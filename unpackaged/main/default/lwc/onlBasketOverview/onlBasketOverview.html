@@ -1,0 +1,15 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Basket Overview -->
+<template>
+    <div class="basket-overview">
+        <div class="basket-info">{basket_count} test(s) in basket</div>
+        <div class="slds-p-around_medium basket-items" if:true={hasTestsInBasket}>
+            <template for:each={basket} for:item="item">
+                <c-onl-basket-item key={item.product.Id} item={item} onremove={handleRemoveItemFromBasket}></c-onl-basket-item>
+            </template>
+        </div>
+    </div>
+</template>

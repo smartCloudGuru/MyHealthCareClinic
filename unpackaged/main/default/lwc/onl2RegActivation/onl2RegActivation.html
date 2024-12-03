@@ -1,0 +1,37 @@
+<!--
+ - Created 19.7.2022..
+ -->
+
+<!-- Onl 2 Registration Activation -->
+<template>
+
+
+    <div if:true={loading} class="saved-note slds-m-top_xx-large slds-text-heading_large slds-p-around_large">
+        <br/>
+        <p class="slds-align_absolute-center">Please wait&mldr;</p>
+    </div>
+    <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <div if:true={success}
+         class="width-limited saved-note slds-m-top_xx-large slds-text-heading_medium slds-p-around_large">
+        <p>Your account has been successfully activated.</p>
+        <p>You may now login at our Store with your e-mail and password.</p>
+        <p>Please email us at <a href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a> if you have need for assistance.</p>
+
+<!--        <div class="width-limited slds-text-align_center">-->
+<!--            <a href="?page=main" class="button_link back-to-site" role="button">{storeConfig.backToStoreText}</a>-->
+<!--            <div if:true={storeConfig.backToWebsiteUrl}>-->
+<!--                <a href={storeConfig.backToWebsiteUrl} class="button_link back-to-site" role="button">{storeConfig.backToWebsiteText}</a>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+
+    <div if:true={msgRegister} class="width-limited slds-text-color_error slds-m-top_xx-large">
+        <p>We are unable to process you registration request.</p>
+        <p>{msgRegister}</p>
+        <p>If you need assistance, call us at&nbsp;<strong>{_contactPhone}</strong>.</p>
+    </div>
+</template>

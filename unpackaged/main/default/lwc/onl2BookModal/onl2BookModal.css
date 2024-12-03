@@ -1,0 +1,532 @@
+/**
+ * Created 11.3.2021..
+ */
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin: 10px auto 12px;
+    text-align: center;
+}
+
+.slds-modal__content {
+    padding: 8px;
+    padding-top: 0;
+}
+
+.policy-note {
+    background-color: rgb(239 239 239);
+    padding: 5px;
+    margin-top: 12px;
+    font-size: 84%;
+    border-radius: 5px;
+}
+
+.policy-note a {
+    font-weight: 400;
+}
+
+p {
+    font-size: 16px;
+    /*padding-left: 10px;*/
+}
+
+.pad-05 {
+    padding: 0.3rem;
+}
+
+.details {
+    margin-top: 0px;
+    margin-bottom: 26px;
+    font-weight: 600;
+    line-height: 22px;
+}
+
+.street,
+.city {
+    white-space: pre;
+    overflow: hidden;
+    min-height: 20px;
+}
+
+.city {
+    font-weight: 600;
+}
+
+.box {
+    margin-bottom: 0;
+    padding: 4px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.next-availability {
+    padding-bottom: 6px;
+    padding-top: 12px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 1rem;
+}
+
+
+.slots-column-small {
+    padding: 14px;
+}
+
+.padding {
+    min-height: 300px;
+    display: block;
+}
+
+.location-list p,
+.slots-column p {
+    margin-bottom: 18px;
+    padding: 0;
+}
+
+p.free-text {
+    margin-bottom: 0px;
+    padding-top: 36px;
+}
+
+.location {
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 23px;
+    padding: 18px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    display: grid;
+}
+
+.location.single {
+    margin-bottom: 0;
+}
+
+.payment-notice {
+    border: 1px solid #d8d8d8;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #fbface;
+}
+
+.address {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    padding-right: 8px;
+    padding-top: 8px;
+    min-height: 88px;
+}
+
+.availability {
+    justify-self: end;
+    grid-column: 2;
+    padding-bottom: 8px;
+}
+
+
+.location.single .address {
+    min-height: 0;
+}
+
+
+.select-button {
+    justify-self: end;
+    align-self: end;
+    grid-column: 2;
+    padding-top: 8px;
+}
+
+
+.green {
+    color: #4cb05b;
+}
+
+.boldgreen {
+    color: var(--c-color-main);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.standout-warn {
+    color: var(--c-color-error);
+}
+
+.bold {
+    font-weight: 500;
+}
+
+.spinner-holder {
+    margin-top: 1rem;
+    height: 200px;
+    margin-bottom: 1rem;
+}
+
+.slds-spinner_container {
+    top: 72px;
+}
+
+.booking-spinner .spinner-holder {
+    margin-top: 0rem;
+    height: 130px;
+    margin-bottom: 0rem;
+}
+
+.booking-spinner .slds-spinner_container {
+    top: 0px;
+}
+
+
+.selected .box.location {
+    border: 3px solid #4cb05b;
+    padding: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.locations {
+    margin-top: 1rem;
+}
+
+.timeslots {
+    min-height: 494px;
+    padding: 4px;
+}
+
+
+.slot-wrapper {
+    padding: 3px;
+}
+
+.slot {
+    padding: 3px;
+    text-align: center;
+    border: 1px solid var(--c-color-border);
+    border-radius: 4px;
+    color: var(--c-color-border);
+    font-size: 14px;
+    padding-top: 3px;
+    line-height: 19px;
+}
+
+.arrow {
+    padding: 4px;
+    cursor: pointer;
+    border: 1px solid #afafb1;
+    border-radius: 6px;
+    font-weight: 400;
+}
+
+.arrow-icon {
+    font-size: xx-large;
+    top: 4px;
+    position: relative;
+}
+
+.slot.available {
+    color: #3c3c3b;
+    border: 1px solid #B7E768;
+    background-color: #B7E768;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.slot.available:hover {
+    padding: 1px;
+    text-align: center;
+    border: 3px solid #4cb05b;
+    border-radius: 4px;
+}
+
+.no-left-padding {
+    padding-left: 0;
+}
+
+.small-top-bottom-padding {
+    padding-top: 24px;
+    padding-bottom: 0px;
+}
+
+.slot-divider {
+    height: 8px;
+    border-bottom: 1px solid #e0e2e0;
+    margin-bottom: 8px;
+}
+
+.schedule-date {
+    text-align: center;
+}
+
+.time-and-location {
+    border: 1px solid #d8d8d8;
+    padding: 12px;
+    padding-top: 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+p.time-and-date {
+    margin-bottom: 8px;
+    padding: 0;
+    font-size: 16px;
+}
+
+span.time-and-date {
+    font-weight: 500;
+    color: #4cb05b;
+}
+
+.box.confirmation {
+    padding: 0px 8px 16px;
+    font-size: 16px;
+}
+
+.box.confirmation p {
+    margin-bottom: 16px;
+}
+
+.box.confirmation h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.personals {
+    margin-bottom: 16px;
+}
+
+.location-box {
+    margin-top: 2px;
+}
+
+.modal-footer {
+    padding-top: 1.4rem;
+}
+
+lightning-combobox {
+    color: #3c3c3b;
+}
+
+.preferred-resource-choice {
+    padding: 0px 50px 32px;
+}
+
+.practitioner {
+
+}
+
+.loading-divider {
+    border-bottom: 1px solid #d8d8d8;
+    padding-bottom: 22px;
+    margin-bottom: 10px;
+}
+
+.wide-as-possible {
+    min-width: unset !important;
+    width: 90%;
+}
+
+.no-slots-text {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.slds-modal__close {
+    top: 5px !important;
+    right: 14px !important;
+}
+
+.slds-modal__header {
+    border-bottom: none;
+    box-shadow: 0px 1px 3px 0px #c1c1c1;
+    z-index: unset;
+    padding: 8px;
+}
+
+.page-direct .slds-modal__header,
+.page-direct .slds-modal__content {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.slds-modal__header h2 {
+    font-size: 18px;
+    margin-top: 6px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.slots-column-small .date-long {
+    box-shadow: var(--c-color-covid) 0px 2px 0px 0px;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.randox .slots-column-small .date-long {
+    box-shadow: var(--c-color-branding-randox) 0px 2px 0px 0px;
+}
+
+.display-none {
+    display: none;
+}
+
+.font80 {
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.prev-but, .next-but {
+    height: 40px;
+}
+
+.prev-but .arrow {
+    margin-left: 14px;
+}
+
+.next-but .arrow {
+    margin-right: 14px;
+}
+
+.back-button {
+    width: 100%;
+    display: inline-grid;
+    margin-top: 8px;
+}
+
+.required_mark {
+    color: rgb(234, 0, 30);
+}
+
+.attach-name {
+    font-weight: 500;
+    line-height: 20px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    list-style: inside;
+    padding-left: 12px;
+}
+
+.location-notice {
+    color: var(--c-color-error);
+    text-align: center;
+
+    background-color: rgb(239 239 239);
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 84%;
+}
+
+.location-wrapper {
+    border-radius: 4px;
+    padding: 8px;
+}
+
+
+.location-wrapper .inner {
+    padding: 12px;
+    border: 2px solid var(--c-color-main);
+    border-radius: 4px;
+    cursor: pointer;
+    min-height: 114px;
+}
+
+.location-wrapper .inner:hover {
+    background-color: #cdefc4;
+}
+
+.location-wrapper .name {
+    font-weight: bold;
+    font-size: 1.0rem;
+}
+
+.location-wrapper .locaddress {
+    font-size: 0.84rem;
+}
+
+.pad-24-12 {
+    padding-top: 0px;
+    padding-bottom: 6px;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.confirm-booking-button {
+    /*for tracking purposes*/
+}
+
+.start-booking {
+    /*for tracking purposes*/
+}
+
+@media only screen and (max-width: 768px) {
+
+    .availability {
+        grid-column: 1 !important;
+        justify-self: start;
+    }
+
+    .wide-as-possible {
+        min-width: unset !important;
+        width: 100%;
+        padding: 0;
+        height: 100%;
+        display: grid;
+    }
+
+    .wide-as-possible .slds-modal__header,
+    .wide-as-possible .slds-modal__content {
+        border-radius: 0px;
+    }
+
+    .timeslots .slot-wrapper {
+        padding: 3px;
+    }
+
+    .timeslots .slot {
+        padding: 3px;
+        text-align: center;
+        border: 1px solid var(--c-color-border);
+        border-radius: 4px;
+        color: var(--c-color-border);
+        font-size: 14px;
+        line-height: 21px;
+    }
+
+    .timeslots .slot.available {
+        color: #3c3c3b;
+        border: 1px solid #B7E768;
+        background-color: #B7E768;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .timeslots .slot.available:hover {
+        padding: 1px;
+        text-align: center;
+        border: 3px solid #4cb05b;
+        border-radius: 4px;
+    }
+
+    .no-slots-text {
+        font-weight: 400;
+    }
+
+    .small-padding-on-small {
+        padding: 0.6rem;
+    }
+
+    .next-availability {
+        padding-bottom: 4px;
+        padding-top: 8px;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-top: 1rem;
+    }
+
+}

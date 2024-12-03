@@ -1,0 +1,41 @@
+/**
+ * Created 13.3.2021..
+ */
+
+.product-name {
+    font-weight: 600;
+}
+
+.details {
+    padding-top: 12px;
+}
+
+lightning-button.edit-button {
+    margin-right: 18px;
+}
+
+.priceitem {
+    min-width: 100px;
+    padding-left: 20px;
+    text-align: end;
+}
+
+.product-totalprice {
+    font-weight: 500;
+}
+
+.product-row {
+    margin-bottom: 10px;
+}
+
+.edit-options {
+    font-size: 0.9rem;
+    float: left;
+    padding-left: 16px;
+}
+
+.edit-options a {
+    font-variant: all-small-caps;
+    font-size: 1rem;
+    margin-right:1.6rem;
+}

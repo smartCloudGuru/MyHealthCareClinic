@@ -1,0 +1,406 @@
+<!--
+ - Created by Matija on 23.11.2023.
+ -->
+
+<apex:page id="TLC_Booking"
+           showHeader="false"
+           sideBar="false"
+           standardStylesheets="false"
+>
+
+
+    <head profile="http://www.w3.org/2005/10/profile">
+        <title>Book Online</title>
+
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{!$Setup.OnlineStoreSettings__c.GTM_Id__c}');</script>
+        <!-- End Google Tag Manager -->
+
+        <!-- Shadow DOM Analytics solution Example-->
+
+        <script>
+            (function () {
+                // Set to the event you want to track
+                var eventName = 'click',
+                    // Set to false if you don't want to use capture phase
+                    useCapture = true,
+                    // Set to false if you want to track all events and not just those in shadow DOM
+                    trackOnlyShadowDom = true;
+
+                var callback = function (event) {
+                    if ('composed' in event && typeof event.composedPath === 'function') {
+                        // Get the path of elements the event climbed through, e.g.
+                        // [span, div, div, section, body]
+                        var path = event.composedPath();
+
+                        //console.log('::path:', path);
+
+                        // Fetch reference to the element that was actually clicked
+                        var targetElement = path[0];
+
+
+
+                        // Check if the element is WITHIN the shadow DOM (ignoring the root)
+                        var shadowFound = path.length ? path.filter(function (i) {
+                            return !targetElement.shadowRoot && !!i.shadowRoot;
+                        }).length > 0 : false;
+
+                        // If only shadow DOM events should be tracked and the element is not within one, return
+                        //if (trackOnlyShadowDom && !shadowFound) return;
+
+                        // Push to dataLayer
+                        if (shadowFound) {
+                            window.dataLayer.push({
+                                event: "gtm.click",
+
+                                'gtm.element': targetElement,
+                                'gtm.elementClasses': targetElement.className || '',
+                                'gtm.elementId': targetElement.id || '',
+                                'gtm.elementTarget': targetElement.target || '',
+                                'gtm.elementUrl': targetElement.href || targetElement.action || '',
+                                innerText: targetElement.innerText,
+                                inShadowDom: shadowFound,
+                                storeName: 'TLC'
+
+                            });
+                        } else {
+                            window.dataLayer.push({
+                                event: "gtm.click",
+                                inShadowDom: shadowFound,
+                                storeName: 'TLC'
+                            });
+                        }
+                    }
+                };
+
+                document.addEventListener(eventName, callback, useCapture);
+            })();
+        </script>
+
+        <meta content="initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, minimal-ui" name="viewport"/>
+        <script type="text/javascript" async="true" src="https://510003174.collect.igodigital.com/collect.js"></script>
+        <link rel="icon" href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png" sizes="32x32"/>
+        <link rel="icon" href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png" sizes="192x192"/>
+        <link rel="apple-touch-icon" href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png"/>
+        <meta name="msapplication-TileImage" content="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png"/>
+        <style type="text/css">
+
+            html {
+                --c-color-text: rgb(60, 60, 59) !important;
+                --c-color-background-header: #ededed !important;
+                --c-color-background-secondary: #fcfcfc !important;
+                --c-color-covid: rgba(0, 86, 140) !important;
+                --c-color-covidlight: #81c88b !important;
+                --c-color-appointment: rgba(0,86,140) !important;
+                --c-color-appointment-light: #fafafa !important;
+                --c-color-product: #e06310 !important;
+                --c-color-product-light: #f6ae7f !important;
+
+                --c-color-main: rgba(0, 86, 140);
+                --c-color-secondary: rgba(241, 181, 61);
+
+                --c-color-error: #bc0d0d !important;
+                --c-color-border: #e1e1e1 !important;
+
+                --c-tlc-color-button: rgba(241,181,61);
+                --c-tlc-color-buttonhover: rgba(232,121,40);
+            }
+
+            body {
+                margin: 0;
+                background-color: #ededed;
+            }
+        </style>
+    </head>
+
+    <style>
+
+        @font-face {
+            font-family: "Museo";
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(https://myhealthcareclinic.com/fonts/MuseoSans-300.otf) format('opentype')
+        }
+
+        @font-face {
+            font-family: "Museo";
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://myhealthcareclinic.com/fonts/MuseoSans_500.otf) format('opentype')
+        }
+
+        /* A font by Jos Buivenga (exljbris) -> www.exljbris.com */
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/635674/00000000000000000000e800/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n1&amp;v=3") format("woff2"),url("https://use.typekit.net/af/635674/00000000000000000000e800/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n1&amp;v=3") format("woff"),url("https://use.typekit.net/af/635674/00000000000000000000e800/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n1&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: normal;
+            font-weight: 100;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/47003b/00000000000000000000e801/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i1&amp;v=3") format("woff2"),url("https://use.typekit.net/af/47003b/00000000000000000000e801/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i1&amp;v=3") format("woff"),url("https://use.typekit.net/af/47003b/00000000000000000000e801/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i1&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: italic;
+            font-weight: 100;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/620bf8/00000000000000000000e7fe/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n3&amp;v=3") format("woff2"),url("https://use.typekit.net/af/620bf8/00000000000000000000e7fe/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n3&amp;v=3") format("woff"),url("https://use.typekit.net/af/620bf8/00000000000000000000e7fe/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n3&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: normal;
+            font-weight: 300;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/5cca6d/00000000000000000000e802/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i3&amp;v=3") format("woff2"),url("https://use.typekit.net/af/5cca6d/00000000000000000000e802/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i3&amp;v=3") format("woff"),url("https://use.typekit.net/af/5cca6d/00000000000000000000e802/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i3&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: italic;
+            font-weight: 300;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/a28b50/00000000000000000000e803/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n5&amp;v=3") format("woff2"),url("https://use.typekit.net/af/a28b50/00000000000000000000e803/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n5&amp;v=3") format("woff"),url("https://use.typekit.net/af/a28b50/00000000000000000000e803/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n5&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: normal;
+            font-weight: 500;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/c2d3de/00000000000000000000e804/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i5&amp;v=3") format("woff2"),url("https://use.typekit.net/af/c2d3de/00000000000000000000e804/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i5&amp;v=3") format("woff"),url("https://use.typekit.net/af/c2d3de/00000000000000000000e804/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i5&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: italic;
+            font-weight: 500;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/e3ca36/00000000000000000000e805/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n7&amp;v=3") format("woff2"),url("https://use.typekit.net/af/e3ca36/00000000000000000000e805/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n7&amp;v=3") format("woff"),url("https://use.typekit.net/af/e3ca36/00000000000000000000e805/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n7&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: normal;
+            font-weight: 700;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/2841b6/00000000000000000000e806/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i7&amp;v=3") format("woff2"),url("https://use.typekit.net/af/2841b6/00000000000000000000e806/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i7&amp;v=3") format("woff"),url("https://use.typekit.net/af/2841b6/00000000000000000000e806/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i7&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: italic;
+            font-weight: 700;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/9cf49e/00000000000000000000e807/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n9&amp;v=3") format("woff2"),url("https://use.typekit.net/af/9cf49e/00000000000000000000e807/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n9&amp;v=3") format("woff"),url("https://use.typekit.net/af/9cf49e/00000000000000000000e807/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=n9&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: normal;
+            font-weight: 900;
+            font-stretch: normal;
+        }
+
+        @font-face {
+            font-family: "museo-sans";
+            src: url("https://use.typekit.net/af/27c143/00000000000000000000e808/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i9&amp;v=3") format("woff2"),url("https://use.typekit.net/af/27c143/00000000000000000000e808/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i9&amp;v=3") format("woff"),url("https://use.typekit.net/af/27c143/00000000000000000000e808/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&amp;fvd=i9&amp;v=3") format("opentype");
+            font-display: auto;
+            font-style: italic;
+            font-weight: 900;
+            font-stretch: normal;
+        }
+
+
+        body, body p, body a, body li {
+            font-family: museo-sans, "Museo", sans-serif;
+            font-weight: 300
+        }
+
+        body h1, body h2, body h3, body h4, body h5, body h6 {
+            font-family: museo-sans, "Museo", sans-serif;;
+            font-weight: 500
+        }
+    </style>
+
+    <apex:includeLightning />
+    <apex:includeScript value="https://js.stripe.com/v3/"/>
+
+
+    <div id="lightning"/>
+
+    <script type="application/javascript">
+        var stripe;
+        $Lightning.use("c:TestOutApp", function () {
+            $Lightning.createComponent("c:OnlineStore_TLC",
+                {
+                    "storeConfig": {
+                        "termsUrl": "https://myhealthcareclinic.com/medical/covid-terms-conditions/",
+                        "product": false,
+                        "privacyUrl": "https://myhealthcareclinic.com/privacy/",
+                        "logoUrl": "https://www.thelondonclinic.co.uk/wingsuit/dist/images/logo.svg",
+                        "covid": false,
+                        "contactTel": "0207 971 1787",
+                        "contactEmail": "info@myhealthcareclinic.com",
+                        "appointment": true,
+                        "storeName": "TheLondonClinic",
+                        "forceDisplayTabs": true,
+                        "backToWebsiteUrl": "https://www.thelondonclinic.co.uk/",
+                        "backToWebsiteText": "Back to Homepage",
+                        "backToStoreText": "Back to Appointment Booking",
+                        "displayLocations": true,
+                        "allowTestModes": true,
+                        "hideRegistering": true,
+                        "hideDirectBookBackdrop": true
+                    }
+                },
+                "lightning",
+                function (cmp) {
+                    $A.eventService.addHandler({"event": "c:PaymentClicked", "handler": initiatePayment});
+                    $A.eventService.addHandler({"event": "c:SessionChange", "handler": sessionChange});
+                });
+        });
+
+        //Function to call Lightning Component Function
+        var initiatePayment = function (event) {
+            if (!stripe) {
+                stripe = Stripe("{!$Setup.OnlineStoreSettings__c.Stripe_Public_Key__c}");
+            }
+
+            stripe.redirectToCheckout({sessionId: event.getParam("sessionId")})
+                .then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+        };
+
+        var sessionChange = function (event) {
+            let details = event.getParams().details;
+
+            if (window.location.href.indexOf('sandbox') >= 0) console.log('::AB:sessionChange:details', details);
+
+            // if (!details.consent)
+            // {
+            //     if (window.location.href.indexOf('sandbox') >= 0) console.log('::AB:sessionChange:consent for statistics not present');
+            //     return;
+            // }
+            //
+            // if (!details.consent.statistics)
+            // {
+            //     if (window.location.href.indexOf('sandbox') >= 0) console.log('::AB:sessionChange:consent for statistics not given');
+            //     return;
+            // }
+
+            if (details.stage === 'bookSelected') {
+                return;
+            }
+
+            if (details.stage === 'logout') {
+                return;
+            }
+
+            if (details.stage === 'bookConfirmed') {
+                if (details.ProductCode) {
+                    //pushToETMC(["setOrgId", "510003174"]);
+                    pushToETMC(["trackCart", {
+                        "cart": [{"item": details.productId, "unique_id": details.productId}]
+                    }]);
+                }
+                return;
+            }
+
+            if (details.stage === 'bookStart') {
+
+                if (details.productCode) {
+                    pushToETMC(["trackCart", {
+                        "cart": [{"item": details.productId, "unique_id": details.productId}]
+                    }]);
+                }
+                return;
+            }
+
+            // if (details.stage === 'bookStop') {
+            //     if (details.productId) {
+            //         pushToETMC(["setOrgId", "510003174"]);
+            //         pushToETMC(["trackCart", {
+            //             "cart": []
+            //         }]);
+            //     }
+            //     return;
+            // }
+
+            if (details.stage === 'opportunityWon') {
+                if (details.opportunity != null
+                    && details.opportunity.OpportunityLineItems != null
+                    && details.opportunity.OpportunityLineItems.records != null
+                    && details.opportunity.OpportunityLineItems.records.length > 0
+                ) {
+                    let cart = [];
+                    for (let item of details.opportunity.OpportunityLineItems.records) {
+                        cart.push({
+                            "item": item.ProductCode, "quantity": item.Quantity, "price": item.UnitPrice, "unique_id": item.Product2Id
+                        });
+                    }
+                    //pushToETMC(["setOrgId", "510003174"]);
+                    pushToETMC(["trackConversion", {"cart": cart, opportunityId: details.opportunity.Id}]);
+                }
+                return;
+            }
+
+            if (details.stage === 'loginOk') {
+                //pushToETMC(["setOrgId", "510003174"]);
+                pushToETMC(["setUserInfo", {
+                    "email": details.contactId,
+                    "details": {
+                        "PatientType": details.patientType,
+                        "MembershipTier": details.membershipType
+                    }
+                }]);
+                return;
+            }
+
+            if (_etmc) {
+                //pushToETMC(["setOrgId", "510003174"]);
+                pushToETMC(["trackPageView", {"item:": details.productId, "category": details.category}]);
+            }
+        };
+
+        var pushToETMC = function (event) {
+            // if (!_etmc) _etmc = [];
+            // {
+            //     _etmc.push(["setOrgId", "510003174"]);
+            //     if (window.location.href.indexOf('sandbox') >= 0) console.log('::AB:_etmc.push', JSON.stringify(["setOrgId", "510003174"]));
+            // }
+            if (window.location.href.indexOf('sandbox') >= 0) console.log('::AB:_etmc.push', JSON.stringify(event));
+            if (_etmc) _etmc.push(event);
+        }
+    </script>
+
+    <script>
+        var _etmc = [];
+        _etmc.push(["setOrgId", "510003174"]);
+        _etmc.push(["trackPageView"]);
+    </script>
+
+    <site:googleAnalyticsTracking />
+
+</apex:page>

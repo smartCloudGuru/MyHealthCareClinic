@@ -1,0 +1,182 @@
+<!--
+ - Created by zokito on 5/29/21.
+ -->
+<apex:page id="COVID_Test_PCR_Certificate" standardController="COVID_Test__c"
+           extensions="Covid_Test_Certificate_Controller"
+           applyBodyTag="false"
+           renderAs="advanced_pdf"
+           showHeader="false">
+    <head>
+        <style>
+            @page {
+                margin: 0.5in;
+                size: 8.25in 11.75in;
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+
+            body {
+                font-family: sans-serif, serif;
+                margin: 0;
+                padding: 0;
+                font-size: 13px;
+            }
+
+
+            h1 {
+                font-size: 19px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            h2 {
+                font-size: 16px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom: 20px;
+            }
+
+            p {
+                line-height: 18px;
+                margin-top: 6px;
+                margin-bottom: 10px;
+            }
+
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+                font-size: 11px;
+                line-height: 16px;
+                text-align: center;
+            }
+
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+
+        </style>
+    </head>
+
+    <apex:image url="{!$Resource.Mhc_logo_rgb}" width="180"/>
+    <h1>CERTIFICATE OF CONFIRMATION: SARS-COVID-2 TESTING<br/><br/>PERFORMED BY RT-PCR METHOD</h1>
+
+    <p>
+        MyHealthcare Clinic Testing Centre - {!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.Name}<br/>
+        {!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.Street}, {!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.City}, {!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.PostalCode}
+    </p>
+
+    <p>
+        <strong>Date:&nbsp;
+            <apex:outputText value="{0,date,dd-MMM-yyyy}">
+                <apex:param value="{!TODAY()}"/>
+            </apex:outputText>
+        </strong>
+        <br/>
+        <strong>Patient Name: {!COVID_Test__c.Provided_First_Name__c} {!COVID_Test__c.Provided_Last_Name__c}</strong>
+        <br/>
+        <strong>Patient DOB:&nbsp;
+            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!COVID_Test__c.Provided_Date_of_Birth__c}"/>
+            </apex:outputText>
+        </strong>
+        <br/>
+        <strong>Laboratory URN: {!COVID_Test__c.Test_URN__c}</strong>
+        <br/>
+        <strong>Passport Number: {!COVID_Test__c.Provided_Passport_Number__c}</strong>
+        <br/>
+        <strong>Booking Reference: {!COVID_Test__c.Booking_Reference__c}</strong>
+    </p>
+
+    <p>
+        TO WHOM IT MAY CONCERN
+    </p>
+    <p>
+        The above patient had a COVID-19 Nasopharyngeal (throat and nasal) swab test performed
+        by a healthcare professional to check for active infection to coronavirus on&nbsp;
+        <apex:outputText value="{!formattedSwabDateTime}"/>.
+    </p>
+
+    <!--    panel negative-->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Negative'}">
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == true}">
+            <p>Your coronavirus (COVID-19) test result is <strong>NEGATIVE</strong>. It’s likely you were not infectious when the test was done.</p>
+            <p>If you develop symptoms of coronavirus, it is advised that you take a PCR test. If you have any of the main symptoms the public health
+                advice is to avoid contact with other people where possible.</p>
+            <p>For more information visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == false}">
+        <p>The result is <strong>NEGATIVE</strong> indicating the patient does not have the coronavirus infection at the
+            time of testing.
+        </p>
+        <p>Technical Notes: The RT-PCR test was performed using a Nasopharyngeal (throat and nasal) swab. A sample is
+            prepared by extracting the chosen section of the genome, and then PCR (Polyamerase Chain Reaction)
+            techniques amplify the genome section ready for detection. This type of test detects the RNA (Ribonucleic acid)
+            contained within the SARS-CoV-2 virus.</p>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <!-- panel positive -->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Positive'}">
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == true}">
+            <p>Your coronavirus test result is <strong>POSITIVE</strong>. This means you probably have the virus.</p>
+            <p>You are no longer legally required to self-isolate.</p>
+            <p>However, if you have a positive test result, the public health advice is to stay at home and avoid contact with other people where
+                possible.</p>
+            <p>It is advised that you do not travel, including to leave the UK.</p>
+            <p>For more information visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+            <p>Contact 111 if you need medical help. In an emergency dial 999.</p>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == false}">
+        <p>Your coronavirus test result is <strong>POSITIVE</strong>. You had the virus when the test was done.</p>
+        <p>If you have not had symptoms of coronavirus, you must self-isolate for 10 days from your test
+            date. If you have symptoms of coronavirus, you must self-isolate for 10 days from the day your
+            symptoms started, if earlier than when you took your test.</p>
+        <p>People you live with or are travelling with should also self-isolate for 10 days from the day you
+            took a test.</p>
+        <p>You must not travel, including to leave the UK, during self-isolation.</p>
+        <p>For further information, visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+
+        <p>Contact 111 if you need medical help. In an emergency dial 999.</p>
+        <p>Technical Notes: The RT-PCR test was performed using a Nasopharyngeal (throat and nasal) swab.</p>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!!ISBLANK(COVID_Test__c.Certificate_Custom_Text__c)}" layout="none">
+        <p>
+            <apex:outputText escape="false" value="{!COVID_Test__c.Certificate_Custom_Text__c}"/>
+        </p>
+    </apex:outputPanel>
+
+    <p>
+        The RT-PCR swab was tested at ‘Randox Clinical Laboratory Services’ which is a UKAS
+        accredited (see QR code below) and Public Health England endorsed laboratory.
+    </p>
+
+    <div>
+        <p>
+            Yours sincerely
+        </p>
+        <div>
+            <apex:image url="{!$Resource.signature_akash_patel}" height="80"/>
+        </div>
+    </div>
+
+    <p>
+        Dr Akash Patel MBBS BSc (Hons) MRCGP<br/>
+        Medical Director - GMC: 7088309
+    </p>
+
+    <p>
+        <apex:image url="{!$Resource.qr_ukas}" height="80"/>
+    </p>
+
+    <div class="footer">
+        <p>Web: myhealthcareclinic.com Mail: coronatesting@myhealthcareclinic.com Tel: 02070995555
+            <br/>END OF REPORT</p>
+    </div>
+</apex:page>

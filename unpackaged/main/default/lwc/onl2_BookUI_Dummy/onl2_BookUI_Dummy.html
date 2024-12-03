@@ -1,0 +1,129 @@
+<!--
+ - Created 17.6.2022..
+ -->
+
+<!-- Onl 2 Book Ui Dummy -->
+<template>
+
+    <!-- INITIAL SCREEN -->
+    <template if:true={showInitialScreen}>
+
+        <template if:false={resourceOptions}>
+            <div class="slds-tabs_card asblock slds-align_absolute-center">
+                <div class="spinnerHolder">
+                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                </div>
+                <div class="spinnerText">
+
+                </div>
+            </div>
+        </template>
+
+
+        <p class="min-height">
+            <span if:true={resourceOptions} class="slds-tabs_card asblock">
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small">
+                        <lightning-combobox label="Practitioner to Reserve:"
+                                            data-formfield="bookresource"
+                                            placeholder="Please select…"
+                                            options={resourceOptions}
+                                            value={resourceSelected}
+                                            onchange={handleResourceChanged}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small" class="slds-align_absolute-center">
+                        <lightning-input
+                                type="datetime"
+                                name="inputFromDatetime"
+                                data-formfield="inputFromDatetime"
+                                label="Reserve From"
+                                onchange={handleFromDateTimeChange}
+                        >
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small" class="slds-align_absolute-center">
+                    <lightning-input
+                            type="datetime"
+                            name="inputToDatetime"
+                            data-formfield="inputToDatetime"
+                            label="Reserve To"
+                            onchange={handleToDateTimeChange}
+                    >
+                    </lightning-input>
+
+                </lightning-layout-item>
+            </lightning-layout>
+        </span>
+
+            <lightning-layout if:true={readyToBook} multiple-rows="true" horizontal-align="start" class="slds-p-around_large">
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small" class="slds-align_absolute-center">
+                    <lightning-button icon-name="utility:event" label="Reserve this Time Slot" variant="brand"
+                                      class="mhc-button action-button no-margin"
+                                      onclick={doBook}></lightning-button>
+                    <br/>
+                </lightning-layout-item>
+            </lightning-layout>
+
+        </p>
+    </template>
+
+
+    <template if:true={showWaitScreen}>
+        <div class="slds-tabs_card asblock slds-align_absolute-center">
+            <div class="spinnerHolder">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+            <div class="spinnerText">
+                Please wait while the slot is being reserved …
+            </div>
+        </div>
+    </template>
+
+    <template if:true={showResultScreen}>
+        <div if:false={noPaymentDone} class="slds-tabs_card asblock slds-align_absolute-center">
+            <lightning-record-view-form object-api-name="ServiceAppointment" record-id={appointmentId}>
+                <lightning-layout multiple-rows="false" horizontal-align="start">
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                        <strong>Reserved a time slot:<br/><br/></strong>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                        <lightning-output-field field-name="Treatment__c"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="ServiceTerritoryId"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="WorkTypeId"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="SchedStartTime"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="SchedEndTime"></lightning-output-field>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-record-view-form>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small" class="slds-align_absolute-center">
+                    <lightning-button label="View Opportunity" variant="brand" class="mhc-button action-button no-margin"
+                                      onclick={goToOpportunity}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+
+        </div>
+
+    </template>
+
+</template>

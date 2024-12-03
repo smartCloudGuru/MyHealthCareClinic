@@ -1,0 +1,369 @@
+<!--
+ - Created 3.4.2024..
+ -->
+
+<!-- TLP Reschedule -->
+<template>
+
+    <p class="dev-build">r012</p>
+
+    <template if:false={rescheduleSuccess}>
+
+        <template if:false={loading}>
+            <template if:true={existingBooking}>
+
+                <div class="page-width-limited">
+                    <lightning-layout
+                            multiple-rows=""
+                            horizontal-align="start"
+                            class="mhc2">
+
+
+                        <!-- cancel text and button -->
+                        <template if:false={existingBooking.Cancelled__c}>
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=12
+                                    class="box no-border slds-m-top_x-large">
+
+                                You are about to reschedule&nbsp;<span class="bolder">{existingBooking.Work_Type_Group__r.Name}</span>&nbsp;appointment
+                                scheduled for&nbsp;
+                                <lightning-formatted-date-time value={existingBooking.Scheduled_Start__c}
+                                                               year="numeric"
+                                                               month="long"
+                                                               day="2-digit"
+                                                               weekday="long"
+                                                               hour="2-digit"
+                                                               hour12={ampm}
+                                                               minute="2-digit"
+                                                               time-zone="Europe/London"
+                                                               class="bolder"></lightning-formatted-date-time>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="box no-border slds-m-top_x-large">
+                                Please select the new date and time slot:
+                            </lightning-layout-item>
+
+                        </template>
+
+                        <!-- msg if already cancelled -->
+                        <lightning-layout-item
+                                if:true={existingBooking.Cancelled__c}
+                                size=12
+                                small-device-size=12
+                                medium-device-size=12
+                                large-device-size=12
+                                class="box no-border slots-column slds-m-top_x-large">
+
+                            The appointment you are trying to reschedule has been cancelled
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item
+                                if:false={loading}
+                                size=12
+                                small-device-size=12
+                                medium-device-size=12
+                                large-device-size=12
+                                class="box no-border slots-column">
+
+                            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                                <template if:false={loadingSlots}>
+                                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                           class="pad-top-bottom-075">
+                                        <lightning-input
+                                                type="date"
+                                                name="inputDate"
+                                                label={datePickerText}
+                                                class="display-inline date-input pad-r-10"
+                                                value={selectedDate}
+                                                date-style="short"
+                                                onchange={handleDateInputChange}
+                                        >
+                                        </lightning-input>
+
+                                        <lightning-button-icon
+                                                class="table-cell"
+                                                icon-name="utility:refresh"
+                                                alternative-text="Refresh"
+                                                onclick={searchSlots}
+                                        ></lightning-button-icon>
+                                    </lightning-layout-item>
+
+                                </template>
+
+                                <template if:true={loadingSlots}>
+                                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                           class="pad-top-bottom-075">
+
+                                        <lightning-input
+                                                if:true={loadingSlots}
+                                                type="date"
+                                                name="inputDate"
+                                                label={datePickerText}
+                                                class="display-inline date-input pad-r-10"
+                                                value={selectedDate}
+                                                date-style="short"
+                                                disabled
+                                        >
+                                        </lightning-input>
+
+                                        <lightning-button-icon
+                                                class="table-cell"
+                                                icon-name="utility:refresh"
+                                                alternative-text="Refresh"
+                                                disabled
+                                        ></lightning-button-icon>
+                                    </lightning-layout-item>
+
+
+                                </template>
+
+                                <template if:true={canSearch}>
+                                    <!-- timeslots -->
+                                    <lightning-layout-item if:true={loadingSlots}
+                                                           size=12 small-device-size=12 medium-device-size=12
+                                                           large-device-size=12
+                                                           class="timeslots">
+                                        <div class="spinner-holder slds-align_absolute-center">
+                                            <p>Please be patient while we look for availability&mldr;<br/><br/></p>
+                                            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                        </div>
+                                    </lightning-layout-item>
+
+                                    <lightning-layout-item if:false={loadingSlots}
+                                                           size=12 small-device-size=12 medium-device-size=12
+                                                           large-device-size=12
+                                                           class="timeslots">
+
+                                        <lightning-layout
+                                                multiple-rows="true" vertical-align="stretch"
+                                                horizontal-align="start"
+                                                pull-to-boundary="medium">
+
+                                            <lightning-layout-item size=6
+                                                                   small-device-size=6 medium-device-size=6 large-device-size=6
+                                                                   class="prev-but slds-text-align_left">
+                                                <span class="arrow" onclick={handleDayMinus}><span class="arrow-icon">&lt;</span> Previous </span>
+                                            </lightning-layout-item>
+
+                                            <lightning-layout-item size=6
+                                                                   small-device-size=6 medium-device-size=6 large-device-size=6
+                                                                   class="next-but slds-text-align_right">
+                                                <span class="arrow" onclick={handleDayPlus}>Next <span class="arrow-icon">&gt;</span></span>
+                                            </lightning-layout-item>
+
+                                            <!-- DAY0 column -->
+                                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                                   class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                <lightning-layout multiple-rows="" horizontal-align="start">
+                                                    <lightning-layout-item
+                                                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                            class="slds-align_absolute-center date-long">
+                                                        <lightning-formatted-date-time value={selectedDateP0} year="numeric" month="long"
+                                                                                       day="2-digit"
+                                                                                       weekday="long"></lightning-formatted-date-time>
+                                                    </lightning-layout-item>
+                                                    <!-- ITERATE SLOTS day0-->
+                                                    <template if:true={hasSlotsDay0}
+                                                              for:each={currentSlotsDay0} for:item="slot">
+                                                        <lightning-layout-item key={slot.label}
+                                                                               size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                               class="slot-wrapper">
+                                                            <div if:true={slot.startTime}
+                                                                 class="slot available"
+                                                                 onclick={handleTimeSlotSelected}
+                                                                 data-start={slot.startTime}
+                                                                 data-end={slot.endTime}
+                                                                 data-resources={slot.resources}
+                                                                 data-resource_locations={slot.resource_locations}
+                                                            >{slot.label}
+                                                            </div>
+                                                        </lightning-layout-item>
+                                                    </template> <!-- end ITERATE SLOTS day0-->
+
+                                                    <template if:false={hasSlotsDay0}>
+                                                        <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                    </template>
+                                                </lightning-layout>
+                                            </lightning-layout-item>
+
+
+                                            <!-- DAY1 column -->
+                                            <lightning-layout-item
+                                                    size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                    class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                <lightning-layout multiple-rows="" horizontal-align="start">
+                                                    <lightning-layout-item
+                                                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                            class="slds-align_absolute-center date-long">
+                                                        <lightning-formatted-date-time value={selectedDateP1} year="numeric" month="long"
+                                                                                       day="2-digit"
+                                                                                       weekday="long"></lightning-formatted-date-time>
+                                                    </lightning-layout-item>
+                                                    <!-- ITERATE SLOTS day1-->
+                                                    <template if:true={hasSlotsDay1}
+                                                              for:each={currentSlotsDay1} for:item="slot">
+                                                        <lightning-layout-item key={slot.label}
+                                                                               size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                               class="slot-wrapper">
+                                                            <div if:true={slot.startTime}
+                                                                 class="slot available"
+                                                                 onclick={handleTimeSlotSelected}
+                                                                 data-start={slot.startTime}
+                                                                 data-end={slot.endTime}
+                                                                 data-resources={slot.resources}
+                                                                 data-resource_locations={slot.resource_locations}
+                                                                 aria-label={productMetaData}
+                                                            >{slot.label}
+                                                            </div>
+                                                        </lightning-layout-item>
+                                                    </template> <!-- end ITERATE SLOTS day1-->
+                                                    <template if:false={hasSlotsDay1}>
+                                                        <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                    </template>
+                                                </lightning-layout>
+                                            </lightning-layout-item>
+
+                                            <!-- DAY2 column -->
+                                            <lightning-layout-item
+                                                    size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                    class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                <lightning-layout multiple-rows="" horizontal-align="start">
+                                                    <lightning-layout-item
+                                                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                            class="slds-align_absolute-center date-long">
+                                                        <lightning-formatted-date-time value={selectedDateP2} year="numeric" month="long"
+                                                                                       day="2-digit"
+                                                                                       weekday="long"></lightning-formatted-date-time>
+                                                    </lightning-layout-item>
+                                                    <!-- ITERATE SLOTS day2-->
+                                                    <template if:true={hasSlotsDay2}
+                                                              for:each={currentSlotsDay2} for:item="slot">
+                                                        <lightning-layout-item key={slot.label}
+                                                                               size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                               class="slot-wrapper">
+                                                            <div if:true={slot.startTime}
+                                                                 class="slot available"
+                                                                 onclick={handleTimeSlotSelected}
+                                                                 data-start={slot.startTime}
+                                                                 data-end={slot.endTime}
+                                                                 data-resources={slot.resources}
+                                                                 data-resource_locations={slot.resource_locations}
+                                                                 aria-label={productMetaData}
+                                                            >{slot.label}
+                                                            </div>
+                                                        </lightning-layout-item>
+                                                    </template> <!-- end ITERATE SLOTS day2-->
+                                                    <template if:false={hasSlotsDay2}>
+                                                        <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                    </template>
+                                                </lightning-layout>
+                                            </lightning-layout-item>
+
+
+                                        </lightning-layout>
+                                    </lightning-layout-item>
+                                </template>
+                            </lightning-layout>
+
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+                    <!-- if slot was selected -->
+                    <template if:true={selectedSlot}>
+                        <lightning-layout>
+                            <lightning-layout-item class="timeslot-selected slds-text-align_center"
+                                                   size=12 small-device-size=12 medium-device-size=12>
+                                <p class="bolder">{selectedAppointmentName}</p>
+                                <p> Reschedule for&nbsp;
+                                    <lightning-formatted-date-time value={selectedSlot.startTime}
+                                                                   year="numeric"
+                                                                   month="long"
+                                                                   day="2-digit"
+                                                                   weekday="long"
+                                                                   hour="2-digit"
+                                                                   hour12={ampm}
+                                                                   minute="2-digit"
+                                                                   time-zone="Europe/London"
+                                                                   class="bolder"
+                                    ></lightning-formatted-date-time>
+                                </p>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template>
+
+                    <lightning-layout
+                            if:false={loadingSlots}
+                            multiple-rows="true" horizontal-align="start"
+                            class={displayFormCSS}>
+
+                        <lightning-layout-item if:false={submitting} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center">
+                            <lightning-button if:true={selectedSlot}
+                                              icon-name="utility:event" label="Reschedule"
+                                              class="mhc-button action-button no-margin"
+                                              onclick={doReschedule}></lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={submitting} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center">
+                            <div class="spinner-holder slds-align_absolute-center">
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+                </div>
+
+            </template>
+        </template>
+
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+
+        <template if:true={showErrorModal}>
+            <c-onl-ok-modal modal-title="Unable to process rescheduling"
+                            text="We are unable to process your request at this time. Please try again or contact us for assistance."
+                            text2={errorModalText}
+                            onno={closeErrorModal}
+                            onclose={closeErrorModal}
+                            onyes={closeErrorModal}
+            ></c-onl-ok-modal>
+        </template>
+
+    </template>
+
+
+    <template if:true={rescheduleSuccess}>
+        <div class="page-width-limited">
+            <p class="slds-m-top_x-large"><span class="bolder">{existingBooking.Work_Type_Group__r.Name}</span>&nbsp;appointment originally scheduled
+                for&nbsp;
+                <lightning-formatted-date-time value={existingBooking.Scheduled_Start__c}
+                                               year="numeric"
+                                               month="long"
+                                               day="2-digit"
+                                               weekday="long"
+                                               hour="2-digit"
+                                               hour12={ampm}
+                                               minute="2-digit"
+                                               time-zone="Europe/London"
+                                               ></lightning-formatted-date-time>
+                &nbsp;has now been rescheduled. You will receive a confirmation email soon.
+            </p>
+        </div>
+    </template>
+
+    <template if:true={fetchFailed}>
+        <div class="page-width-limited">
+            <p class="slds-m-top_x-large">The appointment you are trying to reach does not exist. Please check the validity of the link that got you
+                to this page.</p>
+        </div>
+    </template>
+</template>

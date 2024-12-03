@@ -1,0 +1,47 @@
+<!--
+ example url https://myhealthcareclinic--c.vf.force.com/apex/emailTestTLPPage?param=a4zPx000000AA69IAG
+ https://myhealthcareclinic--uat--c.sandbox.vf.force.com/apex/emailTestTLPPage?param=a4zPx000000AA69IAG
+ -->
+
+<apex:page id="emailTestPage">
+    <head>
+
+        <style>
+            .width-limited {
+                max-width: 640px;
+                margin: auto;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+
+    <strong>TLC HS Portal emails</strong>
+    <hr/>
+
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingConfirmationTemplate_TLP recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingReschedulingTemplate_TLP recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingCancellationTemplate_TLP recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingConfirmationTemplate_TLP_T1 recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingReschedulingTemplate_TLP_T1 recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingCancellationTemplate_TLP_T1 recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+
+    </body>
+</apex:page>

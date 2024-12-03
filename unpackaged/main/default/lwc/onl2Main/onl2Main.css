@@ -1,0 +1,60 @@
+/**
+ * Created 22.3.2021..
+ */
+
+c-onl-find-appointments,
+c-onl-find-covid-tests,
+c-onl-find-products
+{
+    display: none;
+}
+
+c-onl-find-appointments[data-selected="appointment"],
+c-onl-find-covid-tests[data-selected="covid"],
+c-onl-find-products[data-selected="product"]
+{
+    display: contents;
+}
+
+.footer-buttons
+{
+    margin-top: 0px;
+}
+
+.find-lists
+{
+    padding-top: 1px;
+    /*background-color:  var(--c-color-background-header);*/
+    background-color: #fff;
+    padding-bottom: 24px;
+}
+
+.cookie-banner
+{
+    left: unset;
+    margin-left: 0;
+    width: 100%;
+    bottom:0;
+    border:none;
+    background-color: var(--c-color-background-header);
+    box-shadow: rgb(38 57 77) 0px -2px 28px -11px;
+    border-radius: 0;
+    position:fixed;
+}
+
+.cookie-banner h2
+{
+    font-size:18px;
+    margin-top: 4px !important;
+}
+
+.cookie-banner .slds-popover__footer
+{
+    background-color: var(--c-color-background-header);
+    padding:1rem;
+}
+
+.cookie-banner .mhc-button
+{
+    margin:3px;
+}

@@ -1,0 +1,140 @@
+/**
+ * Created 21.3.2022..
+ */
+.min-height {
+    height: 720px;
+    min-height: 720px;
+}
+
+.asblock {
+    display: block;
+    margin-bottom: 20px;
+    padding: 0px;
+}
+
+.asblock.nomarg {
+    margin-bottom: 0px;
+}
+
+.ooms-warning
+{
+    color: #b90606;
+    font-weight: 500;
+}
+
+.warn-amber {
+    /*color: darkgoldenrod;*/
+    /*font-weight: 500;*/
+}
+
+.pad-top {
+    line-height: 77px;
+}
+
+.spinnerHolder {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+
+.spinnerText {
+    display: inline-block;
+    height: 94px;
+    vertical-align: middle;
+}
+
+.slot-divider {
+    height: 8px;
+    border-bottom: 1px solid #e0e2e0;
+    margin-bottom: 8px;
+}
+
+.slot-wrapper {
+    padding: 4px;
+}
+
+.help-icon {
+    top: -8px;
+    position: relative;
+    margin-left: 2px;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.special-instructions {
+    color: #041ea8;
+}
+
+.green {
+    color: #4cb05b;
+}
+
+.slot {
+    padding: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: center;
+    border: 1px solid var(--c-color-border);
+    border-radius: 2px;
+    display: flow-root;
+}
+
+.slot.available {
+    color: #3c3c3b;
+    border: 1px solid #B7E768;
+    background-color: #d8f1af;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mid-text {
+    padding-top: 1.5em;
+}
+
+.slot.available.selected {
+    border: 1px solid darkblue;
+    background-color: darkblue;
+    color: #fff;
+}
+
+.slot:hover {
+    border: 1px solid darkblue;
+}
+
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -70px;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

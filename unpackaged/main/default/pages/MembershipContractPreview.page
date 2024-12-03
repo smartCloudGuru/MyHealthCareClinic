@@ -1,0 +1,1107 @@
+<apex:page lightningStyleSheets="true" standardStylesheets="false" showHeader="false" controller="MembershipContract_ctrl">
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-1.8.js')}" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.js')}" />
+        <apex:stylesheet value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.css')}" />
+        <apex:slds />
+
+        <style type="text/css">
+
+            #ctopHeaderId {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 999;
+            }
+
+            #cContentId {
+            padding-top: 50px;
+            position: absolute;
+            }
+
+            .overlay {
+            position: fixed;
+            top: 208px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: block;
+            background-color: #000;
+            opacity: 0.57;
+            filter: "alpha(opacity=57)";
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=57)";
+            z-index: 10;
+            }
+
+            .col1 {
+            padding-left: 20px !important;
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+            }
+
+            .col2 {
+            padding-right: 20px !important;
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+            }
+
+            .col11, .col22 {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            }
+
+            .col12 {
+            padding-left: 20px !important;
+            padding-bottom: 15px !important;
+            }
+
+            .btn-main:hover {
+            background-color: #f7ba00 !important;
+            border-color: #f7ba00 !important;
+            color: #333 !important;
+            }
+
+            .btn-main {
+            background-color: #ffce00 !important;
+            border-color: #ffce00 !important;
+            color: #333 !important;
+            float: right;
+            }
+
+            .requiredLoaderBG {
+            background-color: rgba(92, 173, 243, 0.22);
+            opacity: 0.9;
+            filter: alpha(opacity=70);
+            background-image: url(/dashboards/img/landmark_spinner_1589EE.gif);
+            background-position: center center;
+            background-repeat: no-repeat;
+            height: 100%;
+            left: 0;
+            position: fixed;
+            text-align: center;
+            top: 0;
+            width: 100%;
+            z-index: 1;
+            background-size: 7%;
+            }
+
+            div_signcontract {
+            width: 99%;
+            }
+
+            .popupHeader {
+            margin: 10px;
+            }
+
+
+            .myFormStyle {
+            background-color: #023107;
+            margin: 0px;
+            }
+
+            .pgLabel {
+            color: #fff;
+            font-weight: bold;
+            margin-right: 7px;
+            }
+
+            .pgText {
+            margin-left: 7px;
+            }
+
+            .tdBorder {
+            border: 1px solid;
+            border-right: none;
+            }
+        </style>
+
+        <script type="text/javascript">
+            function continuebtn(){
+            $('body').css('overflow','auto');
+            $('.overlay').remove();
+            $('#ctopHeaderId').show();
+            $('#cHeaderId').hide();
+            }
+            function toastLaunch() {
+            var element = document.getElementById("ToastMessage");
+            element.classList.toggle("slds-hidden");
+            if(document.getElementById('ToastMessage').className.indexOf("slds-hidden") ==-1 ){
+            confrimRedirect();
+            }
+            }
+            function toastLaunchIP() {
+            var element = document.getElementById("ToastMessageIP");
+            element.classList.toggle("slds-hidden");
+            if(document.getElementById('ToastMessageIP').className.indexOf("slds-hidden") ==-1 ){
+            confrimRedirect();
+            }
+            }
+        </script>
+        <apex:slds />
+    </head>
+    <div id="msgerId" style="font-size: 19px;
+                            background: #ff9d9d;
+                            padding: 0px 2%;
+                            text-shadow: 0px 0px 1px #ff030380;
+                            margin: 0px 6%;
+                            border-radius: 3px;
+                            box-shadow: 4px 4px 1px 0px;
+                            position: fixed;
+                            z-index: 999999;">
+        <apex:pagemessages id="msgerrId"></apex:pagemessages>
+    </div>
+    <apex:form >
+        <apex:outputPanel id="pnlId">
+            <div class="content">
+                <body>
+                    <apex:outputPanel >
+                        <div Id="ctopHeaderId">
+                            <table style="width:100%">
+                                <tr style="height:30px;background-color:#006119/*#005cb9*/">
+                                    <td style="width:60%" class="col11">
+                                        <span style="color:#fff;font-size: 16px;">Please review Contract details in order to send.</span>
+                                    </td>
+                                    <td style="width:40%" align="right">
+                                        <a href="/{!$CurrentPage.parameters.token}" style="float:right;color:#000; font-size: 15px;margin-right: 32px; font-weight: bold;" class="slds-button  slds-button_outline-brand " id="cancelId">Cancel</a>
+                                        <apex:commandButton value="Send" action="{!onSend}" onComplete="toastLaunch();" style="font-size: 15px; font-weight: bold;margin-right: 12px;" styleclass="slds-button  slds-button_outline-brand btn-main" reRender="msgerrId,pnlId,msgId" status="ajaxId" />
+                                        <apex:commandButton value="In Person Sign" action="{!sendMailMethod}" onComplete="toastLaunchIP();" style="font-size: 15px; font-weight: bold;margin-right: 12px;" styleclass="slds-button  slds-button_outline-brand btn-main" reRender="msgerrId,pnlId,msgId" status="ajaxId" />
+                                        <a href="/apex/AddMember?action=sc&ml={!$CurrentPage.parameters.ml}&mt={!$CurrentPage.parameters.mt}&id={!$CurrentPage.parameters.token}" style="float:right;color:#000;  font-size: 15px; font-weight: bold;margin-right: 10px;" class="slds-button  slds-button_outline-brand">Previous</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="background-color: #D2D3D0;" id="cContentId">
+                            <div style="margin-left: 20% !important;margin-right: 20% !important; background-color: white;">
+                                <div style="height:10px;background-color: #D2D3D0;">
+                                    &nbsp;
+                                </div>
+                                <div style="padding-left:5%;padding-right:5%;">
+                                    <div style="width:100%;margin-left: 35px;">
+                                        <table style="border: 1px #7A7783; width:90%; ">
+                                            <thead>
+                                                <tr style="background-color:white;color:#54408A;">
+                                                    <th style="width:40%;height: 150px;">
+                                                        <apex:image url="{!$Resource.Myhealthcarecliniclogo}" style="float:left;width:200px; height:85px;" />
+                                                    </th>
+                                                    <th style="text-align: left;width:60%;">
+                                                        <h1 style="font-size:25px; background-color:white;color:#739A40;text-align: left;margin-left:50px;">
+                                                            <b>
+                                                                MEMBERSHIP APPLICATION<br />FORM AND CONTRACT
+                                                            </b>
+                                                        </h1>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Paying Customer Name:</div>
+                                                    </td>
+                                                    <td style="border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            <apex:outputText value="{!objAccount.Name}" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Paying Customer Address:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            {!objAccount.Billing_Address__c}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="80">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">List Of Members Covered By The Contract:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            <apex:outputField value="{!objAccount.List_Of_Members_Covered_By_The_Contract__c}" />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Membership Start Date:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                                <apex:param value="{!objAccount.Membership_Start_Date__c }" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Membership Change Dates:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                                <apex:param value="{!objAccount.Membership_Change_Dates__c}" />
+                                                            </apex:outputText>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Total Monthly Membership Fee</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            <b>£</b>{!objAccount.Total_Monthly_Membership_Fees__c}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Home Clinic:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            {!objAccount.Home_Clinic__c }
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Membership Type:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            {!objAccount.Membership_Type__c}
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Payment Frequency:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            {!objAccount.Payment_Frequency__c}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr height="40">
+                                                    <td style="background-color:#A0CB69;border: 1px solid black;text-align: right;">
+                                                        <div class="pgLabel">Membership Level:</div>
+                                                    </td>
+                                                    <td style="color:white;border: 1px solid black;color:black;">
+                                                        <div class="pgText">
+                                                            {!objAccount.Membership_Level__c}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div style="padding-top:15px; width:95%;">
+                                            <P>This Contract is made between MyHealthcare Clinic Limited and the Customer.</P>
+                                            <br />
+                                            <P>The Clinic’s standard terms and conditions for memberships are attached and form part of this contract and shall have effect as if set out in full in the body of this contract. Any reference to this contract includes the terms and conditions.</P>
+                                            <br />
+                                            <P>This contract has been entered into on the date stated at the beginning of it.</P>
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 60%;">
+                                                        <P>
+                                                            Signed by paying customer on behalf of <b>ALL MEMBERS NAMED ABOVE</b>
+                                                        </P>
+                                                    </td>
+                                                    <td>
+                                                        <div align="left">
+                                                            <div>
+                                                                <img src="{!$Resource.Contractformsignature}" id="cSignImgId" style="float:center;width:110px; height:50px;" />
+                                                            </div>
+
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                            <apex:param value="{!TODAY()}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <P>
+                                                            Signed by for and on behalf of <b>MYHEALTHCARE CLINIC LIMITED</b>
+                                                        </P>
+                                                    </td>
+                                                    <td>
+                                                        <div align="left">
+                                                            <apex:image url="{!$Resource.Myhealthcarecliniclogo}" style="float:center;width:100px; height:50px;" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                            <apex:param value="{!TODAY()}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div style="height:10px">&nbsp;</div>
+                                <br />
+                                <br />
+                                <br />
+
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p><strong style=" font-size: 13.5pt;">KEY FACTS: MYHEALTHCARE CLINIC MEMBERSHIP PLANS</strong></p>
+                                    <p><strong style=" ">DURATION OF CONTRACT TERMS</strong></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">All Membership plans are subject to a 12-month minimum contract term and are subject to an annual price increase.</span></p>
+                                    <p><strong style=" ">APPOINTMENT BOOKING</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            Appointments may require a holding fee to be paid; refunded on attendance or if cancelled with at least 24 hours’ notice. Any consultation or service not included within a Membership schedule requires full payment at the time of
+                                            booking at standard list prices.
+                                        </span>
+                                    </p>
+                                    <p><strong style=" ">MISSED APPOINTMENTS</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            Any Member who books and does not attend an appointment will be charged £25 for each 20 minutes missed in respect of each missed appointment unless they have given the clinic at least 24 hours’ notice to cancel or reschedule the
+                                            appointment. Members will not be able to book subsequent appointments unless all due fees have been paid (including and not limited to fees for missed appointments, treatments and services).
+                                        </span>
+                                    </p>
+                                    <p><strong style=" ">SPECIFIC TERMS APPLICABLE TO DENTAL MEMBERSHIP PLANS</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            Members may receive a treatment plan if necessary, for any work that is required during the first Dental Check up with the Dentist. This will detail treatments needed for the Member to be Dentally fit and will be offered with a
+                                            discount of 20%.
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">Members are required to attend all regular Dental Check-up and Hygiene appointments included in the Dental Plan. </span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">No refunds will be granted in cases where the Member has failed to attend these routine Dental appointments. </span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            The MyHealthcare Dental, Complete and Premium plan and dental discount (20% off) applies to all general dental treatments excluding those relating to Implant, Invisalign, Orthodontic and other Specialist services.
+                                        </span>
+                                    </p>
+                                    <p><strong style=" ">SPECIFIC TERMS APPLICABLE TO CHILD MEMBERSHIP PLANS</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                           Child Memberships are available to those under 18 years of age when added to a corresponding adult Membership. Blood tests or Healthscreens are not included with any child Membership plan.
+                                        </span>
+                                    </p>
+                                    <p><strong style=" ">CANCELLATION OF MEMBERSHIP</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            A Member may cancel their Membership at any time within the first 14 days of the Membership Plan starting from the Membership Start Date (“Cooling Off Period”). If the Membership is cancelled within the first 14 days (Cooling Off
+                                            Period) all services, tests, diagnostics and treatments used will need to be paid in full at the standard list price. Once the Cooling Off Period has elapsed, a membership cannot be cancelled within the first 12 months and
+                                            thereafter can be cancelled with 3 months written notice.
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p><strong style=" ">WHO TO CONTACT?</strong></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">For membership queries please contact </span>
+                                        <strong style="color: rgb(60, 60, 59);  ">membership@myhealthcareclinic.com </strong><span style="color: rgb(60, 60, 59);  ">or call 0207 0995555.</span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  "></span></p>
+                                    <p><br /></p>
+                                    <p><span style="color: rgb(60, 60, 59);  font-size: 13.5pt;"></span></p>
+                                    <p><strong style="color: rgb(60, 60, 59); ">TERMS AND CONDITIONS OF MEMBERSHIP</strong></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  font-size: 10pt;">1.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">INTERPRETATION</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">The following definitions and rules of interpretation apply in these Conditions.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">1.1.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">DEFINITIONS</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Business Day:</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> a day other than a Saturday, Sunday or a public holiday in England when banks in London are open for business</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Company</strong>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            means MyHealthcare Clinic Limited, a company incorporated in England and Wales under company registration number 08503371 and having its registered office at Manchester Square, 18 Fitzhardinge Street, London W1H 6EQ
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Contract:</strong>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            the contract between the Company and the Customer in respect of the Membership in accordance with the Membership Application Form and these Terms and Conditions
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Home Clinic</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the Clinic which has been designated the Member’s Home Clinic as stated on the Member’s Membership Application Form</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Cancellation Date</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the date on which the one month notice period required pursuant to clause 10.5 ends</span>
+                                    </p>
+                                    <p><strong style="color: rgb(60, 60, 59);  ">Clinic</strong><span style="color: rgb(60, 60, 59);  "> means any of the clinics operated by the Company</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Cooling Off Period</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the first 14 days of the Membership Plan starting from the Membership Start Date.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Fees</strong><span style="color: rgb(60, 60, 59);  "> means any monies payable by the Member to the Company.</span>
+                                    </p>
+                                    <p><strong style="color: rgb(60, 60, 59);  ">Joining Fee</strong><span style="color: rgb(60, 60, 59);  "> means the fee payable to join a Membership.</span></p>
+                                    <p><strong style="color: rgb(60, 60, 59);  ">Member</strong><span style="color: rgb(60, 60, 59);  "> means a member of one of the Membership Plans</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership</strong>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            means any of the types of membership of the Clinic including Dental, GP, Complete, Premium, Implant, Orthodontic, Comprehensive Dental Care and all add-on services, each constituting a separate
+                                        </span>
+                                        <strong style="color: rgb(60, 60, 59);  "> Membership Plan</strong><span style="color: rgb(60, 60, 59);  ">.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership Application Form</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the application form completed by a Member in order to apply for membership of the Clinic</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership Payments</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the monthly Fees payable in respect of a Membership Plan.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership Schedule</strong>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            means the current membership schedule of the Company setting out the different types of Membership Plans available, the services included in each Membership Plan and the fees payable for each Membership Plan
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership Start Date</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the date on which a Member’s application for Membership as indicated on Member’s Membership Application Form</span>
+                                    </p>
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Practice Manager</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the employee appointed by the Company to control the day to day operation of a Clinic.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Terms and Conditions:</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> the terms and conditions set out in this document as amended from time to time.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Membership Start Date</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the date on which a Member’s application for Membership as indicated on Member’s Membership Application Form</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Practice Manager</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> means the employee appointed by the Company to control the day to day operation of a Clinic</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">Terms and Conditions:</strong>
+                                        <span style="color: rgb(60, 60, 59);  "> the terms and conditions set out in this document as amended from time to time.</span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.2. Clause, headings shall not affect the interpretation of these Conditions.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            1.3. A person includes a natural person, corporate or unincorporated body (whether or not having separate legal personality) and that person’s personal representatives, successors and permitted assigns.
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.4. Unless the context otherwise requires, words in the singular shall include the plural and in the plural shall include the singular.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.5. Unless the context otherwise requires, a reference to one gender shall include a reference to the other genders.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.6. A reference to a statute or statutory provision is a reference to it as amended, extended or re-enacted from time to time</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            1.7. A reference to a statute or statutory provision shall include all subordinate legislation made from time to time under that statute or statutory provision.
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.8. A reference to writing or written includes fax and shall exclude e-mail.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">1.9. Any obligation on a party not to do something includes an obligation not to allow that thing to be done.</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">2.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">MEMBERSHIP</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">2.1.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            It is a condition of Membership that a Member agrees to pay the Fees and agrees to be bound by these Terms and Conditions. These Terms and Conditions may be revoked, altered or added to from time to time by the Company, without
+                                            prior notification to Members. The current version of the Terms and Conditions is available from a Practice Manager upon request at any time.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            2.2. The services covered by each Membership are set out in the Membership Schedule. The current version of the Membership Schedule is available from a Practice Manager upon request at any time.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            2.3. A Member can only hold one type of Membership at any one time. Members may change their type of Membership at any time in accordance with the Terms and Conditions set out herein, but, in order to prevent abuse, alterations to
+                                            Members’ schemes which would result in a reduction in the fees payable are not permitted within the first 12 months of Membership.
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p><span style="color: rgb(60, 60, 59);  ">2.4. The Company reserves the right to refuse an application for Membership from any applicant at its absolute discretion.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            2.5. A fair usage policy applies to all Membership Plans. A copy of the Clinic’s fair usage policy can be obtained from any of the Practice Managers on request. A Practice Manager is entitled to suspend or revoke a Member’s
+                                            Membership if the Practice Manager decided in his absolute discretion that the Member is in breach of the Clinic’s fair usage policy.
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">2.6. No included treatments or services within a Membership schedule can be rolled into the next Membership year.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">2.7. The company reserves the right to apply change to the benefits and price of the membership. When changes are to be applied, the company will endeavor to give adequate notice which will be no less than 1 month and up to 3 months before the changes are enacted.</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">3.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">Payments</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">3.1. The monthly membership fees payable by the Member for the relevant Membership are set out in the Membership Schedule</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">3.2. The Company may vary the charges set out in the Membership Schedule from time to time at its absolute discretion.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.3. All Membership Plans must be paid by direct debit and a direct debit mandate must be completed before any Membership can be accepted. Please note that some banks and building societies do not accept direct debit instructions
+                                            for certain accounts.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.4. All Membership Payments shall be made monthly in advance by direct debit, save for the first Membership Payment which shall be made on the Membership Start Date
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">3.5. All Membership Plans are subject to an annual price increase.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.6. Where the Member has opted for monthly Membership Payments all payments (other than the first Membership Payment) will be taken on or around the monthly anniversary of the Membership Start Date.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.7. An administration fee of £20 will be charged to a Member whose monthly direct debit charge is rejected. Additionally, any payments or amounts due which are not made on the date that they become due shall attract interest at the
+                                            annual rate of 4% above the base rate of HSBC’s from the date the payment is due until the date that it is received by the Company. Members agree to indemnify the Company against all expenses and legal costs incurred by the Company
+                                            in recovering overdue amounts. Whilst a Members account is in arrears, no appointments, treatments or services will be allowed.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.8. A monthly statement will be sent to Members for treatments received that are not covered by their Membership Plan if there is a balance owing to the Clinic. No statement will be sent if there is no balance owing. Treatment not
+                                            covered by a particular Membership will be charged by direct debit monthly in arrears unless paid for at the time of treatment.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.9. A full price list of all aspects of treatment not covered by the Membership Plan is available from any of the Practice Managers upon request at any time.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            3.10. Prescription-writing and repeat prescriptions are free of charge to Members. For the avoidance of doubt, however, the cost of medication prescribed is not covered by any of the Membership Plans.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">4.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">SPECIFIC TERMS APPLICABLE TO DENTAL MEMBERSHIP PLANS</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            4.1. Members may receive a treatment plan if necessary, for any work that is required during the first Dental Check up with the Dentist. This will detail treatments needed for the Member to be Dentally fit and will be offered with a
+                                            discount of 20%.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            4.2. Members are required to attend all regular Dental Check-up and Hygiene appointments included in their respective Dental Plan in order to maintain this level of Cover (see section 4.5). No refunds will be granted in cases where the Member has failed to attend these routine Dental appointments.
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div style="margin:-13px">&nbsp;</div>
+                                <br />
+
+                                <br />
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p><span style="color: rgb(60, 60, 59);  ">4.3. Dental membership excludes mouth reconstructions (for example, dental work required after traumatic injury).</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            4.4. The MyHealthcare Dentist, Complete and Premium plan discount (20% off) applies to all general dental treatments excluding those relating to cosmetic procedures, Implant and Implant related, Invisalign, Orthodontic and other
+                                            Specialist services.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            4.5. Regarding Dental, Complete or Premium Membership plans, only 1 included dental and 1 included hygiene appointment can be booked in any 6-month period and cannot be rolled over into the next half of a Membership year. The dental
+                                            check-up and hygiene must take place at least once every 6 months to ensure the benefits of the membership, unless otherwise instructed by the clinician.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">5.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">TERMS SPECIFIC TO CHILD MEMBERSHIP</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            5.1. Child Members can only be accepted if a parent or legal guardian is also a Member. A child is defined as any person aged under 18yrs. Child Member status will change to adult status when a child reaches 18yrs at which stage
+                                            they will be required to become a full Member and complete a Membership Application Form in their own right
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            5.2. Child Membership Fees will be paid via a child Member’s parents or guardians’ direct debit at the same time as the Membership Payment for a child Member’s parents or guardian is taken. Additional treatment costs will also be
+                                            taken by direct debit unless paid for at the time of treatment
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            5.3. Child Membership plans do not include the same level of included services as adult Members. Blood tests and Healthscreens are not included with any child Membership plan.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">6.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">MISSED APPOINTMENT</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">6.1. Appointments require a holding fee to be paid, refunded on attendance or if cancelled with at least 24 hours’ notice.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            6.2. Where a Member books and does not attend an appointment without the notice as detailed in point 6.1 above, they shall be charged a minimum of £25 in respect of each missed appointment unless a Member has have given the Clinic
+                                            at least 24 hours’ notice of cancelling or rescheduling the appointment. The amount charged will be £25 for each 20 minutes missed, rounded down where appropriate. For example, a 30-minute appointment will be charged £25.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            6.3. Members will not be able to book subsequent appointments unless all due fees have been paid (including and not limited to fees for missed appointments, treatments and services).
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">6.4. Any consultation or service not included within a Membership schedule requires full payment at the time of booking at standard list prices.</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">7.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">LIABILITY OF THE CLINIC</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">7.1. Nothing in the Contract limits or excludes the Clinic’s liability for:</span></p>
+                                    <p><span style=" "> (a) death or personal injury caused by its negligence;</span></p>
+                                    <p><span style=" "> (b) fraud or fraudulent misrepresentation; or</span></p>
+                                    <p><span style=" "> (c) or any other liability which cannot be limited or excluded by applicable law</span></p>
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            7.2. Save explicitly set out in these Terms and Conditions all warranties, conditions and other terms (whether implied by statue or otherwise) are, to the fullest extent permitted by law, excluded from the Contract
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            7.3. Subject to clause 7.1, the Clinic shall not be liable to the Customer, whether in contract, tort (including negligence), for breach of statutory duty, or otherwise, arising under or in connection with the Contract for:
+                                        </span>
+                                    </p>
+                                    <p><span style=" "> (a) loss of profits;</span></p>
+                                    <p><span style=" "> (b) loss of or damage to goodwill;</span></p>
+                                    <p><span style=" "> (c) any indirect or consequential loss</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            7.4. Subject to clause 7.1 and clause 7.2, the Clinic’s total liability to the Customer, whether in contract, tort (including negligence), for breach of statutory duty, or otherwise, arising under or in connection with the Contract
+                                            shall be limited to an amount equal to the total monies paid by the Customer and received by the Clinic in respect of the Membership
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">7.5. The Company does not accept liability for any damage or loss to Members’ or their guests’ personal property brought onto Clinic premises.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">7.6. This paragraph 7 shall survive the termination or expiry (for whatever reason) of the Member’s Membership</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">8.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">OPENING HOURS</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">8.1. Clinic opening hours are fixed by the Company and are subject to change without prior notice.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            8.2. The Company may at any time close any Clinic premises or any part thereof, without prior notice, in order to execute necessary repairs, alterations, re-decoration, or otherwise
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">8.3. Clinics may be closed on bank holidays.</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">9.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">DATA PROTECTION</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            9.1. It is necessary for the purpose of providing Members with health advice and support for the Company to retain data concerning Members’ identity, contact details and general health on file. By signing the Membership Application
+                                            Form, you expressly consent to the Company having authority to keep this data for the duration of your Membership and for up to two years afterwards, or if Membership is refused for any reason, for a reasonable period of time from
+                                            the date you completed this form to assist the Company provide you with the best possible services
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            9.2. For the avoidance of doubt, by signing the Membership Application Form you are not affecting any of your rights under the Data Protection Act 1998
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            9.3. The Company’s privacy policy forms part of these Terms and Conditions and shall have effect as if set out in full in these Terms and Conditions. The Company’s privacy policy sets out the terms on which we process any personal
+                                            data we collect from you, or that you provide to us, A copy of the Company’s privacy policy can be found on the Company’s website and is available from any of the Practice Managers on request
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">10.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">CANCELLATION OF MEMBERSHIP</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">10.1.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            A Member may cancel their Membership at anytime within the first 14 days of the Membership Plan starting from the Membership Start Date (“Cooling Off Period”).
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            10.2. If the Membership is cancelled within the first 14 days (Cooling Off Period) all services, tests, diagnostics and treatments used will need to be paid in full at the standard price
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">10.3. The Membership cannot be cancelled within the first 12 months, and thereafter with 3 months’ written notice.</span></p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">10.4. Requests for cancellation must be in writing and addressed to the Practice Manager of the Member’s Home Clinic</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            10.5. The notice period of 3 month will commence from the date a written notification of cancellation is received. The Practice Manager will confirm receipt of the notification with 10 days of receipt of such notification.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            10.6. If Members do not receive confirmation of cancellation from the Practice Manager of their Home Clinic within 10 days of sending their request for cancellation, they should inform the Practice Manager immediately as it will
+                                            always remain the Member’s responsibility to ensure that cancellation letters have been received
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">10.7. All Fees due from a Member to the Clinic must be paid prior to the termination of Membership.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            10.8. After the first year of membership if a Member receives a healthscreen but then wishes to cancel their membership before a subsequent 12 month Membership period is complete, these services will be payable at list prices prior to termination of Membership.
+                                        </span>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">10.9. Once a Member cancels their Membership, a re-joining fee of £295 will apply for re-joining.</span></p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            10.10. MyHealthcare Clinic reserves the right to cancel any membership plan with 30 days’ notice, and without notice in cases of aggressive, abusive or disruptive contact from any Member towards any staff.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">11.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">SERVICES NOT INCLUDED IN THE MEMBERSHIP</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">11.1.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            Consultations with specialist dental and medical specialists are not included within the Membership Plans except where expressly stated on the Membership Schedule.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            11.2. Membership Plans include blood tests and diagnostics as part of the healthscreens. Some tests are age and gender specific. Any additional tests will require payment according to the  Clinic’s standard price list.
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">11.3.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            All vaccines, including children’s vaccines and travel vaccines will be charged according to the Clinic’s standard price list, which is available from any of the Practice Managers on request
+                                        </span>
+                                    </p>                                    
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+                                <c:dynapdfcomponent type="footer"/>
+
+                                <br />
+                                <br />
+                                <div style="padding-left:5%;padding-right:5%">
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">12.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">NO WAIVER</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            No failure or delay by either party in exercising any of its rights under the Contract shall be deemed to be a waiver of that right, and no waiver by either party of any breach of the Contract by the other shall be considered as a
+                                            waiver of any subsequent breach of the same or any other provision
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">13.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">ENTIRE AGREEMENT</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            13.1. The Contract constitutes the entire agreement between the parties and supersedes and extinguishes all previous agreements, promises, assurances, warranties, representations and understandings between them, whether written or
+                                            oral, relating to its subject matter
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            13.2. Each party agrees that it shall have no remedies in respect of any statement, representation, assurance or warranty (whether made innocently or negligently) that is not set out in the Contract. Each party agrees that it shall
+                                            have no claim for innocent or negligent misrepresentation or negligent misstatement based on any statement in the Contract
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">13.3.</span><span style="color: rgb(60, 60, 59); font-size: 7pt;"></span>
+                                        <span style="color: rgb(60, 60, 59);  ">Nothing in this clause shall limit or exclude any liability for fraud.</span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">14.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">SEVERANCE</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            If any provision or part-provision of the Contract is or becomes invalid, illegal or unenforceable, it shall be deemed modified to the minimum extent necessary to make it valid, legal and enforceable. If such modification is not
+                                            possible, the relevant provision or part-provision shall be deemed deleted. Any modification to or deletion of a provision or part-provision under this clause shall not affect the validity and enforceability of the rest of the
+                                            Contract
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">15.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">THIRD PARTY RIGHTS</strong>
+                                    </p>
+                                    <p><span style="color: rgb(60, 60, 59);  ">No one other than a party to the Contract shall have any right to enforce any of its terms.</span></p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">16.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">GOVERNING LAW</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            The Contract and any dispute or claim arising out of or in connection with it or its subject matter or formation (including non-contractual disputes or claims) shall be governed by and construed in accordance with the law of England
+                                            and Wales
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <strong style="color: rgb(60, 60, 59);  ">17.</strong><strong style="color: rgb(60, 60, 59); font-size: 7pt;"></strong>
+                                        <strong style="color: rgb(60, 60, 59);  ">JURISDICTION</strong>
+                                    </p>
+                                    <p>
+                                        <span style="color: rgb(60, 60, 59);  ">
+                                            Each party irrevocably agrees that the courts of England and Wales shall have exclusive jurisdiction to settle any dispute or claim arising out of or in connection with the Contract or its subject matter or formation (including
+                                            non-contractual disputes or claims).
+                                        </span>
+                                    </p>    
+                                    <p><br /></p>
+                                    <p><strong style="color: rgb(60, 60, 59);  "> MyHealthcare Clinic Limited</strong></p>
+                                    <p><strong style="color: rgb(60, 60, 59);  "> 01 March 2023</strong></p>
+                                    <p><span style="font-size: 10pt;"></span></p>                             
+                                </div>
+
+                                <div style="margin:-16px">&nbsp;</div>
+                                <br />
+
+                                <br />
+                                <c:dynapdfcomponent type="footer"/>
+                            </div>
+                            <div class="demo-only" id="modelId" style="height: 640px;display:none;">
+                                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                                    <div class="slds-modal__container">
+                                        <header class="slds-modal__header">
+                                            <a class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="closeSignatureModel()" style="  width: 2rem;height: 2rem;position: absolute;top: 0;right: 0;">
+                                                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" style="fill: rgb(107, 109, 112);">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.8.0#close" />
+                                                </svg>
+                                                <span class="slds-assistive-text">Close</span>
+                                            </a>
+                                            <h2 class="slds-text-heading_medium slds-hyphenate" id="modal-heading-01" style="font-size: 1.0rem;    font-weight: bold;" data-aura-rendered-by="57:57;a">Patient Signature</h2>
+                                        </header>
+                                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                            <div data-role="page" id="mainPage">
+                                                <apex:pageMessages ></apex:pageMessages>
+                                                <div data-role="header">
+                                                </div>
+                                                <!-- /header -->
+                                                <div data-role="content" id="divPopUpSignContract">
+                                                    <div style="color:red;font-weight:bold; display:none" id="msgDivId">Please Accept &amp; Sign in order to submit.</div>
+                                                    <div class="ui-content popUpHeight">
+                                                        <div style="display: none; ">
+                                                            <div style="width:100%;border: 1px solid #000;height: 180px;">
+                                                                <div style="margin-left: 28%;margin-top: 50px;">
+                                                                    <apex:outputText escape="false" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="div_signcontract" style="width: 100%;border: 1px solid #000; ">
+                                                            <canvas id="canvas" style="width: 100% !important;">Canvas is not supported</canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <footer class="slds-modal__footer">
+                                            <a class="slds-button slds-button_outline-brand" onclick="closeSignatureModel()">Cancel</a>
+                                            <input id="btnClearSign" type="button" data-inline="true" data-mini="true" data-theme="b" value="Clear" onclick="init_Sign_Canvas()" class="slds-button slds-button_destructive" />
+                                            <input type="button" value="Save" class="slds-button slds-button_brand" onclick="onUpdate();" />
+                                            <apex:inputText value="{!imgSource}" id="setVal" style="display:none;" />
+                                        </footer>
+                                    </div>
+                                </section>
+                                <div class="slds-backdrop slds-backdrop_open"></div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </body>
+            </div>
+        </apex:outputPanel>
+        <apex:actionStatus id="ajaxId" startStyleClass="requiredLoaderBG"></apex:actionStatus>
+
+    </apex:form>
+    <div>
+        <div class="demo-only slds-hidden" style="height: 4rem;padding-top: 60px;" id='ToastMessage'>
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_warning" role="alert">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="success">
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#success')}" />
+                        </svg>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">
+                            Contract has been sent to <u>
+                                <b>{!objAccount.Name}</b>
+                            </u> at <u>
+                                <b>{!objAccount.PersonEmail}</b>
+                            </u>,
+                            <br />It will automatically redirect to Patient details page withing <b>
+                                <span id="counterId">5</span>
+                            </b> seconds, Or <b>
+                                <a href="/{!$CurrentPage.parameters.token}">Click Here</a>
+                            </b> to redirect.
+                        </h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close" onclick='toastLaunch()'>
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="demo-only slds-hidden" style="height: 4rem;padding-top: 0px;" id='ToastMessageIP'>
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_warning" role="alert">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="success">
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#success')}" />
+                        </svg>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">
+                            Contract has been sent on <u>
+                                <b>membership@myhealthcareclinic.com</b>
+                            </u>,
+                            <br />Please handover tab to the patient and ask him for signature.<b>
+                                <span id="counterIdIP">5</span>
+                            </b> seconds, Or <b>
+                                <a href="/{!$CurrentPage.parameters.token}">Click Here</a>
+                            </b> to redirect.
+                        </h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close" onclick='toastLaunch()'>
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <apex:includeScript value="/support/console/47.0/integration.js" />
+    <script>
+        var seconds = 5;
+        var el = document.getElementById('counterId');
+        var elIp = document.getElementById('counterIdIP');
+
+        function incrementSeconds() {
+        if(seconds != 0){
+        seconds -= 1;
+        el.innerText = seconds;
+        elIp.innerText = seconds;
+        }else{
+        /*el.click();
+        elIp.click();*/
+        //window.location.href = "/{!$CurrentPage.parameters.token}";
+        testCloseTab();
+        sforce.one.navigateToSObject("{!$CurrentPage.parameters.token}");
+        }
+        }
+        function confrimRedirect(){
+        setInterval(incrementSeconds, 1000);
+        }
+        function testCloseTab() {
+        //First find the ID of the current tab to close it
+        sforce.console.getEnclosingTabId(closeSubtab);
+        }
+
+        var closeSubtab = function closeSubtab(result) {
+        //Now that we have the tab ID, we can close it
+        var tabId = result.id;
+        sforce.console.closeTab(tabId);
+        };
+    </script>
+</apex:page>

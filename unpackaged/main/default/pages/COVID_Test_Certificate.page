@@ -1,0 +1,260 @@
+<!--
+ - Created by zokito on 4/13/21.
+ -->
+
+<apex:page id="COVID_Test_Certificate"
+           standardController="COVID_Test__c"
+           applyBodyTag="false"
+           renderAs="advanced_pdf"
+           showHeader="false">
+    <head>
+        <style>
+            @page { margin: 0.5in; size: 8.25in 11.75in; }
+
+            body {
+                font-family: sans-serif, serif;
+                margin: 0;
+                padding: 0;
+                font-size: 13px;
+            }
+
+            .prefix-table {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                padding-top: 16px;
+                padding-bottom: 16px;
+                border-top: 1px solid #949494;
+                border-bottom: 1px solid #949494;
+            }
+
+            .prefix-table table tr {
+                height: 22px;
+            }
+
+            h1 {
+                font-size: 19px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom:24px;
+            }
+
+            h2 {
+                font-size: 16px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom:20px;
+            }
+
+            p {
+                line-height: 18px;
+                margin-top: 6px;
+                margin-bottom: 10px;
+            }
+
+            table.urns {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                margin-bottom: 32px;
+            }
+
+            table.urns th {
+                background-color: #d8d8d8;
+            }
+
+            table.urns th, table.urns td {
+                text-align: center;
+                border: 1px solid #949494;
+                font-weight: 400;
+                padding: 5px;
+            }
+
+            table.info {
+                width: 100%;
+                margin-top: 80px;
+                border-collapse: collapse;
+            }
+
+            table.info th, table.info td
+            {
+                padding:0;
+                height: 20px;
+            }
+
+            p.footer
+            {
+                font-size:11px;
+                line-height: 16px;
+            }
+
+            @media print { body {-webkit-print-color-adjust: exact;} }
+
+        </style>
+    </head>
+
+    <apex:image url="{!$Resource.Mhc_logo_rgb}" width="180"/>
+    <div class="prefix-table">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">My Healthcare Clinic</td>
+                <td style="width: 25%;">URN:</td>
+                <td style="width: 25%;">{!COVID_Test__c.Test_URN__c}</td>
+            </tr>
+            <tr>
+                <td>Commodore House, Juniper Drive</td>
+                <td>Gender:</td>
+                <td>{!COVID_Test__c.Provided_Gender__c}</td>
+            </tr>
+            <tr>
+                <td>Wandsworth</td>
+                <td>Date Of Receipt:</td>
+                <td>UNKNOWN</td>
+            </tr>
+            <tr>
+                <td>London</td>
+                <td>Date Of Report:</td>
+                <td>{!COVID_Test__c.Randox_reportedDate__c}</td>
+            </tr>
+            <tr>
+                <td>England</td>
+                <td>Swab Date:</td>
+                <td>
+<!--                    <apex:outputText value="{0,date,dd-MMM-yyyy HH:mm }">-->
+<!--                        <apex:param value="{!COVID_Test__c.Swab_Collection_Date__c}"/>-->
+<!--                    </apex:outputText>-->
+                    <apex:outputText value="{0,date,dd-MMM-yyyy HH:mm }">
+                        <apex:param value="{!COVID_Test__c.Swab_Collection_Date__c}"/>
+                    </apex:outputText>
+                </td>
+            </tr>
+            <tr>
+                <td>SW18 1TW</td>
+                <td>Passport Number:</td>
+                <td>{!COVID_Test__c.Provided_Passport_Number__c}</td>
+            </tr>
+        </table>
+    </div>
+
+    <h1>Results report / Certificate</h1>
+
+    <p>Dear <strong>{!COVID_Test__c.Patient__r.Name}</strong>, Date of Birth:&nbsp;
+        <apex:outputText value="{0,date,dd-MMM-yyyy}">
+            <apex:param value="{!COVID_Test__c.Provided_Date_of_Birth__c}"/>
+        </apex:outputText>
+    </p>
+
+    <!--    panel negative-->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Negative'}">
+        <p>Your coronavirus (COVID-19) test result is <strong>negative</strong>. You do not have the virus.</p>
+        <p>
+            You can return to work if you’ve not had a high temperature for 48 hours and feel well. Talk to your employer
+            first. If
+            you feel well but someone you live with tests positive, self-isolate for 14 days from when that person’s
+            symptoms
+            started. If you get symptoms of coronavirus, self-isolate for 7 days.
+        </p>
+
+        <p>Contact 111 if you need medical help. For a medical emergency, dial 999.</p>
+    </apex:outputPanel>
+    <!--    panel positive-->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Positive'}">
+        <p>Your coronavirus (COVID-19) test result is <strong>positive</strong>. You do not have the virus.</p>
+        <p>
+            You can return to work if you’ve not had a high temperature for 48 hours and feel well. Talk to your employer
+            first. If
+            you feel well but someone you live with tests positive, self-isolate for 14 days from when that person’s
+            symptoms
+            started. If you get symptoms of coronavirus, self-isolate for 7 days.
+        </p>
+
+        <p>Contact 111 if you need medical help. For a medical emergency, dial 999.</p>
+    </apex:outputPanel>
+    <!--    panel unclear-->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Unclear'}">
+        <p>Your coronavirus (COVID-19) test result is <strong>unclear</strong>. You do not have the virus.</p>
+        <p>
+            You can return to work if you’ve not had a high temperature for 48 hours and feel well. Talk to your employer
+            first. If
+            you feel well but someone you live with tests positive, self-isolate for 14 days from when that person’s
+            symptoms
+            started. If you get symptoms of coronavirus, self-isolate for 7 days.
+        </p>
+
+        <p>Contact 111 if you need medical help. For a medical emergency, dial 999.</p>
+
+    </apex:outputPanel>
+
+    <table class="urns">
+        <thead>
+        <tr>
+            <th>URN</th>
+            <th>LIS ID</th>
+            <th>Test Name</th>
+            <th>Result</th>
+            <th>CT Value</th>
+            <th>Test Method</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{!COVID_Test__c.Test_URN__c}</td>
+            <td>{!COVID_Test__c.Randox_t1Value__c}</td>
+            <td>{!COVID_Test__c.Randox_test1Name__c}</td>
+            <td>{!COVID_Test__c.Randox_combinedResult__c}</td>
+            <td>{!COVID_Test__c.Randox_ct1Value__c}</td>
+            <td>{!COVID_Test__c.Randox_testMethod__c}</td>
+        </tr>
+        <tr>
+            <td>{!COVID_Test__c.Test_URN__c}</td>
+            <td>{!COVID_Test__c.Randox_t2Value__c}</td>
+            <td>{!COVID_Test__c.Randox_test2Name__c}</td>
+            <td>{!COVID_Test__c.Randox_combinedResult__c}</td>
+            <td>{!COVID_Test__c.Randox_ct2Value__c}</td>
+            <td>{!COVID_Test__c.Randox_testMethod__c}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <strong>Type of Test: </strong>Sample collection for the Randox PCR test is in the form of a swab, which will
+        gather an individual’s nasopharyngeal and oropharyngeal secretions.
+    </p>
+
+    <p>
+        <strong>Technical Note: </strong>A sample is prepared by extracting the chosen section of the genome, and then
+        PCR (Polymerase
+        Chain Reaction) techniques are used to amplify (replicate) the genome section, ready for detection. This type of
+        test
+        detects the RNA (Ribonucleic acid) contained within the SARS-CoV-2 virus.
+    </p>
+
+    <table class="info">
+        <tr>
+            <td>Ann-Marie Jennings PhD, BSc, FIBMS</td>
+            <td><strong>Testing Location</strong></td>
+        </tr>
+        <tr>
+            <td>RCLS Head of Department</td>
+            <td>{!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.Name}</td>
+        </tr>
+        <tr>
+            <td><strong>Randox Clinical Laboratory Services (RCLS)</strong></td>
+            <td>{!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.Street}</td>
+        </tr>
+        <tr>
+            <td>Tel: +44 (0)28 9442 2413</td>
+            <td>{!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.City} {!COVID_Test__c.Scheduled_Appointment__r.ServiceTerritory.PostalCode}</td>
+        </tr>
+    </table>
+
+    <h2>- End of Report -</h2>
+
+    <p class="footer">
+        Sampling is carried out by Randox Health. All laboratory testing is referred to RCLS. This report shall not be
+        reproduced except in full without
+        approval of the issuing laboratory. All results apply to the samples as received at this laboratory. The test
+        dates of all results will be between the
+        collection date and report date stated within this report.
+    </p>
+
+</apex:page>

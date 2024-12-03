@@ -1,0 +1,40 @@
+/**
+ * Created 14.9.2022..
+ */
+.slds-card__body {
+    text-align: justify;
+    font-size: 14px;
+    line-height: 27px;
+}
+
+div.slds-modal
+{
+    z-index: 9550 !important;
+}
+
+div.slds-backdrop
+{
+    z-index: 9500 !important;
+}
+
+.submit-button,
+.cancel-button {
+    width: 210px;
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+
+.cancel-button {
+    color: var(--c-color-secondary);
+    background-color: #FFFFFF;
+    border: 1px solid var(--c-color-secondary);
+}
+
+.cancel-button:hover {
+    color: #fff;
+    background-color: var(--c-color-error);
+    border: 1px solid var(--c-color-error);
+}

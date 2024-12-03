@@ -1,0 +1,56 @@
+/**
+ * Created 13.3.2021..
+ */
+
+.box {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-left:20px;
+}
+
+.product-name {
+    font-weight: 600;
+    color: var(--c-color-covid);
+    font-size: 18px;
+}
+
+.appointment {
+    padding-top: 12px;
+}
+
+.appointment .datetime {
+    font-weight: 600;
+    color: #4cb05b;
+}
+
+.details {
+    padding-top: 12px;
+}
+
+.calendars {
+    font-size: 14px;
+}
+
+.cal-link {
+    margin-left: 10px;
+}
+
+.ico {
+    margin-right: 12px;
+    margin-bottom: 12px;
+}
+
+.location {
+    display: inline-table;
+}
+
+.persona {
+    display: inline-table;
+    font-weight: 600;
+}
+
+.not-yet-scheduled
+{
+    color: #e20909;
+    font-weight: 500;
+}

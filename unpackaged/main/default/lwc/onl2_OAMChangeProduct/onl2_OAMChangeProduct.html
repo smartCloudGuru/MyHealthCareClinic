@@ -1,0 +1,216 @@
+<!--
+ - Created 22.2.2022..
+ -->
+
+<!-- Onl 2 Oam Change Product -->
+<template>
+
+    <lightning-card title="Rebook the COVID Test">
+
+        <p if:false={loading} class="slds-p-horizontal_small min-height">
+
+            <!-- INITIAL SCREEN -->
+            <span if:true={showInitialScreen} class="slds-tabs_card asblock">
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <template if:true={productChangeAvailable}>
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-small">
+                        <lightning-input type="toggle"
+                                         label="Change The Test Type"
+                                         data-id="doChangeType"
+                                         message-toggle-active=""
+                                         message-toggle-inactive=""
+                                         checked={doChangeType}
+                                         onchange={handleDoChangeTypeChange}></lightning-input>
+                    </lightning-layout-item>
+
+                    <template if:true={doChangeType}>
+                        <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                               padding="around-small" class="warn-amber">
+                            This change will modify the original Order. Current Product <strong>{currentProductName}</strong> will be removed from the
+                            order, and a new Product will be added.
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                               padding="around-small">
+                            <lightning-combobox label="Change Ordered Product To"
+                                                data-formfield="changeto"
+                                                placeholder="Please select product to change to…"
+                                                options={changeOptions}
+                                                value={changeToSelected}
+                                                onchange={handleChangeToChanged}>
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                    </template>
+                </template>
+            </lightning-layout>
+        </span>
+
+            <span if:true={showInitialScreen} class="slds-tabs_card asblock">
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-small">
+                    <lightning-input type="toggle"
+                                     label="(Re)schedule The Test"
+                                     data-id="doRebook"
+                                     message-toggle-active=""
+                                     message-toggle-inactive=""
+                                     checked={doRebook}
+                                     onchange={handleDoRebookChange}></lightning-input>
+                </lightning-layout-item>
+
+                <template if:true={doRebook}>
+
+                    <lightning-layout-item if:false={currentAppId} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small">
+                        There is no Appointment defined currently!
+                    </lightning-layout-item>
+
+                    <lightning-layout-item if:true={currentAppId} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small">
+                        Current Appointment at <strong>{currentAppLocation}</strong>:
+                        <br/><br/>
+                        <lightning-record-view-form object-api-name="COVID_Test__c" record-id={recordId}>
+                            <lightning-layout multiple-rows="false" horizontal-align="start">
+                                <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                    <lightning-output-field field-name="Work_Type_Group__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                    <lightning-output-field field-name="Scheduled_Appointment__c"></lightning-output-field>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                    <lightning-output-field field-name="Appointment_Date_Time__c"></lightning-output-field>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </lightning-record-view-form>
+
+                    </lightning-layout-item>
+
+                </template>
+
+            </lightning-layout>
+        </span>
+
+
+            <!-- REBOOK SCREEN -->
+            <lightning-layout if:true={showBookingScreen} multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item if:true={currentAppId} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small">
+                    Current Appointment at <strong>{currentAppLocation}</strong>:
+                    <br/><br/>
+                    <lightning-record-view-form object-api-name="COVID_Test__c" record-id={recordId}>
+                        <lightning-layout multiple-rows="false" horizontal-align="start">
+                            <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                <lightning-output-field field-name="Work_Type_Group__c"></lightning-output-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                <lightning-output-field field-name="Scheduled_Appointment__c"></lightning-output-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size=12 large-device-size=4 medium-device-size=4 small-device-size=4 padding="around-medium">
+                                <lightning-output-field field-name="Appointment_Date_Time__c"></lightning-output-field>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-record-view-form>
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small">
+                    <lightning-combobox label="New Appointment Location"
+                                        data-formfield="newlocation"
+                                        placeholder="Please select…"
+                                        options={locationOptions}
+                                        value={locationSelected}
+                                        onchange={handleLocationChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+
+                <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                       padding="around-small">
+                    <lightning-input
+                            type="date"
+                            name="inputDate"
+                            data-formfield="newdate"
+                            label="New Appointment Date"
+                            value={selectedDate}
+                            onchange={handleDateInputChange}
+                    >
+                    </lightning-input>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:false={loadingSlots} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                       padding="around-small">
+                    <lightning-combobox if:true={hasTimeSlots} label="New Appointment Time"
+                                        data-formfield="newAppointmentTime"
+                                        placeholder="Please select…"
+                                        options={currentSlots}
+                                        onchange={handleStartTimeChanged}
+                                        value={timeSelected}
+                    >
+                    </lightning-combobox>
+                    <span if:false={hasTimeSlots} class="pad-top">
+                    No time slots found for specified location and date
+                </span>
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+            <template if:true={showConfirmScreen}>
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small" class="warn-amber">
+                        Please confirm your changes. By clicking Next, the following changes will be done:
+                    </lightning-layout-item>
+                </lightning-layout>
+
+                <template if:true={doChangeType}>
+                    <span if:true={showConfirmScreen} class="slds-tabs_card asblock">
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                                   padding="around-small" class="warn-amber">
+                                Currently ordered Product will change:
+                                <br/>
+                                <br/>&nbsp;&nbsp;Old Product: <strong>{currentProductName}</strong>
+                                <br/><br/>&nbsp;&nbsp;New Product: <strong>{newProductName}</strong>
+
+                            </lightning-layout-item>
+                           </lightning-layout>
+                    </span>
+                </template>
+
+                <template if:true={doRebook}>
+                    <span if:true={showConfirmScreen} class="slds-tabs_card asblock">
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+                           <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                                  padding="around-small" class="warn-amber">
+                                Currently appointment will be rescheduled to:
+                                <br/>
+                                <br/><strong>{newLocationName}</strong>
+                                <br/>
+                                <br/><strong><lightning-formatted-date-time
+                                   value={timeSelected} year="numeric" month="short" day="2-digit" hour="numeric" minute="2-digit" weekday="long">
+                                </lightning-formatted-date-time></strong>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+                    </span>
+                </template>
+            </template>
+
+
+        </p>
+
+        <p if:true={loading} class="slds-p-horizontal_small">
+            <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+        </p>
+        <p slot="footer">
+            <lightning-button if:false={showInitialScreen} label="Back" title="Back" onclick={handleBack}></lightning-button>
+            &nbsp;&nbsp;&nbsp;
+            <lightning-button if:true={allowNext} variant="brand" label="Next" title="Next" onclick={handleNext}></lightning-button>
+            <lightning-button if:false={allowNext} variant="brand" label="Next" title="Next" disabled></lightning-button>
+        </p>
+    </lightning-card>
+
+    <span style="display:none">{recordId}</span>
+</template>

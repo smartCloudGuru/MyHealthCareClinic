@@ -1,0 +1,18 @@
+/**
+ * Created 14.3.2021..
+ */
+
+.box {
+    padding-bottom: 32px;
+    margin-bottom:0;
+}
+
+lightning-button.close-modal-button {
+    min-width: 140px;
+    display: inline-block;
+}
+
+lightning-button.save-personal-details-button {
+    min-width: 140px;
+    display: inline-block;
+}

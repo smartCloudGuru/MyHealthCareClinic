@@ -1,0 +1,85 @@
+/**
+ * Created 12.3.2021..
+ */
+
+.row-wrap {
+    margin-bottom: 0;
+}
+
+h4 {
+    font-size: 20px;
+    color: var(--c-color-text);
+    font-weight: 500;
+    margin-bottom: 4px;
+    margin-top: 24px;
+}
+
+h5 {
+    font-size: 18px;
+    color: var(--c-color-text);
+    font-weight: 500;
+    margin-bottom: 0px;
+    margin-top: 20px;
+}
+
+.info-line {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-bottom: 6px;
+}
+
+.info {
+    margin-bottom: 20px;
+}
+
+.total-payment {
+    margin-top: 14px;
+    padding-right: 12px;
+}
+
+
+.bundle-edit {
+    margin-bottom: 12px;
+}
+
+h5.covid-test {
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.warn-red {
+    color: #b90606;
+    font-weight: 500;
+}
+
+.row-wrap.inside {
+    width: 100%;
+    padding: 12px 52px;
+    padding-top: 0;
+    background-color: var(--c-color-main);
+    color: #fff;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.row-wrap.over
+{
+    margin-top: 40px;
+}
+
+
+.row-wrap.over h4
+{
+    margin-top: 0px;
+    color: #FFF;
+}
+
+.order-overview h4
+{
+    text-align: center;
+     border-top: 1px solid var(--c-color-main);
+     border-radius: 5px;
+     padding-top: 14px;
+}

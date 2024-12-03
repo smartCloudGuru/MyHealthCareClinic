@@ -1,0 +1,53 @@
+/**
+ * Created 15.4.2021..
+ */
+
+.spinner-holder.searching
+{
+    height: 113px;
+    margin-top: -20px;
+}
+
+
+.box.search
+{
+    background-color: var(--c-color-covid);
+    margin:0;
+    margin-bottom: 18px;
+}
+
+.box.search h3
+{
+    font-size: 24px;
+    color: #FFF;
+}
+
+.search-cell
+{
+    text-align: end;
+}
+
+.row-wrap
+{
+    padding-top: 0;
+    background-color: var(--c-color-covid);
+}
+
+.test-result-wrapper
+{
+    padding:0;
+}
+
+.box.search-wrapper
+{
+    margin-top:0px;
+    padding: 0;
+    background-color: #ededed;
+}
+
+.no-results
+{
+    padding: 32px;
+    padding-top: 15px;
+    display: block;
+}

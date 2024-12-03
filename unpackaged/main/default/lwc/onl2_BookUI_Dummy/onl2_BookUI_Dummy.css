@@ -1,0 +1,90 @@
+/**
+ * Created 21.3.2022..
+ */
+.min-height
+{
+    height:460px;
+    min-height:460px;
+}
+.asblock
+{
+    display: block;
+    margin-bottom: 20px;
+    padding: 6px;
+}
+.warn-amber
+{
+    /*color: darkgoldenrod;*/
+    /*font-weight: 500;*/
+}
+
+.pad-top
+{
+    line-height: 77px;
+}
+
+.spinnerHolder
+{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.spinnerText
+{
+    display: inline-block;
+    height: 94px;
+    vertical-align: middle;
+}
+
+.slot-divider {
+    height: 8px;
+    border-bottom: 1px solid #e0e2e0;
+    margin-bottom: 8px;
+}
+
+.slot-wrapper {
+    padding: 4px;
+}
+
+.help-icon
+{
+    top: -8px;
+    position: relative;
+    margin-left: 2px;
+}
+
+.bold
+{
+    font-weight: 600;
+}
+
+.green {
+    color: #4cb05b;
+}
+
+.slot {
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: center;
+    border: 1px solid var(--c-color-border);
+    border-radius: 10px;
+    color: var(--c-color-border);
+    display: flow-root;
+}
+
+.slot.available {
+    color: #3c3c3b;
+    border: 1px solid #B7E768;
+    background-color: #B7E768;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.slot.available.selected
+{
+    border: 1px solid darkblue;
+    background-color: darkblue;
+    color: #fff;
+}

@@ -1,0 +1,262 @@
+<!--
+ - Created 13.9.2022..
+ -->
+
+<!-- Mem Add Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open">
+
+        <div class="slds-modal__container">
+
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="cancel-button topx slds-modal__close">
+                </lightning-button-icon>
+                <template if:true={isAdd}>
+                    <h2 if:true={isAdult} class="slds-text-heading_medium">Add an additional Adult Member</h2>
+                    <h2 if:false={isAdult} class="slds-text-heading_medium">Add an additional Child Member</h2>
+                </template>
+                <template if:false={isAdd}>
+                    <h2 if:true={isAdult} class="slds-text-heading_medium">Edit additional Adult Member</h2>
+                    <h2 if:false={isAdult} class="slds-text-heading_medium">Edit additional Child Member</h2>
+                </template>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="First Name"
+                                         data-id="firstName"
+                                         placeholder="First Name"
+                                         value={memberToEdit.firstName}
+                                         required
+                                         max-length=100>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Last Name"
+                                         data-id="lastName"
+                                         placeholder="Last Name"
+                                         value={memberToEdit.lastName}
+                                         required
+                                         max-length=100>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Email"
+                                         type="email"
+                                         data-id="email"
+                                         placeholder="Email"
+                                         value={memberToEdit.email}
+                                         onchange={validateEmail2}
+                                         required
+                                         max-length=100>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Confirm Email"
+                                         type="email2"
+                                         data-id="email2"
+                                         placeholder="Email"
+                                         autocomplete="off"
+                                         required
+                                         value={memberToEdit.email2}
+                                         onchange={validateEmail2}
+                                         max-length=100>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                        <lightning-combobox
+                                label="Gender"
+                                data-id="gender"
+                                placeholder=""
+                                required
+                                options={genderOptions}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Phone Number"
+                                         data-id="phone"
+                                         type="tel"
+                                         placeholder="Phone"
+                                         value={memberToEdit.phone}
+                                         required
+                                         max-length=100>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        &nbsp;
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small"
+                                           class="subheading">
+                        <div>Date of birth</div>
+                        <div if:false={dobDateValid} class="slds-text-color_error fs14">
+                            <template if:true={isAdult}> Please enter a valid date. An Adult member must be at least 18 years old to
+                                apply for membership
+                            </template>
+                            <template if:false={isAdult}> Please enter a valid date. A Child member must be under 18 years old to
+                                apply for membership
+                            </template>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+
+                        <lightning-combobox
+                                label="Day"
+                                data-id="dob_d"
+                                value={memberToEdit.dob_d}
+                                placeholder=""
+                                required
+                                options={ddOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                        <lightning-combobox
+                                label="Month"
+                                data-id="dob_m"
+                                value={memberToEdit.dob_m}
+                                placeholder=""
+                                required
+                                options={mmOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                        <lightning-combobox
+                                label="Year"
+                                data-id="dob_y"
+                                value={memberToEdit.dob_y}
+                                placeholder=""
+                                required
+                                options={yyOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="subheading">
+                        <div class="slds-form-element__legend slds-form-element__label"><strong>Current address</strong></div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-id="checkAddressSame"
+                                         checked= {memberToEdit.checkAddressSame}
+                                         label="Address is the same as for main payer"
+                                         onchange={handleSameAddress}
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+                    <template if:false={sameAddressChecked}>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <c-onl2-autofill-input data-id="searchByPostal"
+                                                   label="Postal Code &amp; Address Search"
+                                                   class="sub-address address-search"
+                                                   onsearch={handlePostcodeSearch}
+                                                   onselectionchange={handlePostcodeSelection}></c-onl2-autofill-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 1"
+                                             data-id="address1"
+                                             placeholder="Address Line 1"
+                                             autocomplete="off"
+                                             value={memberToEdit.address1}
+                                             required
+                                             class="sub-address"
+                                             max-length=200>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 2"
+                                             data-id="address2"
+                                             placeholder="Address Line 2"
+                                             value={memberToEdit.address2}
+                                             autocomplete="off"
+                                             class="sub-address"
+                                             max-length=200>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 3"
+                                             data-id="address3"
+                                             placeholder="Address Line 3"
+                                             value={memberToEdit.address3}
+                                             autocomplete="off"
+                                             class="sub-address"
+                                             max-length=200>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="City"
+                                             data-id="city"
+                                             placeholder="City"
+                                             value={memberToEdit.city}
+                                             class="sub-address"
+                                             required
+                                             autocomplete="off"
+                                             max-length=200>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Postal Code"
+                                             data-id="postalCode"
+                                             placeholder="Postal Code"
+                                             value={memberToEdit.postalCode}
+                                             class="sub-address"
+                                             required
+                                             autocomplete="off"
+                                             max-length=200>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </template>
+
+                    <!-- DIVIDER -->
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="big-divider">
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+                <div class="modal-footer">
+                    <lightning-button class="cancel-button" variant="brand" label="Cancel" onclick={handleClose}></lightning-button>
+                    <lightning-button class="submit-button" variant="brand" label="Save" onclick={handleAdd}></lightning-button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

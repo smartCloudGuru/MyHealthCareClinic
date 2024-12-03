@@ -1,0 +1,164 @@
+/**
+ * Created 12.3.2021..
+ */
+
+.row-wrap {
+    margin-bottom: 0;
+}
+
+.row-wrap p {
+    color: var(--c-color-text);
+}
+
+h4 {
+    font-size: 24px;
+    color: var(--c-color-text);
+    font-weight: 500;
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+h5 {
+    font-size: 20px;
+    color: var(--c-color-text);
+    font-weight: 500;
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+.info-line {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-bottom: 6px;
+}
+
+.info {
+    margin-bottom: 42px;
+}
+
+.total-payment {
+    margin-top: 14px;
+    padding-right: 12px;
+}
+
+.header-notice {
+    font-weight: 500;
+    padding-top: 11px;
+    color: var(--c-color-secondary);
+}
+
+.bundle-edit {
+    margin-bottom: 12px;
+}
+
+h5.covid-test {
+    margin-top: 8px;
+}
+
+.reschedule-notification {
+    text-align: center;
+    font-weight: 600;
+    color: var(--c-color-secondary);
+}
+
+.row-wrap.subheader {
+    padding-top: 20px;
+    padding-bottom: 0px;
+    min-height: 74px;
+    margin-bottom: 14px;
+}
+
+.row-wrap.ticks {
+    width: 100%;
+    padding: 12px;
+}
+
+.row-wrap.over {
+    margin-top: 0px;
+    margin-bottom: 14px;
+    padding-top: 13px;
+    border-radius: 10px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.row-wrap.over h4 {
+    margin-top: 0px;
+    color: var(--c-color-text);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.basket-info {
+    height: 24px;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: right;
+    border: none;
+    font-weight: 500;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    padding-bottom: 2.2rem;
+    padding-top: 1rem;
+    margin-top: 12px;
+}
+
+.personal-details-wrapper {
+    /*padding-left: 24px;*/
+}
+
+.personal-details-form {
+    border-radius: 10px;
+}
+
+.ticks-wrapper {
+    padding-top: 2px;
+}
+
+.form-field {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.cart-box {
+}
+
+.outlined-box h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.pad-check {
+    padding-left: 12px;
+}
+
+.tc-error-message {
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.hidden {
+    /*display: none;*/
+    filter:blur(1px);
+}
+
+.row-wrap.over h4.delivery {
+    margin-top: 10px;
+}
+
+p.delivery {
+    font-size: 16px;
+    padding-left: 12px;
+}
+.earliest-date
+{
+    font-weight: 500;
+    color:#cc0000 !important;
+}
+
+.display-none
+{
+    display: none;
+}

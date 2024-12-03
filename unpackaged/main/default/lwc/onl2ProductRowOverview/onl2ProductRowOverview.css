@@ -1,0 +1,49 @@
+/**
+ * Created 13.3.2021..
+ */
+
+:host {
+    /*font-size: 14px;*/
+}
+
+.product-name {
+    font-weight: 600;
+}
+
+.product-name {
+    font-weight: 600;
+}
+
+.details {
+    padding-top: 12px;
+}
+
+lightning-button.edit-button {
+    margin-right: 18px;
+}
+
+.priceitem {
+    min-width: 90px;
+    padding-left: 12px;
+    text-align: end;
+}
+
+.product-totalprice {
+    font-weight: 500;
+}
+
+.product-row {
+    margin-bottom: 10px;
+}
+
+.edit-options {
+    font-size: 0.9rem;
+    float: left;
+    padding-left: 8px;
+}
+
+.edit-options a {
+    font-variant: all-small-caps;
+    font-size: 1rem;
+    margin-right: 1.6rem;
+}

@@ -1,0 +1,124 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl FIND Covid Tests -->
+<template>
+
+    <lightning-layout if:true={smallFactorAndNavigationShown} multiple-rows="false" horizontal-align="spread">
+
+        <lightning-layout-item class="width-limited slds-text-align_left back-for-small">
+            <lightning-button if:true={searchDone}
+                              label="Back"
+                              icon-name="utility:chevronleft"
+                              class="mhc-button back-button no-margin"
+                              onclick={handleBackToSearch}></lightning-button>
+
+        </lightning-layout-item>
+
+    </lightning-layout>
+
+
+    <div class="row-wrap" if:false={hideForSmallFF}>
+
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="width-limited">
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=11>
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" >
+
+                    <lightning-layout-item if:false={showServiceCenters} size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                        <lightning-input label="Postal code"
+                                         data-formfield="postalcode"
+                                         placeholder=""
+                                         required
+                                         value={_defaults.postalcode}>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item if:true={showServiceCenters} size=12 small-device-size=12 medium-device-size=12 large-device-size=6 padding="around-small">
+                        <lightning-combobox label="Location"
+                                            data-formfield="postalcode"
+                                            placeholder="Please select…"
+                                            options={serviceCenterOptions}
+                                            required
+                                            value={_defaults.postalcode}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item if:false={showServiceCenters} size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                        <lightning-combobox label="Within"
+                                            data-formfield="distance"
+                                            placeholder="Please select…"
+                                            options={distanceOptions}
+                                            required
+                                            value={_defaults.distance}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                        <lightning-combobox label="Test Type"
+                                            data-formfield="type"
+                                            placeholder="Please select…"
+                                            options={typeOptions}
+                                            required
+                                            value={_defaults.type}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                        <lightning-combobox label="Turnaround Time"
+                                            data-formfield="turnaround"
+                                            placeholder=""
+                                            options={turnaroundOptions}
+                                            value={_defaults.turnaround}
+                                            >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=1 class="search-cell" padding="around-small">
+
+                <lightning-button label="Search"
+                                  class="mhc-button form-button search-button"
+                                  onclick={doSearch}></lightning-button>
+            </lightning-layout-item>
+
+        </lightning-layout>
+    </div>
+
+
+    <lightning-layout multiple-rows="true" horizontal-align="start">
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                               class="filter-results covid">
+
+            <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+
+            <template if:false={loading}>
+
+                <template if:true={noResults}>
+                    <div class="width-limited">
+                        <span class="no-results">No tests found for your query.</span>
+                    </div>
+                </template>
+
+                <!-- PRODUCT ITERATION -->
+                <template if:false={noResults} for:each={foundProducts} for:item="product">
+                    <c-onl-product-row onadd={handleAddToBasket} key={product.product.Id} product={product.product}
+                                       locations={product.locations}></c-onl-product-row>
+
+                </template>
+            </template>
+
+        </lightning-layout-item>
+
+    </lightning-layout>
+
+</template>

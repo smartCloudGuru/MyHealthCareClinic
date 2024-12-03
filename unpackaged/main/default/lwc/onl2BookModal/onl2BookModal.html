@@ -1,0 +1,1082 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Book Modal (used for new Appointment booking flow)-->
+<template>
+    <div role="dialog" class={modalCss}>
+
+        <div class={modalContainerCss}>
+
+            <header class="slds-modal__header">
+                <template if:false={direct}>
+                    <lightning-button-icon if:false={step.booking} icon-name="utility:close"
+                                           alternative-text="Close"
+                                           title="Close"
+                                           onclick={handleClose}
+                                           class="mhc-button slds-modal__close">
+                    </lightning-button-icon>
+                </template>
+                <h2>Booking: {productName}</h2>
+                <div class="policy-note">For help choosing an appointment, call Patient Support at <a
+                        href="tel:02072824280" class="rulertel">0207&nbsp;282&nbsp;4280</a>.
+                    Please have
+                    your <span class="bold">payment card ready</span> if needed.
+                </div>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                <template if:true={dataReady}>
+
+                    <template if:false={showBigLocations}>
+
+                        <lightning-layout
+                                if:true={step.location}
+                                multiple-rows="true"
+                                horizontal-align="start"
+                                class="box brand slds-align_absolute-center location-box">
+
+
+                            <lightning-layout-item if:true={hasLocations}
+                                                   class="small-padding-on-small"
+                                                   size=12 small-device-size=12 medium-device-size=4 large-device-size=2
+                                                   padding="around-small">
+
+                                <lightning-input
+                                        if:false={loadingSlots}
+                                        type="date"
+                                        name="inputDate"
+                                        label="Select Date"
+                                        class="display-inline date-input font80 slds-align_absolute-center hide-label-on-small"
+                                        value={selectedDate}
+                                        date-style="short"
+                                        onchange={handleDateInputChange}
+                                >
+                                </lightning-input>
+                                <lightning-input
+                                        if:true={loadingSlots}
+                                        type="date"
+                                        name="inputDate"
+                                        label="Select Date"
+                                        class="display-inline date-input font80 slds-align_absolute-center hide-label-on-small"
+                                        value={selectedDate}
+                                        date-style="short"
+                                        disabled
+                                >
+                                </lightning-input>
+
+                            </lightning-layout-item>
+
+                            <template if:false={videoOrTelApp}>
+                                <lightning-layout-item if:true={hasLocations} size=12 class="small-padding-on-small" small-device-size=12
+                                                       medium-device-size=8 large-device-size=6
+                                                       padding="around-small">
+                                    <lightning-combobox if:false={loadingSlots} label="Location"
+                                                        class="font80  hide-label-on-small"
+                                                        data-formfield="postalcode"
+                                                        placeholder="Please select a location…"
+                                                        options={serviceCenterOptions}
+                                                        onchange={handleLocationChanged}
+                                                        value={selectedServiceCenterId}>
+                                    </lightning-combobox>
+                                    <lightning-combobox if:true={loadingSlots} label="Location"
+                                                        class="font80 hide-label-on-small"
+                                                        data-formfield="postalcode"
+                                                        placeholder="Please select a location…"
+                                                        options={serviceCenterOptions}
+                                                        disabled
+                                                        value={selectedServiceCenterId}>
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+                            </template>
+
+                        </lightning-layout> <!-- end green choices -->
+
+                    </template>
+
+                    <!-- [2024-02] added display of service center notice (from territory.Store_Notice__c), if one is configured -->
+                    <template if:true={selectedLocationNotice}>
+                        <lightning-layout
+                                if:true={step.location}
+                                multiple-rows=""
+                                horizontal-align="start">
+                            <lightning-layout-item if:false={videoOrTelApp}
+                                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="location-notice">
+                                &#9888;&nbsp;{selectedLocationNotice}
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template>
+
+
+                    <!-- STEP location -->
+                    <template if:true={step.location}>
+                        <lightning-layout
+                                if:false={loading}
+                                multiple-rows=""
+                                horizontal-align="start">
+
+                            <lightning-layout-item
+                                    if:true={showNextAvailability}
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=12
+                                    class="next-availability no-border box onl2 ">
+
+                                <c-onl2_-book-find-next-slots chosen-date={selectedDate}
+                                                              data-componentid='find-available-dates'
+                                                              selected-service-center-id={selectedServiceCenterId}
+                                                              selected-work-type-group-id={selectedWTGId}
+                                                              ondate={handleAvailableDateSelected}
+                                                              onstart={handleFindNextStart}
+                                                              ondone={handleFindNextDone}
+                                                              instant-search="true"
+                                                              store-booking="true"
+                                                              text-after="Earliest availability:"
+                                ></c-onl2_-book-find-next-slots>
+                            </lightning-layout-item>
+
+
+                            <!--if no location is selected-->
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=12
+                                    class="box no-border locations"
+                                    if:true={showBigLocations}
+                            >
+
+                                <lightning-layout
+                                        if:false={loading}
+                                        multiple-rows="true"
+                                        horizontal-align="space" vertical-align="stretch">
+                                    <lightning-layout-item key={loc.Id}
+                                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                           class="pad-24-12">
+                                        <div>Please select your preferred location:</div>
+                                    </lightning-layout-item>
+
+                                    <template for:each={serviceCenterOptions} for:item="loc">
+                                        <lightning-layout-item key={loc.Id}
+                                                               size=12 small-device-size=12 medium-device-size=6 large-device-size=3
+                                                               flexibility="auto"
+                                                               class="location-wrapper">
+                                            <div if:true={loc.value}
+                                                 onclick={handleBigLocationSelected}
+                                                 data-locid={loc.value}
+                                                 aria-label={productMetaData}
+                                                 class="inner"
+                                            >
+                                                <div class="name">{loc.name}</div>
+                                                <div class="locaddress">{loc.street}</div>
+                                                <div class="locaddress">{loc.address}</div>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </template>
+                                </lightning-layout>
+                            </lightning-layout-item>
+
+
+                            <template if:false={showBigLocations}>
+                                <lightning-layout-item
+                                        if:true={showAvailableSlots}
+                                        size=12
+                                        small-device-size=12
+                                        medium-device-size=12
+                                        large-device-size=12
+                                        class="box no-border slots-column"
+                                >
+
+                                    <lightning-layout multiple-rows="true" horizontal-align="start">
+                                        <lightning-layout-item if:true={loadingSlots} size=12 small-device-size=12
+                                                               medium-device-size=12 large-device-size=12
+                                                               padding="around-small" class="timeslots">
+                                            <div class="spinner-holder slds-align_absolute-center">
+                                                <p class="slds-align_absolute-center">Please be patient while we look for availability&mldr;</p>
+                                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                            </div>
+                                        </lightning-layout-item>
+
+                                        <!-- timeslots -->
+                                        <lightning-layout-item if:false={loadingSlots}
+                                                               size=12 small-device-size=12 medium-device-size=12
+                                                               large-device-size=12
+                                                               class="timeslots">
+
+
+                                            <lightning-layout if:true={selectedIdOrVideoCall} multiple-rows="true" vertical-align="stretch"
+                                                              horizontal-align="start"
+                                                              pull-to-boundary="medium">
+
+                                                <template if:true={showPractitionerList}>
+                                                    <template if:true={hasAnyAvailability}>
+                                                        <lightning-layout-item if:true={hasLocations}
+                                                                               class="small-padding-on-small"
+                                                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                                               padding="around-small">
+
+                                                            <div if:true={showResources}>
+                                                                <lightning-combobox label="Preferred Practitioner"
+                                                                                    data-formfield="practitioner"
+                                                                                    placeholder="Please select…"
+                                                                                    options={resourceOptions}
+                                                                                    value={filterByResource}
+                                                                                    class="font80 hide-label-on-small hide-on-small"
+                                                                                    onchange={handleFilteredResourceChanged}>
+                                                                </lightning-combobox>
+                                                            </div>
+                                                            <div if:false={showResources}>
+<!--                                                                <lightning-combobox label="Preferred Practitioner"-->
+<!--                                                                                    class="font80 hide-label-on-small hide-on-small"-->
+<!--                                                                                    placeholder="Please select…"-->
+<!--                                                                                    disabled>-->
+<!--                                                                </lightning-combobox>-->
+                                                            </div>
+                                                        </lightning-layout-item>
+
+                                                    </template>
+                                                </template>
+
+                                                <lightning-layout-item size=6
+                                                                       small-device-size=6 medium-device-size=6 large-device-size=6
+                                                                       class="prev-but slds-text-align_left">
+                                                    <span class="arrow" onclick={handleDayMinus}><span
+                                                            class="arrow-icon">&lt;</span> Previous Day </span>
+                                                </lightning-layout-item>
+
+                                                <lightning-layout-item size=6
+                                                                       small-device-size=6 medium-device-size=6 large-device-size=6
+                                                                       class="next-but slds-text-align_right">
+                                                    <span class="arrow" onclick={handleDayPlus}>Next Day <span class="arrow-icon">&gt;</span></span>
+                                                </lightning-layout-item>
+
+                                                <!-- DAY0 column -->
+                                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                                       class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                                        <lightning-layout-item
+                                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                                class="slds-align_absolute-center date-long">
+                                                            <lightning-formatted-date-time value={selectedDateP0} year="numeric" month="long"
+                                                                                           day="2-digit"
+                                                                                           weekday="long"></lightning-formatted-date-time>
+                                                        </lightning-layout-item>
+                                                        <!-- ITERATE SLOTS day0-->
+                                                        <template if:true={hasSlotsDay0}
+                                                                  for:each={currentSlotsDay0} for:item="slot">
+                                                            <lightning-layout-item key={slot.label}
+                                                                                   size=4 small-device-size=4 medium-device-size=4 large-device-size=4
+                                                                                   class="slot-wrapper">
+                                                                <div if:true={slot.startTime}
+                                                                     class="slot available"
+                                                                     onclick={handleTimeSlotSelected}
+                                                                     data-start={slot.startTime}
+                                                                     data-end={slot.endTime}
+                                                                     data-resources={slot.resources}
+                                                                     data-resource_locations={slot.resource_locations}
+                                                                     aria-label={productMetaData}
+                                                                >{slot.label}
+                                                                </div>
+                                                            </lightning-layout-item>
+                                                        </template> <!-- end ITERATE SLOTS day0-->
+
+                                                        <template if:false={hasSlotsDay0}>
+                                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                        </template>
+                                                    </lightning-layout>
+                                                </lightning-layout-item>
+
+
+                                                <!-- DAY1 column -->
+                                                <lightning-layout-item
+                                                        size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                        class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                                        <lightning-layout-item
+                                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                                class="slds-align_absolute-center date-long">
+                                                            <lightning-formatted-date-time value={selectedDateP1} year="numeric" month="long"
+                                                                                           day="2-digit"
+                                                                                           weekday="long"></lightning-formatted-date-time>
+                                                        </lightning-layout-item>
+                                                        <!-- ITERATE SLOTS day1-->
+                                                        <template if:true={hasSlotsDay1}
+                                                                  for:each={currentSlotsDay1} for:item="slot">
+                                                            <lightning-layout-item key={slot.label}
+                                                                                   size=4 small-device-size=4 medium-device-size=4 large-device-size=4
+                                                                                   class="slot-wrapper">
+                                                                <div if:true={slot.startTime}
+                                                                     class="slot available"
+                                                                     onclick={handleTimeSlotSelected}
+                                                                     data-start={slot.startTime}
+                                                                     data-end={slot.endTime}
+                                                                     data-resources={slot.resources}
+                                                                     data-resource_locations={slot.resource_locations}
+                                                                     aria-label={productMetaData}
+                                                                >{slot.label}
+                                                                </div>
+                                                            </lightning-layout-item>
+                                                        </template> <!-- end ITERATE SLOTS day1-->
+                                                        <template if:false={hasSlotsDay1}>
+                                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                        </template>
+                                                    </lightning-layout>
+                                                </lightning-layout-item>
+
+                                                <!-- DAY2 column -->
+                                                <lightning-layout-item
+                                                        size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                        class="slds-text-align_center slots-column-small" padding="around-medium">
+                                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                                        <lightning-layout-item
+                                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                                class="slds-align_absolute-center date-long">
+                                                            <lightning-formatted-date-time value={selectedDateP2} year="numeric" month="long"
+                                                                                           day="2-digit"
+                                                                                           weekday="long"></lightning-formatted-date-time>
+                                                        </lightning-layout-item>
+                                                        <!-- ITERATE SLOTS day2-->
+                                                        <template if:true={hasSlotsDay2}
+                                                                  for:each={currentSlotsDay2} for:item="slot">
+                                                            <lightning-layout-item key={slot.label}
+                                                                                   size=4 small-device-size=4 medium-device-size=4 large-device-size=4
+                                                                                   class="slot-wrapper">
+                                                                <div if:true={slot.startTime}
+                                                                     class="slot available"
+                                                                     onclick={handleTimeSlotSelected}
+                                                                     data-start={slot.startTime}
+                                                                     data-end={slot.endTime}
+                                                                     data-resources={slot.resources}
+                                                                     data-resource_locations={slot.resource_locations}
+                                                                     aria-label={productMetaData}
+                                                                >{slot.label}
+                                                                </div>
+                                                            </lightning-layout-item>
+                                                        </template> <!-- end ITERATE SLOTS day2-->
+                                                        <template if:false={hasSlotsDay2}>
+                                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                                        </template>
+                                                    </lightning-layout>
+                                                </lightning-layout-item>
+
+
+                                            </lightning-layout>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </lightning-layout-item>
+                            </template>
+                        </lightning-layout>
+                    </template>
+
+                    <!-- STEP confirm  -->
+                    <lightning-layout
+                            if:true={step.confirm}
+                            multiple-rows="true"
+                            horizontal-align="start">
+
+                        <lightning-layout-item
+                                if:false={loading}
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                class="no-border slds-text-align_left no-left-padding">
+                            <lightning-button label="Back to location and time selection"
+                                              icon-name="utility:chevronleft"
+                                              class="mhc-button back-button"
+                                              onclick={handleBackToSlots}></lightning-button>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+
+
+                    <!-- STEP confirmation dialog -->
+                    <lightning-layout if:true={step.confirm}
+                                      multiple-rows="true" horizontal-align="start"
+                                      class="confirmation">
+
+                        <lightning-layout-item if:true={errorMessage}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                            <div class="slds-align_absolute-center">
+                                <p class="errorMessage">{errorMessage}</p>
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={selectedSlot} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="time-and-location">
+                            <p class="time-and-date">
+                                <lightning-icon icon-name="utility:event" alternative-text="Date and time!" title="Date and time" size="small"
+                                                class="slds-m-right_small"></lightning-icon>
+                                <lightning-formatted-date-time value={selectedSlot.startTime}
+                                                               year="numeric"
+                                                               month="long"
+                                                               day="2-digit"
+                                                               weekday="long"
+                                                               hour="2-digit"
+                                                               hour12={ampm}
+                                                               minute="2-digit"
+                                                               time-zone="Europe/London"
+                                                               class="bold"
+                                ></lightning-formatted-date-time>
+
+                            </p>
+                            <template if:false={videoOrTelApp}>
+                                <p class="time-and-date">
+                                    <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" size="small"
+                                                    class="slds-m-right_small"></lightning-icon>
+                                    <c-onl-location loc={selectedLocation} dont-show-distance all-one-line></c-onl-location>
+                                </p>
+                                <p if:true={selectedLocationNotice} class="location-notice">&#9888;&nbsp;{selectedLocationNotice}</p>
+                            </template>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               padding="around-small" class="payment-notice">
+                            <span class="bold">Please note:</span> The price for your appointment will be displayed once you have entered your
+                            details. Where payment applies, have your&nbsp;<span class="bold">payment card</span>&nbsp;on hand to complete the
+                            booking.
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:false={theoSelectedOrLoggedIn} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                               padding="around-small">
+                            <lightning-button
+                                    label="Book without registering"
+                                    class="mhc-button primary-button slds-align_absolute-center no-margin start-booking"
+                                    onclick={handleShowTheoForm}>
+                            </lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:false={theoSelectedOrLoggedIn} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                               padding="around-small">
+                            <lightning-button
+                                    label="Login or Register"
+                                    class="mhc-button primary-button slds-align_absolute-center no-margin start-booking"
+                                    onclick={handleShowLogin}>
+                            </lightning-button>
+                        </lightning-layout-item>
+
+                        <!-- THEO FORM -->
+                        <lightning-layout-item if:true={showTheoForm} size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                            <!--                        <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">-->
+                            <lightning-layout multiple-rows="true" horizontal-align="start" class="mhc2 theo-form">
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="slds-m-bottom_x-small">
+                                    <p class="time-and-date" style="margin-bottom:0">If you are booking for somebody else<span if:false={isTLCStore}>&nbsp;(for example your child)</span>,
+                                        kindly
+                                        fill in the&nbsp;
+                                        <span class="bold">patient's details only</span></p>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=6 small-device-size=6 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <lightning-input type="text"
+                                                     label="Patient's First Name"
+                                                     placeholder="First Name"
+                                                     data-formfield="firstName"
+                                                     max-length=18
+                                                     required
+                                                     onchange={handleTheoFormChange}
+                                    ></lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=6 small-device-size=6 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <lightning-input type="text"
+                                                     label="Patient's Last Name"
+                                                     placeholder="Last Name"
+                                                     data-formfield="lastName"
+                                                     max-length=18
+                                                     required
+                                                     onchange={handleTheoFormChange}
+                                    ></lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=4 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-combobox
+                                            label="Birth Day"
+                                            data-formfield="dob_d"
+                                            placeholder=""
+                                            required
+                                            options={ddOptions}
+                                            onchange={validateDOB}
+                                    >
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=4 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-combobox
+                                            label="Birth Month"
+                                            data-formfield="dob_m"
+                                            placeholder=""
+                                            required
+                                            options={mmOptions}
+                                            onchange={validateDOB}
+                                    >
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=4 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-combobox
+                                            label="Birth Year"
+                                            data-formfield="dob_y"
+                                            placeholder=""
+                                            required
+                                            options={yyOptions}
+                                            onchange={validateDOB}
+                                    >
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-combobox
+                                            label="Gender"
+                                            data-formfield="gender"
+                                            placeholder=""
+                                            required
+                                            options={genderOptions}
+                                    >
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <lightning-input type="email"
+                                                     label="E-mail"
+                                                     data-formfield="theoEmail"
+                                                     placeholder="E-mail"
+                                                     max-length=64
+                                                     required
+                                                     onchange={handleTheoFormChange}
+                                    ></lightning-input>
+                                </lightning-layout-item>
+
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <lightning-input type="text"
+                                                     label="Mobile Number"
+                                                     data-formfield="theoPhone"
+                                                     max-length=24
+                                                     required
+                                                     onchange={handleTheoFormChange}
+                                    ></lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <c-onl2-autofill-input label="Postal Code &amp; Address Search"
+                                                           onsearch={handlePostcodeSearch}
+                                                           onselectionchange={handlePostcodeSelection}
+                                    ></c-onl2-autofill-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-input label="Postal code"
+                                                     data-formfield="postalCode"
+                                                     placeholder="Postal code"
+                                                     required
+                                                     max-length=12
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                                    <lightning-input label="City"
+                                                     data-formfield="city"
+                                                     placeholder="City"
+                                                     required
+                                                     max-length=20
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pad-05">
+                                    <lightning-input label="Address"
+                                                     data-formfield="address1"
+                                                     placeholder="Address"
+                                                     required
+                                                     max-length=30>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class={addressLine2Class}>
+                                    <lightning-input label="Address line 2"
+                                                     data-formfield="address2"
+                                                     placeholder="Address line 2"
+                                                     max-length=30>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class={addressLine3Class}>
+                                    <lightning-input label="Address line 3"
+                                                     data-formfield="address3"
+                                                     placeholder="Address line 3"
+                                                     max-length=30>
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class={countyClass}>
+                                    <lightning-input label="County/State"
+                                                     data-formfield="county"
+                                                     placeholder="County/State"
+                                                     max-length=2
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+
+                                <!--                                <lightning-layout-item-->
+                                <!--                                        if:true={step.email}-->
+                                <!--                                        size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-medium"-->
+                                <!--                                        class="slds-align_absolute-center">-->
+                                <!--                                    <lightning-button-->
+                                <!--                                            label="Register with us"-->
+                                <!--                                            class="mhc-button primary-button slds-align_absolute-center no-margin"-->
+                                <!--                                            onclick={handleStartRegister}>-->
+                                <!--                                    </lightning-button>-->
+                                <!--                                </lightning-layout-item>-->
+
+                                <!--                                <lightning-layout-item if:true={step.register}-->
+                                <!--                                                       size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-medium"-->
+                                <!--                                                       class="slds-align_absolute-center">-->
+                                <!--                                    <lightning-button-->
+                                <!--                                            label="Register"-->
+                                <!--                                            class="mhc-button primary-button slds-align_absolute-center no-margin"-->
+                                <!--                                            onclick={handleRegister}>-->
+                                <!--                                    </lightning-button>-->
+                                <!--                                </lightning-layout-item>-->
+
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <lightning-input label="Do you have a promotional code?"
+                                                     data-formfield="promoCode"
+                                                     placeholder="Promotional Code"
+                                                     autocomplete="off"
+                                                     onblur={handlePromoCodeBlur}
+                                                     max-length=16>
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                    <p class="free-text" if:true={promoCodeValidity}>{promoCodeValidity}</p>
+                                </lightning-layout-item>
+
+                                <!-- 2024-01 adding support to attach a file to the booking request -->
+                                <lightning-layout-item if:true={attachRequired}
+                                                       size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+
+                                    <div class="slds-m-top_small">
+                                        <p><span class="required_mark">*&nbsp;</span>{attachText} (required)</p>
+                                        <p>
+                                            <lightning-input type="file"
+                                                             label="Attachment(s)"
+                                                             data-id="attachment"
+                                                             accept=".pdf"
+                                                             multiple="true"
+                                                             required message-when-value-missing="Please upload a file"
+                                                             onchange={handleFilesChange}></lightning-input>
+                                        </p>
+                                        <template if:true={hasAttachments}>
+                                            <ul>
+                                                <template for:each={attachments} for:item="att">
+                                                    <li key={att} if:true={att.name} class="attach-name">{att.name}&nbsp;
+                                                        <lightning-button-icon icon-name="utility:delete" alternative-text="remove" size="small"
+                                                                               title="remove" onclick={handleRemoveAttachment}
+                                                                               data-fid={att.name}></lightning-button-icon>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </template>
+
+                                    </div>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="pad-05 slds-m-bottom_small">
+                                    <lightning-textarea
+                                            data-formfield="theoReasonForVisitInput"
+                                            name="reasonForVisitInput"
+                                            value={reasonForVisit}
+                                            max-length=255
+                                            label="Please enter the reason for the appointment (required):"
+                                            onchange={handleTheoReasonForVisitBlur}></lightning-textarea>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={theoLoading} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="slds-align_absolute-center confirm-booking-button">
+                                    <lightning-button icon-name="utility:event" label="Confirm date and time"
+                                                      class="mhc-button action-button no-margin"
+                                                      aria-label={productMetaData}
+                                                      onclick={doTheoSubmit}></lightning-button>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:true={theoLoading} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="slds-align_absolute-center">
+                                    <div class="spinner-holder slds-align_absolute-center">
+                                        <p>&nbsp;</p>
+                                        <p>&nbsp;</p>
+                                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                    </div>
+                                </lightning-layout-item>
+
+                            </lightning-layout>
+
+
+                        </lightning-layout-item> <!-- end theo form -->
+
+                        <!-- show promo code and reasonForVisit if already loggedin -->
+                        <template if:true={loggedIn}>
+
+                            <template if:false={multipleConnected}>
+
+                                <lightning-layout-item
+                                        size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                        class="login-width-limit">
+                                    <p class="no-margin pad-05">Please select who you are booking for:</p>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="login-width-limit mhc2 pad-05">
+                                    <lightning-combobox label="Book for:"
+                                                        placeholder="Please select …"
+                                                        options={connectedAccounts}
+                                                        onchange={handleAccountChanged}
+                                                        variant="label-hidden"
+                                                        value={selectedAccountToBook}>
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                            </template>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05 mhc2">
+                                <lightning-input label="Do you have a promotional code?"
+                                                 data-formfield="promoCode"
+                                                 placeholder="Promotional Code"
+                                                 autocomplete="off"
+                                                 onblur={handlePromoCodeBlur}
+                                                 max-length=16>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                                <p class="free-text" if:true={promoCodeValidity}>{promoCodeValidity}</p>
+                            </lightning-layout-item>
+
+                            <!-- 2024-01 adding support to attach a file to the booking request -->
+                            <lightning-layout-item if:true={attachRequired}
+                                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+
+                                <div class="slds-m-top_small">
+                                    <p><span class="required_mark">*&nbsp;</span>{attachText} (required)</p>
+                                    <p>
+                                        <lightning-input type="file"
+                                                         label="Attachment(s)"
+                                                         data-id="attachment"
+                                                         accept=".pdf"
+                                                         multiple="true"
+                                                         required message-when-value-missing="Please upload a file"
+                                                         onchange={handleFilesChange}></lightning-input>
+                                    </p>
+                                    <template if:true={hasAttachments}>
+                                        <ul>
+                                            <template for:each={attachments} for:item="att">
+                                                <li key={att} if:true={att.name} class="attach-name">{att.name}&nbsp;
+                                                    <lightning-button-icon icon-name="utility:delete" alternative-text="remove" size="small"
+                                                                           title="remove" onclick={handleRemoveAttachment}
+                                                                           data-fid={att.name></lightning-button-icon>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </template>
+
+                                </div>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="pad-05 mhc2 slds-m-bottom_small">
+                                <lightning-textarea if:false={errorMessage}
+                                                    data-id="reasonForVisitInput"
+                                                    name="reasonForVisitInput"
+                                                    max-length=255
+                                                    label="Please enter the reason for the appointment (required):"
+                                                    onchange={handleReasonForVisitBlur}></lightning-textarea>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="slds-align_absolute-center confirm-booking-button" if:true={confirmEnabled}>
+                                <lightning-button if:false={errorMessage} icon-name="utility:event" label="Confirm date and time"
+                                                  class="mhc-button action-button no-margin"
+                                                  aria-label={productMetaData}
+                                                  onclick={doConfirmBook}></lightning-button>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="slds-align_absolute-center confirm-booking-button" if:false={confirmEnabled}>
+                                <lightning-button if:false={errorMessage} icon-name="utility:event" label="Confirm date and time"
+                                                  class="mhc-button no-margin disabled"
+                                                  onclick={validateForm}
+                                ></lightning-button>
+                            </lightning-layout-item>
+
+                        </template>
+
+
+                    </lightning-layout> <!-- end step confirmation-theo -->
+
+
+                    <!-- STEP booking -->
+                    <lightning-layout
+                            if:true={step.booking}
+                            multiple-rows=""
+                            horizontal-align="start"
+                            class="slds-m-top_medium"
+                    >
+
+                        <!-- SELECTED LOCATION -->
+                        <lightning-layout-item if:true={selectedSlot} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="time-and-location">
+                            <p class="time-and-date">
+                                <lightning-icon icon-name="utility:event" alternative-text="Date and time!" title="Date and time" size="small"
+                                                class="slds-m-right_small"></lightning-icon>
+                                <lightning-formatted-date-time value={selectedSlot.startTime}
+                                                               year="numeric"
+                                                               month="long"
+                                                               day="2-digit"
+                                                               weekday="long"
+                                                               hour="2-digit"
+                                                               hour12={ampm}
+                                                               minute="2-digit"
+                                                               time-zone="Europe/London"
+                                                               class="bold"
+                                ></lightning-formatted-date-time>
+
+                            </p>
+                            <template if:false={videoOrTelApp}>
+                                <p class="time-and-date">
+                                    <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" size="small"
+                                                    class="slds-m-right_small"></lightning-icon>
+                                    <c-onl-location loc={selectedLocation} dont-show-distance all-one-line></c-onl-location>
+                                </p>
+                                <p if:true={selectedLocationNotice} class="location-notice">&#9888;&nbsp;{selectedLocationNotice}</p>
+                            </template>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item
+                                size=12
+                                small-device-size=12
+                                medium-device-size=12
+                                large-device-size=12>
+
+                            <div class="subtitle">{subtitle}</div>
+                            <div class="slds-align_absolute-center">
+                                <p if:true={errorMessage} class="errorMessage">{errorMessage}</p>
+                            </div>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item
+                                class="booking-spinner"
+                                size=12
+                                small-device-size=12
+                                medium-device-size=12
+                                large-device-size=12
+                        >
+                            <p class="slds-align_absolute-center">Please be patient while we process your booking&mldr;</p>
+                            <div class="spinner-holder slds-align_absolute-center spinner-above">
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+
+                    <!-- STEP postChoice - booking is now done, so display options to book another, back or continue  -->
+                    <lightning-layout
+                            if:true={step.postChoice}
+                            multiple-rows=""
+                            horizontal-align="start"
+                            class="step-postChoice">
+
+                        <lightning-layout-item if:true={subtitle}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-m-top_medium subtitle">
+                            {subtitle}
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={errorMessage}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-m-top_medium">
+                            <div class="slds-align_absolute-center">
+                                <p>{errorMessage}</p>
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={selectedSlot} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="time-and-location slds-m-top_medium">
+                            <p class="time-and-date">
+                                <lightning-icon icon-name="utility:event" alternative-text="Date and time!" title="Date and time" size="small"
+                                                class="slds-m-right_small"></lightning-icon>
+                                <lightning-formatted-date-time value={selectedSlot.startTime}
+                                                               year="numeric"
+                                                               month="long"
+                                                               day="2-digit"
+                                                               weekday="long"
+                                                               hour="2-digit"
+                                                               hour12={ampm}
+                                                               minute="2-digit"
+                                                               time-zone="Europe/London"
+                                                               class="bold"
+                                ></lightning-formatted-date-time>
+                            </p>
+                            <template if:false={videoOrTelApp}>
+                                <p class="time-and-date">
+                                    <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" size="small"
+                                                    class="slds-m-right_small"></lightning-icon>
+                                    <c-onl-location loc={selectedLocation} dont-show-distance all-one-line></c-onl-location>
+                                </p>
+                                <p if:true={selectedLocationNotice} class="location-notice">&#9888;&nbsp;{selectedLocationNotice}</p>
+                            </template>
+                        </lightning-layout-item>
+
+
+                        <!-- if ooms info has been returned -->
+                        <lightning-layout-item if:true={oomsInfo} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                               padding="around-small">
+
+                            <!-- if there aro no free appintments left (spent fully) -->
+                            <template if:false={numOomsFreeAppointments}>
+                                You have already used your <strong>{oomsInfo.maxFree}</strong> {counterName} included in your membership plan.
+                            </template>
+
+                            <!-- if there are some free appintments left (not spent fully) -->
+                            <template if:true={numOomsFreeAppointments}>
+                                Based on your Membership, you have <strong>{numOomsFreeAppointments}</strong> remaining {counterName} available
+
+                                <template if:true={oomsInfo.nextFreeDate}>
+                                    &nbsp;which can be booked on, or after&nbsp;<strong>
+                                    <lightning-formatted-date-time value={oomsInfo.nextFreeDate} year="numeric" month="long" day="2-digit"
+                                                                   weekday="long"></lightning-formatted-date-time>
+                                    .
+                                </strong>
+                                </template>
+                                <template if:false={oomsInfo.nextFreeDate}>
+                                    ,&nbsp;with one being allocated towards this booking.<strong>
+                                </strong>
+                                </template>
+                            </template>
+
+                            <template if:false={serviceTypeDental}>
+                                <template if:true={oomsInfo.pricebookEntry}>
+                                    <template if:true={oomsInfo.pricebookEntry.UnitPrice}>
+                                        <span class="asblock nomarg ooms-warning"><br/>A <span class="standout-warn">surcharge price</span> applies for your booking outside your Membership benefits:&nbsp;
+                                        <lightning-formatted-number
+                                                value={oomsInfo.pricebookEntry.UnitPrice} format-style="currency"
+                                                currency-code="GBP"></lightning-formatted-number>
+                                        </span>
+                                    </template>
+                                </template>
+                            </template>
+
+                            <template if:true={numOomsFreeAppointments}>
+                                <!-- if we know when the booking could be next free -->
+
+                            </template>
+
+                            <template if:true={serviceTypeDental}>
+                                <template if:true={oomsInfo.pricebookEntry}>
+                                    <template if:true={oomsInfo.pricebookEntry.UnitPrice}>
+                                            <span class="asblock nomarg ooms-warning"><br/>Your selected appointment will incur an additional fee of&nbsp;
+                                                <lightning-formatted-number
+                                                        value={oomsInfo.pricebookEntry.UnitPrice} format-style="currency"
+                                                        currency-code="GBP"></lightning-formatted-number></span>
+                                    </template>
+                                </template>
+                            </template>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={showMembershipDiscount} size=12 small-device-size=12 medium-device-size=12
+                                               large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_small" padding="around-small">
+                            The price below includes your&nbsp;<strong style="display: contents;">{membershipDiscount}%</strong>&nbsp;membership
+                            discount.
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_small" padding="around-small">
+
+                            <span class="price">Total price for the appointment:&nbsp;
+                            <lightning-formatted-number value={bookingResult.chargeAmount} format-style="currency" currency-code="GBP"
+                                                        class="bold"></lightning-formatted-number>
+                            </span>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item if:true={showPaymentButton}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_large">
+                            <p class="slds-align_absolute-center boldgreen">Your booking will be held for {_reservationHeldTime} minutes. Please
+                                complete
+                                payment before this time otherwise your booking will be cancelled.</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={showPaymentButton}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_large">
+                            <lightning-button
+                                    label="Continue to payment"
+                                    class="mhc-button action-button"
+                                    aria-label={productMetaData}
+                                    onclick={handleContinueToPayment}></lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={showFinishButton}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_large">
+                            <lightning-button
+                                    label="Confirm the Booking"
+                                    class="mhc-button action-button"
+                                    aria-label={productMetaData}
+                                    onclick={handleFinish}></lightning-button>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item if:true={loading}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center slds-m-top_large">
+                            <div class="spinner-holder slds-align_absolute-center">
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+
+                        <!-- todo if payment free -->
+
+                    </lightning-layout>
+
+
+                    <div if:true={step.postChoice}>
+                        <br/>
+
+                    </div>
+
+                    <template if:false={direct}>
+                        <div class="mhc-button modal-footer">
+                            <button if:false={step.booking} type="button" class="slds-button" onclick={handleClose}>
+                                Close
+                            </button>
+                        </div>
+                    </template>
+
+                </template> <!-- end if data ready -->
+
+                <template if:false={dataReady}>
+                    <div class="spinner-holder slds-align_absolute-center">
+                        <p class="slds-align_absolute-center">Please be patient while we look for availability&mldr;</p>
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div if:false={hideBackdrop} class="slds-backdrop slds-backdrop_open"></div>
+</template>

@@ -1,0 +1,142 @@
+<!--
+ - Created 18.11.2021..
+ -->
+
+<apex:page id="OnlQRResubmission"
+           controller="OnlOTPGenerator"
+           applyBodyTag="false"
+           showHeader="false"
+>
+
+    <head>
+
+        <apex:includeScript value="{!$Resource.jquery360}"/>
+        <apex:includeScript value="{!$Resource.jqueryQrCode}"/>
+
+        <style>
+
+
+            .print-only {
+                display: none;
+            }
+
+
+            @media print {
+                html, body {
+                    width: 210mm;
+                    height: 297mm;
+                    max-height: 297mm;
+                }
+
+                @page {
+                    margin: 0;
+                }
+
+                .page {
+                    margin: 0;
+                    border: initial;
+                    border-radius: initial;
+                    width: initial;
+                    min-height: initial;
+                    box-shadow: initial;
+                    background: initial;
+                    page-break-after: always;
+                }
+
+                body {
+
+                }
+
+                .print-only {
+                    display: block;
+                }
+
+                .print-only.cell {
+                    display: inline-block !important;
+                }
+
+                .no-print {
+                    display: none;
+                }
+
+            }
+
+
+            body {
+                text-align: center;
+            }
+
+            .qrcode canvas {
+                width: 14vw;
+                height: 14vw;
+            }
+
+            button, .btn {
+                font-size: 2em !important;
+            }
+        </style>
+
+    </head>
+    <body>
+
+
+    <apex:pageMessages />
+
+    <script>
+        function printOnComplete() {
+            console.log('opening window.print ..');
+            window.print();
+            console.log('after window.print ..');
+        }
+
+        function fillQr(qurl, otp) {
+            let tekst = qurl + otp;
+            let divid = '#qrcodeCanvas' + otp;
+
+            jQuery(divid).qrcode({
+                text: tekst
+            });
+        }
+
+    </script>
+
+    <br/>
+    <br/>
+    <br/>
+
+
+        <apex:form id="trget">
+
+            <span class="no-print">
+                <apex:commandButton status="busy" value=" New print " action="{!generateOTP}" reRender="trget" oncomplete="printOnComplete();"/>
+            </span>
+
+            <apex:repeat value="{!otps}" var="otp">
+
+                <div class="print-only cell" style="width:99mm;height:56mm;">
+
+                    <p class="print-only" style="font-size: 1vh">
+                        Scan the following code to submit your test result:
+                    </p>
+                    <div id="qrcodeCanvas{!otp}" class="qrcode print-only"></div>
+
+                    <p class="print-only" style="font-size: 1vh">
+                        Or visit
+                        <br/>{!resulturl}
+                        <br/>and enter your PIN: <strong>{!otp}</strong>
+                    </p>
+
+                    <script>
+                        fillQr('{!qrcodeurl}', '{!otp}');
+                    </script>
+                </div>
+
+            </apex:repeat>
+
+
+        </apex:form>
+
+
+    </body>
+
+</apex:page>

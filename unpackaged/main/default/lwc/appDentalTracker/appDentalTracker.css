@@ -1,0 +1,45 @@
+/**
+ * Created by Matija on 14.11.2023..
+ */
+.date {
+    font-weight: 500;
+    background-color: #6375a1;
+    padding: 6px;
+    border-radius: 4px;
+    color: #FFF;
+}
+
+.table .name {
+    font-weight: 500;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    line-height: 8px;
+    display: block;
+}
+
+table {
+    border: 1px solid lightgray;
+    border-collapse: collapse;
+}
+
+table tr td,
+table tr th {
+    padding: 4px;
+    border: 1px solid lightgray;
+}
+
+table tr th {
+    background-color: #e8e8e8;
+}
+
+.title {
+    border-radius: 0.25rem;
+    border: 1px solid rgb(201, 201, 201);
+    background-color: #f3f3f3;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+}

@@ -1,0 +1,172 @@
+<!--
+ - Created by Matija on 5.2.2024..
+ -->
+
+<!-- Onl Randox Landing -->
+<template>
+
+    <template if:false={productsShown}>
+        <div class="slds-align_absolute-center width-limited mhc2">
+
+            <lightning-layout
+                    multiple-rows="true"
+                    horizontal-align="start"
+                    class="slds-p-top_medium field-width-limit no-margin-button-form randox randox-landing">
+
+                <lightning-layout-item
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium"
+                        class="slds-align_absolute-center">
+                    <img alt="Randox Laboratories" width="220"
+                         data-src="http://www.randox.com/wp-content/uploads/2015/12/logo-header.png"
+                         src="http://www.randox.com/wp-content/uploads/2015/12/logo-header.png">
+                </lightning-layout-item>
+
+                <lightning-layout-item
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium"
+                        class="slds-text-align_center">
+                    To proceed to our Randox booking portal, please have your Randox Patient ID <strong>(PID)</strong> with you.
+                </lightning-layout-item>
+                <lightning-layout-item
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium"
+                        class="slds-text-align_center">
+                    Your Randox PID can be found in the Randox results file you received, at the top of your personal details.
+                </lightning-layout-item>
+                <lightning-layout-item
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium"
+                        class="slds-text-align_center">
+                    Kindly ensure that your results are readily accessible, as they will be required for uploading during the appointment
+                    confirmation
+                    process.
+                </lightning-layout-item>
+
+                <lightning-layout-item
+                        if:false={loading}
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+                    <div class="randox-field">
+                    <lightning-input type="text"
+                                     label="Randox PID"
+                                     placeholder="XXXXXX"
+                                     data-formfield="randoxId"
+                                     max-length=7
+                                     value={randoxPatientId}
+                                     class="slds-align_absolute-center max-150"
+                                     required
+                    ></lightning-input>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item
+                        if:true={noAccess}
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+                    <div if:false={loading} class="error">
+                        Unfortunately, we do not recognise the Randox Patient ID you provided. If you believe this is an error, please contact us
+                        at
+                        &nbsp;<strong>+XXXXXXXXX</strong>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item
+                        if:false={loading}
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+                    <lightning-button
+                            label="Proceed"
+                            class="mhc-button primary-button slds-align_absolute-center no-margin"
+                            onclick={handleRandoxProceed}>
+                    </lightning-button>
+                </lightning-layout-item>
+
+                <lightning-layout-item
+                        if:true={loading}
+                        size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+                    <div class="spinner-holder slds-align_absolute-center">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </template>
+
+    <template if:true={productsShown}>
+
+        <div class="background-as-color">
+
+            <div class="slds-align_absolute-center width-limited">
+
+                <lightning-layout
+                        multiple-rows="true"
+                        horizontal-align="start"
+                        class="slds-p-top_medium field-width-limit no-margin-button-form mhc2 randox">
+
+                    <lightning-layout-item
+                            size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium"
+                            class="slds-align_absolute-center">
+                        <img alt="Randox Laboratories" width="220"
+                             data-src="http://www.randox.com/wp-content/uploads/2015/12/logo-header.png"
+                             src="http://www.randox.com/wp-content/uploads/2015/12/logo-header.png">
+                    </lightning-layout-item>
+
+                    <lightning-layout-item
+                            size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+
+                        <div class="policy-note">Bookings are subject to our <a
+                                href="https://myhealthcareclinic.com/wp-content/uploads/MHC-Booking-Policy-Updated-April-2023.pdf"
+                                target="_blank">Booking
+                            Policy</a>. If you need assistance in selecting the right type of appointment, please call our Patient Support Department
+                            on
+                            &nbsp;<a
+                                    href="tel:02070995555">0207&nbsp;099&nbsp;5555</a></div>
+
+                        <!-- TODO show products applicable for the given voucher ({selectedRandoxVoucherTag}) -->
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                            <lightning-layout-item
+                                    size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                    class="filter-results covid">
+
+                                <div if:true={loadingProducts} class="spinner-holder searching slds-align_absolute-center">
+                                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                </div>
+
+                                <template if:false={loadingProducts}>
+
+                                    <lightning-layout if:false={noResults}
+                                                      multiple-rows="true" horizontal-align="start" vertical-align="stretch">
+
+                                        <!-- RESULT ITERATION -->
+
+                                        <template for:each={foundProducts} for:item="prod">
+
+                                            <lightning-layout-item key={prod.Id}
+                                                                   size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                                   class="test-result-wrapper">
+                                                <c-onl2-app-product-result-row
+                                                        product={prod}
+                                                        onbook={handleBook}
+                                                        branding="randox"
+                                                        onofferupsell={handleOfferUpsell}
+                                                        store-config={storeConfig}
+                                                        default-personal-details={defaultPersonalDetails}
+                                                        dev={dev}
+                                                >
+                                                </c-onl2-app-product-result-row>
+
+                                            </lightning-layout-item>
+                                        </template>
+
+
+                                    </lightning-layout>
+
+                                </template>
+
+
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </div>
+    </template>
+
+</template>

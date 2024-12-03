@@ -1,0 +1,117 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl Product Row -->
+<template>
+    <div if:true={product}>
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="box product-row">
+
+            <lightning-layout-item size=12 small-device-size=10 medium-device-size=10 large-device-size=10 class="product-details-cell">
+                <div class="product-name">{product.Name}</div>
+                <div if:true={product.Description} class="product-description">{product.Description}</div>
+                <div if:true={product.Turnaround_Time_Global__c} class="product-turnaround">Turnaround time: {product.Turnaround_Time_Global__c}</div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=2 medium-device-size=2 large-device-size=2 class="product-price-cell">
+                <lightning-formatted-number value={product.Non_Membership_Price__c} format-style="currency" currency-code="GBP"
+                                            class="product-price"></lightning-formatted-number>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={locations}
+                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="product-availability-container">
+
+                <lightning-layout
+                        multiple-rows="true"
+                        vertical-align="start">
+
+                    <template if:true={locations} for:each={locations} for:item="location">
+                        <lightning-layout-item
+                                key={location.name}
+                                class="product-availability"
+                                size=12 small-device-size=12 medium-device-size=6 large-device-size=6>
+                            <span class="location-name">{location.name}</span>
+                            <span if:true={location.red} class="datetime noslot">&nbsp;-&nbsp;{location.formattedFirstAvailable}</span>
+                        </lightning-layout-item>
+                    </template>
+
+                    <lightning-layout-item if:false={isBundle} size=12 small-device-size=12 medium-device-size=12 large-device-size=6>
+
+                        <lightning-layout multiple-rows="true" vertical-align="start" class="slds-is-relative add-buttons">
+                            <template for:each={product.Default_COVID_Tests__r.records} for:item="test">
+
+                                <lightning-layout-item key={test.Id}
+                                                       size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12
+                                                       class="add-to-basket-cell">
+                                    <span class="quantity-label">Quantity:</span>
+                                    <select class="select-css quantity" onchange={handleChangePicklistQuantity}>
+                                        <template for:each={quantities} for:item="num">
+                                            <option value={num} key={num}>{num}</option>
+                                        </template>
+                                    </select>
+                                    <lightning-button label="Schedule now" class="mhc-button primary-button" data-testid={test.Id}
+                                                      onclick={handleSchedule}></lightning-button>
+                                </lightning-layout-item>
+                            </template>
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+
+                    <!-- IS BUNDLE LAYOUT -->
+                    <lightning-layout-item if:true={isBundle} size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+
+                        <lightning-layout multiple-rows="true" vertical-align="start" class="slds-is-relative add-buttons">
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                   large-device-size=12 class="bundled-quantity-cell">
+                                <span class="quantity-label">Quantity:</span>
+                                <select class="select-css quantity" onchange={handleChangePicklistQuantity}>
+                                    <template for:each={quantities} for:item="num">
+                                        <option value={num} key={num}>{num}</option>
+                                    </template>
+                                </select>
+                            </lightning-layout-item>
+
+                            <template for:each={product.Default_COVID_Tests__r.records} for:item="test">
+                                <lightning-layout-item key={test.Id}
+                                                       size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                       class="bundled-test-line">
+
+                                    <lightning-layout multiple-rows="true" vertical-align="start" >
+
+                                        <lightning-layout-item key={test.Id}
+                                                               size=12 small-device-size=12 medium-device-size=6
+                                                               large-device-size=6 class="subtest-cell">
+                                            {test.COVID_Test_Type__c}, {test.Turnaround_Time__c}
+                                        </lightning-layout-item>
+                                        <lightning-layout-item key={test.Id}
+                                                               size=12 small-device-size=12 medium-device-size=6
+                                                               large-device-size=6
+                                                               class="add-to-basket-cell">
+                                            <lightning-button label="Schedule now" class="mhc-button primary-button" data-testid={test.Id}
+                                                              onclick={handleSchedule}></lightning-button>
+                                        </lightning-layout-item>
+
+                                    </lightning-layout>
+
+                                </lightning-layout-item>
+
+
+                            </template>
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+
+
+                </lightning-layout>
+
+            </lightning-layout-item>
+
+
+        </lightning-layout>
+
+    </div>
+
+
+</template>

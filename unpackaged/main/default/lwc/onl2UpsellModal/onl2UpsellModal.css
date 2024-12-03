@@ -1,0 +1,132 @@
+/**
+ * Created 11.3.2021..
+ */
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    margin: 10px auto 12px;
+    text-align: center;
+}
+
+.slds-modal__content {
+    padding: 26px;
+    padding-top: 0;
+}
+
+p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.box {
+    margin-bottom: 0;
+    padding: 4px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+}
+
+.box.brand.upsell {
+    border: none;
+    background-color: var(--c-color-appointment);
+    color: #fff;
+    font-weight: 300;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+.upsell-option-wrapper .description {
+    text-align: justify;
+}
+
+.is-upsell {
+    background-color: #f1fff0;
+}
+
+.choice-title {
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+
+.spinner-holder {
+    margin-top: 1rem;
+    height: 200px;
+    margin-bottom: 1rem;
+}
+
+.loading-divider {
+    border-bottom: 1px solid #d8d8d8;
+    padding-bottom: 22px;
+    margin-bottom: 10px;
+}
+
+.wide-as-possible {
+    min-width: unset !important;
+    width: 90%
+}
+
+.no-slots-text {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.slds-modal__close {
+    top: 5px !important;
+    right: 14px !important;
+}
+
+.slds-modal__header {
+    border-bottom: none;
+    box-shadow: 0px 1px 3px 0px #c1c1c1;
+    z-index: 5000;
+    padding: 8px;
+}
+
+.slds-modal__header h2 {
+    font-size: 18px;
+    margin-top: 6px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.slots-column-small .date-long {
+    box-shadow: var(--c-color-covid) 0px 2px 0px 0px;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.font80 {
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.upsell-option-wrapper {
+    margin-bottom: 16px;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .availability {
+        grid-column: 1 !important;
+        justify-self: start;
+    }
+
+    .wide-as-possible {
+        min-width: unset !important;
+        width: 100%;
+        padding: 0px;
+    }
+
+
+    .no-slots-text {
+        font-weight: 400;
+    }
+
+
+}

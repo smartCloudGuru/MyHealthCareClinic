@@ -1,0 +1,69 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Appointment To Schedule Row -->
+<template>
+
+    <div class="width-limited">
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="box single-test-row">
+
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="test-details-cell">
+                <div class="product-name">{title}</div>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={app.Allows_Scheduling__c} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                   class="slds-text-align_right details">
+                <lightning-button if:false={alreadyScheduled} icon-name="utility:event" label="Schedule" class="mhc-button primary-button"
+                                  onclick={openScheduleModal}></lightning-button>
+                <lightning-button if:true={alreadyScheduled} icon-name="utility:event" label="Reschedule" class="mhc-button schedule-button"
+                                  onclick={openScheduleModal}></lightning-button>
+            </lightning-layout-item>
+
+
+            <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="appointment">
+                <div class="datetime">Scheduled for {scheduledStartFormatted}</div>
+                <div if:true={isClosedWon} class="calendars">
+                    Add to calendar:
+                    <a class="cal-link" target="_blank" href={calHref.google}>Google</a>
+                    <a class="cal-link" target="_blank" href={calHref.ical}>iCal</a>
+                    <a class="cal-link" target="_blank" href={calHref.yahoo}>Yahoo</a>
+                    <a class="cal-link" target="_blank" href={calHref.outlook}>Outlook</a></div>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="details">
+                <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" class="ico" size="small"></lightning-icon>
+                <c-onl-location service-territory={app.ServiceTerritory} class="location"
+                                dont-show-distance></c-onl-location>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:false={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="details not-yet-scheduled">
+                Not yet scheduled
+            </lightning-layout-item>
+
+        </lightning-layout>
+    </div>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenScheduleModal}>
+        <c-onl2-res-schedule-modal
+                onclose={closeScheduleModal}
+                onbooked={handleBooked}
+                test={app}
+                reschedule={alreadyScheduled}
+                default-location={defaultLocation}></c-onl2-res-schedule-modal>
+    </template>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenEditModal}>
+        <c-onl-edit-modal
+                onclose={closeEditModal}
+                onupdated={handleUpdated}
+                test={app}
+        ></c-onl-edit-modal>
+    </template>
+
+</template>

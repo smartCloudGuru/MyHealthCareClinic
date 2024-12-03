@@ -1,0 +1,44 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Basket Item -->
+<template>
+    <div class="basket-item">
+        <div class="quantity-and-name">
+            <span if:true={itemIsProduct}>
+                <span class={typeClass}>&nbsp;</span>
+                {item.quantity}x&nbsp;{itemName}
+            </span>
+            <span if:true={itemIsCoupon}>
+                COUPON: {itemName}
+            </span>
+        </div>
+
+        <div if:false={inEdit} class="edit-options">
+            <a href="javascript:" onclick={handleQuantityPlus}>+1</a>
+            <a href="javascript:" onclick={handleQuantityMinus}>-1</a>
+            <a href="javascript:" onclick={handleRemove}>remove</a>
+        </div>
+
+        <div if:true={inRemove} class="edit-options">
+            <span class="newline-on-small-factor">Are you sure?&nbsp;&nbsp;</span>
+            <a href="javascript:" onclick={handleRemoveYes}>yes, remove</a>
+            &nbsp;&nbsp;
+            <a href="javascript:" onclick={handleRemoveCancel}>cancel</a>
+        </div>
+
+        <!--        <div if:true={inChange} class="edit-options">-->
+        <!--            New quantity: XX-->
+        <!--        </div>-->
+
+        <lightning-formatted-number if:true={itemIsProduct} value={item.totalPrice} format-style="currency" currency-code="GBP" class="price">
+        </lightning-formatted-number>
+
+        <div if:true={itemIsCoupon} class="price">
+            Coupon value will be applied at the next step
+        </div>
+
+
+    </div>
+</template>

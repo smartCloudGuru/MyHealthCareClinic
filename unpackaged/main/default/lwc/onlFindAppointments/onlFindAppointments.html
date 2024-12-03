@@ -1,0 +1,119 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl Add To Basket -->
+<template>
+
+<!--    <lightning-layout if:true={smallFactorAndNavigationShown} multiple-rows="false" horizontal-align="spread" class="width-limited mhc-margin-bottom">-->
+
+<!--        <lightning-layout-item class="width50pc slds-text-align_left">-->
+<!--            <lightning-button if:true={searchDone}-->
+<!--                              label="Back"-->
+<!--                              icon-name="utility:chevronleft"-->
+<!--                              class="mhc-button back-button no-margin"-->
+<!--                              onclick={handleBackToSearch}></lightning-button>-->
+
+<!--        </lightning-layout-item>-->
+
+<!--        <lightning-layout-item if:true={hasTestsInBasket}-->
+<!--                               class="width50pc slds-text-align_right">-->
+<!--            <lightning-button label="Continue"-->
+<!--                              class="mhc-button action-button no-margin"-->
+<!--                              onclick={handleContinueToBooking}>-->
+<!--            </lightning-button>-->
+<!--        </lightning-layout-item>-->
+
+<!--    </lightning-layout>-->
+
+
+    <div class="row-wrap" if:false={hideForSmallFF}>
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="width-limited">
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                <lightning-input label="Postal code"
+                                 data-formfield="postalcode"
+                                 placeholder=""
+                                 required
+                                 value={_defaults.postalcode}>
+                </lightning-input>
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                <lightning-combobox label="Within"
+                                    data-formfield="distance"
+                                    placeholder="Please select…"
+                                    options={distanceOptions}
+                                    required
+                                    value={_defaults.distance}>
+                </lightning-combobox>
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                <lightning-combobox label="Test Type"
+                                    data-formfield="type"
+                                    placeholder="Please select…"
+                                    options={typeOptions}
+                                    required
+                                    value={_defaults.type}>
+                </lightning-combobox>
+            </lightning-layout-item>
+
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                   class="slds-text-align_right">
+                <lightning-button label="Search"
+                                  class="mhc-button form-button small-top-margin"
+                                  onclick={doSearch}></lightning-button>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+
+
+    <lightning-layout multiple-rows="true" horizontal-align="start">
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                               class="filter-results">
+
+            <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+
+            <template if:false={loading}>
+
+                <template if:true={noResults}>
+                    <div class="width-limited">
+                        <span class="no-results">No tests found for your query.</span>
+                    </div>
+                </template>
+
+                <!-- PRODUCT ITERATION -->
+                <template if:false={noResults} for:each={foundProducts} for:item="product">
+                    <c-onl-product-row onadd={doAddToBasket} key={product.product.Id} product={product.product}
+                                       locations={product.locations}></c-onl-product-row>
+
+                </template>
+            </template>
+
+        </lightning-layout-item>
+
+        <!--        <lightning-layout-item-->
+        <!--                size=12-->
+        <!--                small-device-size=12-->
+        <!--                medium-device-size=12-->
+        <!--                large-device-size=12-->
+        <!--                padding="around-small"-->
+        <!--                class="width-limited slds-text-align_right">-->
+        <!--            <lightning-button-->
+        <!--                    if:true={hasTestsInBasket}-->
+        <!--                    label="Continue"-->
+        <!--                    class="mhc-button action-button"-->
+        <!--                    onclick={handleContinueToBooking}>-->
+        <!--            </lightning-button>-->
+        <!--        </lightning-layout-item>-->
+
+    </lightning-layout>
+
+
+
+</template>

@@ -1,0 +1,57 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Test To Schedule Row -->
+<template>
+
+    <lightning-layout multiple-rows="true" horizontal-align="start" class="box product-row">
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+            <lightning-layout>
+                <lightning-layout-item>
+                    <div class="product-name">{name}</div>
+                </lightning-layout-item>
+
+<!--                <lightning-layout-item if:true={isSchedulableAndScheduled}>-->
+<!--                    <div class="schedule_and_persona">todo</div>-->
+<!--                </lightning-layout-item>-->
+<!--                <lightning-layout-item if:true={isSchedulableAndNotScheduled}>-->
+<!--                    <div class="schedule_and_persona">todo if not scheduled</div>-->
+<!--                </lightning-layout-item>-->
+
+                <lightning-layout-item alignment-bump="left">
+                        <span if:false={isDiscount}>
+                            <span class="priceitem product-quantity">{item.Quantity}x</span>
+                            &nbsp;
+                            <lightning-formatted-number value={unitAmount} format-style="currency" currency-code="GBP">
+                            </lightning-formatted-number>
+                        </span>
+                </lightning-layout-item>
+
+                <lightning-layout-item>
+                    <div class="priceitem product-totalprice">
+                        <lightning-formatted-number value={totalAmount} format-style="currency" currency-code="GBP">
+                        </lightning-formatted-number>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+
+        </lightning-layout-item>
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+            <div if:false={inEdit} class="edit-options">
+                <a href="javascript:" onclick={handleRemove}>remove</a>
+            </div>
+
+            <div if:true={inRemove} class="edit-options">
+                <span class="newline-on-small-factor">Are you sure?&nbsp;&nbsp;</span>
+                <a href="javascript:" onclick={handleRemoveYes}>yes, remove from basket</a>
+                &nbsp;&nbsp;
+                <a href="javascript:" onclick={handleRemoveCancel}>cancel</a>
+            </div>
+        </lightning-layout-item>
+
+    </lightning-layout>
+
+</template>

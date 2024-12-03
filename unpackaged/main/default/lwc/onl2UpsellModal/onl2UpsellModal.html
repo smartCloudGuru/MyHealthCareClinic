@@ -1,0 +1,104 @@
+<!--
+ - Created 10.5.2023..
+ -->
+
+<!-- Onl 2 Upsell Modal (used when a product has upsell options) -->
+<template>
+    <template if:true={dataReady}>
+        <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open">
+
+            <div class="slds-modal__container wide-as-possible">
+
+                <header class="slds-modal__header">
+
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Close"
+                                           title="Close"
+                                           onclick={handleClose}
+                                           class="mhc-button slds-modal__close">
+                    </lightning-button-icon>
+
+                    <h2>Additional Options Available</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                    <div class="box brand upsell slds-p-around_medium slds-m-top_medium">The treatment you selected is available in several
+                        variants.<br/>Please consider additional options we offer:
+                    </div>
+
+                    <lightning-layout
+                            multiple-rows="true"
+                            horizontal-align="start"
+                    >
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                class="box upsell-option-wrapper is-base"
+                                padding="around-small">
+
+                            <!--  BASE-->
+                            <lightning-layout multiple-rows="true" horizontal-align="start">
+                                <lightning-layout-item
+                                        size=12 small-device-size=12 medium-device-size=12 large-device-size=8
+                                        padding="around-small" class="description">
+                                    <div class="choice-title">{baseProductName}</div>
+                                    {baseDescription}
+                                </lightning-layout-item>
+                                <lightning-layout-item
+                                        size=12 small-device-size=12 medium-device-size=12 large-device-size=4
+                                        padding="around-small" class="slds-align_absolute-center">
+                                    <lightning-button label="Schedule this treatment" class="mhc-button primary-button secondary-button"
+                                                      onclick={handleScheduleBase}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </lightning-layout-item>
+
+                        <!--  ITERATE OVER UPGRADES-->
+                        <template if:true={upsellsData}
+                                  for:each={upsellsData} for:item="uprod">
+
+                            <lightning-layout-item
+                                    size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                    class="box upsell-option-wrapper is-upsell"
+                                    padding="around-small"
+                                    key={uprod.product.id}>
+
+                                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                                    <lightning-layout-item
+                                            size=12 small-device-size=12 medium-device-size=12 large-device-size=8
+                                            padding="around-small" class="description">
+                                        <div class="choice-title">{uprod.product.Name}</div>
+                                        {uprod.product.Store_Upsell_Description__c}
+                                    </lightning-layout-item>
+
+                                    <lightning-layout-item
+                                            size=12 small-device-size=12 medium-device-size=12 large-device-size=4
+                                            padding="around-small" class="slds-align_absolute-center">
+                                        <span data-pid={uprod.product.Id}>
+                                            <lightning-button label="Schedule upgraded treatment" class="mhc-button primary-button secondary-button"
+                                                              data-pid={uprod.product.Id}
+                                                              onclick={handleScheduleUpgrade}
+                                            >
+                                            </lightning-button>
+                                        </span>
+                                    </lightning-layout-item>
+
+                                </lightning-layout>
+                            </lightning-layout-item>
+                        </template>
+
+
+                    </lightning-layout>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

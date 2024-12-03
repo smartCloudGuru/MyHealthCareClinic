@@ -1,0 +1,342 @@
+<!--
+ - Created 21.3.2022..
+ -->
+
+<!-- Onl 2 Book UI -->
+<template>
+
+    <!-- INITIAL SCREEN -->
+    <template if:true={showInitialScreen}>
+        <p class="min-height">
+
+            <!-- 2022-09-06 patient comments added -->
+            <span class="slds-tabs_card asblock">
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item size=12 large-device-size=3 medium-device-size=4 small-device-size=12
+                                                   padding="around-small" if:true={patientTypeSelected}>
+                                <lightning-combobox label="Patient"
+                                                    data-formfield="patientType"
+                                                    placeholder=""
+                                                    options={patientTypeOptions}
+                                                    value={patientTypeSelected}
+                                                    onchange={handlePatientTypeChanged}>
+                        </lightning-combobox>
+                            </lightning-layout-item>
+
+                    <lightning-layout-item size=12 large-device-size=9 medium-device-size=8 small-device-size=12
+                                           padding="around-small">
+                                <lightning-input
+                                        type="text"
+                                        label="Reason for visit?"
+                                        data-formfield="reasonForVisit"
+                                        placeholder=""
+                                        max-length=512
+                                        onchange={handleReasonForVisitChanged}>
+                                ></lightning-input>
+                            </lightning-layout-item>
+
+                </lightning-layout>
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+<!--                    <lightning-layout-item size=12 large-device-size=3 medium-device-size=3 small-device-size=12-->
+                    <!--                                           padding="around-small" if:true={productOptions}>-->
+                    <!--                                <lightning-combobox label="Service Type"-->
+                    <!--                                                    data-formfield="serviceType"-->
+                    <!--                                                    placeholder=""-->
+                    <!--                                                    options={serviceTypeOptions}-->
+                    <!--                                                    value={serviceTypeSelected}-->
+                    <!--                                                    onchange={handleServiceTypeChanged}>-->
+                    <!--                                </lightning-combobox>-->
+                    <!--                    </lightning-layout-item>-->
+
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small" if:true={productOptions}>
+                                <c-onl2-book-lookup
+                                        label="Search the Product to Book"
+                                        onsearch={handleProductSearch}
+                                        default-results={allProductDefaultOptions}
+                                        onselectionchange={handleProductSearchChanged}>
+                                </c-onl2-book-lookup>
+                            </lightning-layout-item>
+
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small" if:true={specialInstructions}>
+                                <lightning-icon icon-name="action:priority" alternative-text="Special Instructions" variant="warning"
+                                                title="Special Instructions" size="x-small"></lightning-icon>
+                        <span class="special-instructions bold">&nbsp;&nbsp;&nbsp;{specialInstructions}</span>
+                            </lightning-layout-item>
+
+                </lightning-layout>
+            </span>
+
+            <span if:true={applicablePBE} class="slds-tabs_card asblock">
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                           padding="around-small" class="mid-text">
+                        Applicable Price: <strong>
+                        <lightning-formatted-number value={applicablePBE.UnitPrice} format-style="currency" currency-code="GBP"
+                        ></lightning-formatted-number> ({applicablePBE.Pricebook2.Name})
+                        <lightning-helptext class="help-icon"
+                                            content="This is the Price Book entry based on this Patient Type and Membership"></lightning-helptext>
+                    </strong>
+                    </lightning-layout-item>
+                   <lightning-layout-item if:true={hasDiscounts} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                          padding="around-small">
+                        <lightning-combobox label="Apply a discount code?"
+                                            data-formfield="discount"
+                                            placeholder=""
+                                            variant="label-hidden"
+                                            options={discountOptions}
+                                            value={discountSelected}
+                                            onchange={handleDiscountChanged}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:true={oomsInfo} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                           padding="around-small">
+                        <template if:true={oomsInfo.pricebookEntry}>
+                            <template if:true={oomsInfo.pricebookEntry.UnitPrice}>
+                                <span class="asblock nomarg ooms-warning">Surcharge price applies:&nbsp;
+                                    <lightning-formatted-number
+                                            value={oomsInfo.pricebookEntry.UnitPrice} format-style="currency"
+                                            currency-code="GBP"></lightning-formatted-number>
+                                    </span>
+                            </template>
+                            <template if:true={oomsInfo.nextFreeDate}>
+                                <span class="asblock nomarg ooms-warning">This patient might be charged an Out-of-Membership surcharge if they book earlier than&nbsp;
+                                    <strong><lightning-formatted-date-time value={oomsInfo.nextFreeDate} year="numeric" month="long" day="2-digit"
+                                                                           weekday="long"></lightning-formatted-date-time></strong></span>
+                            </template>
+                            <template if:false={oomsInfo.nextFreeDate}>
+                                <span class="asblock nomarg ooms-warning">This patient will be charged an Out-of-Membership surcharge as they have spent all free benefits for this appointment.</span>
+                            </template>
+                        </template>
+                            <template if:true={oomsInfo}>
+                                <span class="asblock nomarg">Free benefits used: <strong>
+                                        {oomsInfo.spentFree}</strong>
+                                    <template if:true={oomsInfo.maxFree}>
+                                        <span> out of total included in membership: <strong>{oomsInfo.maxFree}</strong></span>
+                                    </template>
+                                </span>
+                            </template>
+                            <template if:true={oomsInfo.lastBookedDate}>
+                                <span class="asblock nomarg">Last free booked appointment for this Product:&nbsp;
+                                    <strong><lightning-formatted-date-time value={oomsInfo.lastBookedDate} year="numeric" month="long" day="2-digit"
+                                                                           weekday="long"></lightning-formatted-date-time></strong>
+                                </span>
+                            </template>
+
+
+                    </lightning-layout-item>
+                    </lightning-layout>
+                    </span>
+
+            <span if:true={productSelected} class="asblock nomarg">
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                   <lightning-layout-item if:false={selectedVideoOrTelProduct} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                          padding="horizontal-small">
+                        <lightning-combobox label="Booking Location"
+                                            data-formfield="booklocation"
+                                            placeholder="Please select…"
+                                            options={locationOptions}
+                                            value={locationSelected}
+                                            onchange={handleLocationChanged}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                <lightning-layout-item if:true={selectedVideoOrTelProduct} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                       padding="horizontal-small">
+                        <lightning-combobox label="Booking Location"
+                                            data-formfield="booklocation"
+                                            placeholder="Video or telephone Product selected"
+                                            disabled>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                <!--                  <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12 padding="around-small">-->
+                <!--                        <lightning-combobox label="Preferred Practitioner"-->
+                <!--                                            data-formfield="practitioner"-->
+                <!--                                            placeholder="Please select…"-->
+                <!--                                            options={resourceFilterOptions}-->
+                <!--                                            value={filterByResource}-->
+                <!--                                            onchange={handleFilteredResourceChanged}>-->
+                <!--                        </lightning-combobox>-->
+                <!--                  </lightning-layout-item>-->
+
+
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                           padding="horizontal-small">
+                    <lightning-input
+                            type="date"
+                            name="inputDate"
+                            data-formfield="newdate"
+                            label="Booking Date"
+                            value={selectedDate}
+                            onchange={handleDateInputChange}
+                    >
+                    </lightning-input>
+
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={showResources} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small">
+                            <lightning-combobox label="Preferred Practitioner"
+                                                data-formfield="practitioner"
+                                                placeholder="Please select…"
+                                                options={resourceOptions}
+                                                value={filterByResource}
+                                                onchange={handleFilteredResourceChanged}>
+                            </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={loadingSlots} size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                <span class="slds-align_absolute-center">
+                    <span class="spinnerHolder">
+                        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                    </span>
+                </span>
+               </lightning-layout-item>
+
+                <lightning-layout-item if:false={loadingSlots} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small">
+
+
+
+                            <lightning-layout if:true={hasTimeSlots} multiple-rows="true" horizontal-align="start">
+                            <!-- ITERATE SLOTS -->
+                             <template for:each={currentSlots} for:item="slot">
+
+                                 <lightning-layout-item key={slot.label}
+                                                        size=12 small-device-size=12 medium-device-size=4
+                                                        large-device-size=2
+                                                        class="slot-wrapper">
+                                    <!--                                    <template if:true={slot.startTime}>-->
+
+                                     <span
+                                             if:false={slot.selected}
+                                             class="slot tooltip available"
+                                             onclick={handleTimeSlotSelected}
+                                             data-start={slot.startTime}
+                                             data-end={slot.endTime}
+                                             data-resources={slot.resources}
+                                             data-resource_locations={slot.resource_locations}
+                                     >
+                                        {slot.label}
+                                         <span class="tooltiptext">{slot.label} - {slot.endTimeLabel}</span>
+                                    </span>
+                                    <span
+                                            if:true={slot.selected}
+                                            class="slot tooltip available selected"
+                                            onclick={handleTimeSlotSelected}
+                                            data-start={slot.startTime}
+                                            data-end={slot.endTime}
+                                            data-resources={slot.resources}
+                                            data-resource_locations={slot.resource_locations}
+                                    >
+                                        {slot.label}
+                                        <span class="tooltiptext">{slot.label} - {slot.endTimeLabel}</span>
+                                    </span>
+
+                                     <!--                                        </template>-->
+
+                                     <!--                                    <span if:false={slot.startTime} class="slot">-->
+                                     <!--                                        {slot.label}-->
+                                     <!--                                    </span>-->
+                                    </lightning-layout-item>
+
+                            </template>
+                        </lightning-layout>
+
+                        <c-onl2_-book-find-next-slots if:false={hasTimeSlots}
+                                                      chosen-date={selectedDate}
+                                                      data-componentid='find-available-dates'
+                                                      selected-service-center-id={locationSelected}
+                                                      selected-work-type-group-id={wtgIdSelected}
+                                                      ondate={handleAvailableDateSelected}
+                        ></c-onl2_-book-find-next-slots>
+
+                </lightning-layout-item>
+
+
+
+            </lightning-layout>
+
+
+        </span>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-p-around_large">
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small" class="slds-align_absolute-center">
+                    <lightning-button if:true={readyToBook} icon-name="utility:event" label="Confirm the Booking" variant="brand"
+                                      class="mhc-button action-button no-margin"
+                                      onclick={doBook}></lightning-button>
+                    <br/>
+                </lightning-layout-item>
+            </lightning-layout>
+
+        </p>
+    </template>
+
+
+    <template if:true={showWaitScreen}>
+        <div class="slds-tabs_card asblock slds-align_absolute-center">
+            <div class="spinnerHolder">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+            <div class="spinnerText">
+                Please wait while the booking is being created …
+            </div>
+        </div>
+    </template>
+
+    <template if:true={showResultScreen}>
+        <div if:false={noPaymentDone} class="slds-tabs_card asblock slds-align_absolute-center">
+            <lightning-record-view-form object-api-name="ServiceAppointment" record-id={appointmentId}>
+                <lightning-layout multiple-rows="false" horizontal-align="start">
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                        <strong>Booked an Appointment:<br/><br/></strong>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                        <lightning-output-field field-name="Treatment__c"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12>
+                        <lightning-output-field field-name="ParentRecordId"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="ServiceTerritoryId"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="WorkTypeId"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="SchedStartTime"></lightning-output-field>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                        <lightning-output-field field-name="SchedEndTime"></lightning-output-field>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-record-view-form>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item if:true={noChargeFinalScreen} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small" class="slds-align_absolute-center green bold">
+                    This Appointment is FREE (no payment needed)
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-small" class="slds-align_absolute-center">
+                    <lightning-button label="View Opportunity" variant="brand" class="mhc-button action-button no-margin"
+                                      onclick={goToOpportunity}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+
+        </div>
+
+        <div if:true={noPaymentDone} class="slds-tabs_card asblock slds-align_absolute-center">
+            No payment done
+        </div>
+    </template>
+
+
+</template>

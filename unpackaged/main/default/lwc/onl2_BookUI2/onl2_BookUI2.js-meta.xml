@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>58.0</apiVersion>
+    <description>Onl 2 Book UI</description>
+    <isExposed>true</isExposed>
+    <masterLabel>Onl 2 Book UI</masterLabel>
+    <targets>
+        <target>lightning__RecordAction</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordAction">
+            <actionType>ScreenAction</actionType>
+        </targetConfig>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" label="Record Id" type="String"/>
+            <property name="patientTypeSelected" label="Patient Type Selected" type="String" role="outputOnly"/>
+            <property name="reasonForVisit" label="Reason For Visit" type="String" role="outputOnly"/>
+            <property name="finalScreen" label="True for overview" type="Boolean" role="inputOnly"/>
+            <property name="paidByPos" label="True for POS bypass" type="Boolean" role="inputOnly"/>
+            <property name="noChargeFinalScreen" label="True for overview with 0 amount" type="Boolean" role="inputOnly"/>
+            <property name="chargeAmount" label="Charge Amount" type="String" role="outputOnly"/>
+            <property name="chargeDescription" label="Charge Description" type="String" role="outputOnly"/>
+            <property name="opportunityId" label="Existing Opportunity Id" type="String"/>
+            <property name="productId" label="Product Id" type="String"/>
+            <property name="quoteId" label="Quote Id" type="String"/>
+            <property name="appointmentId" label="Appointment Id" type="String"/>
+            <property name="step" label="Step" type="String" role="outputOnly"/>
+            <property name="transactionID" label="TransactionId from payment screen" type="String" role="inputOnly"/>
+            <property name="paymentMethodId" label="PaymentMethodId fprom payment screen" type="String" role="inputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

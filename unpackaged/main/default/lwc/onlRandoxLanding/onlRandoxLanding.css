@@ -1,0 +1,416 @@
+/**
+ * Created by Matija on 5.2.2024..
+ */
+
+.max-150 {
+    max-width: 180px;
+}
+
+.randox-landing {
+    max-width: 500px;
+}
+
+.randox-field {
+    padding: 18px;
+}
+
+.error {
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+
+.policy-note {
+    background-color: white;
+    padding: 9px;
+    font-size: 84%;
+    margin-right: 10px;
+    margin-left: 11px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #0874bb;
+    text-align: justify;
+}
+
+.policy-note a {
+    font-weight: 400;
+}
+
+
+.test-result-wrapper {
+    padding: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.background-as-color {
+    background-color: var(--c-color-background-header);
+}
+
+@media only screen and (max-width: 600px) {
+    .test-result-wrapper {
+        padding: 0;
+    }
+
+    .policy-note {
+        margin: 16px 0;
+    }
+
+
+}
+
+@media only screen and (max-width: 374px) {
+
+    .policy-note {
+        margin: 16px 0;
+    }
+
+}
+
+@media only screen and (max-width: 767px) {
+
+    .THIS [hide-on-small],
+    .THIS .hide-on-small {
+        display: none;
+    }
+
+    .THIS [show-on-small],
+    .THIS .show-on-small {
+        display: none;
+    }
+
+    .THIS.header1 {
+        float: right;
+    }
+
+    .THIS.header2 {
+        height: 74px;
+    }
+
+    .THIS img.logo {
+        width: 140px;
+        margin: 0;
+        margin-top: 6px;
+    }
+
+    .THIS .menu-layout-item {
+        padding: 12px !important;
+    }
+
+    .THIS h3 {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .THIS .menu-layout-item h3 {
+        font-size: 14px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .THIS .menu_holder .menuOption {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+
+    .THIS .row-wrap {
+        margin-top: 0;
+        margin-bottom: 12px;
+        padding: 0px;
+        padding-top: 24px;
+        padding-bottom: 16px;
+    }
+
+    .THIS .find-lists .row-wrap {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .THIS .find-lists [data-selected="product"] .row-wrap {
+        padding: 0;
+        max-height: 10px;
+    }
+
+    .THIS .find-lists .row-wrap .slds-p-around_small {
+        padding-top: 8px;
+    }
+
+    .THIS .add-to-basket-cell .quantity {
+        width: 4rem;
+    }
+
+    .THIS p {
+        margin-bottom: 16px;
+    }
+
+    .THIS .mhc-margin-bottom {
+        margin-bottom: 16px;
+    }
+
+    .THIS .width-limited {
+        padding-left: 12px !important;
+        padding-right: 12px !important;;
+    }
+
+    .THIS .slds-modal__content .width-limited {
+        padding-left: 0px !important;
+        padding-right: 0px !important;;
+    }
+
+    .THIS .slds-modal__content.slds-p-around_medium {
+        padding-left: 16px !important;
+        padding-right: 16px !important;;
+    }
+
+    .THIS .header {
+        padding-bottom: 10px;
+        padding-top: 10px;
+        /*min-height: 64px;*/
+        text-align: center !important;
+    }
+
+    .THIS .header button.slds-button {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+    }
+
+    .THIS c-onl-test-to-schedule-row .box {
+        margin-left: 0 !important;
+    }
+
+    .THIS .product-availability {
+        padding: 0.5rem !important;
+    }
+
+    .THIS .box button.slds-button
+    .THIS .row-wrap button.slds-button {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .THIS .button-row {
+        text-align: center;
+    }
+
+    .THIS span.newline-on-small-factor {
+        display: block;
+    }
+
+
+    .THIS .form-button.small-top-margin button.slds-button {
+        margin-top: 0px;
+    }
+
+    .THIS .location-list .location .name,
+    .THIS .location-list .location .availability,
+    .THIS .location-list .location .address,
+    .THIS .location-list .location .select-button {
+        grid-column: 1 / span 2;
+    }
+
+    .THIS .location-list .location .availability {
+        justify-self: start;
+    }
+
+    .THIS .location-list .location .address {
+        min-height: 0px;
+    }
+
+    .THIS .location-list .location .name,
+    .THIS .location-list .location .availability,
+    .THIS .location-list .location .address,
+    .THIS .location-list .location .select-button {
+        padding: 0;
+        padding-bottom: 4px;
+    }
+
+    .THIS .timeslots .slot-wrapper,
+    .THIS .timeslots .slot {
+        padding: 8px;
+    }
+
+    .THIS .slds-modal__container {
+        margin: 0;
+        padding: 8px;
+    }
+
+    .THIS .spinner-holder {
+        height: 180px;
+        margin-top: 3rem;
+    }
+
+    .THIS .product-row,
+    .THIS .test-row {
+        margin-bottom: 16px;
+    }
+
+    .THIS .edit-options {
+        float: unset !important;
+        padding-bottom: 6px !important;
+    }
+
+    .THIS .edit-options a:after {
+        content: '';
+    }
+
+    .THIS .edit-options a:before {
+        content: '';
+    }
+
+    .THIS .edit-options a {
+        margin-top: 8px;
+        color: var(--c-color-main);
+        border: 1px solid var(--c-color-main);
+        background-color: #fff;
+        border-radius: 45px;
+        height: 37px;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 18px;
+        transition: all .2s linear;
+        display: inline-block;
+        padding: 7px;
+        padding-left: 1.6rem;
+        padding-right: 1.6rem;
+        text-decoration: none;
+    }
+
+    .THIS h2:not(lightning-calendar h2) {
+        margin-top: 14px;
+        margin-bottom: 6px;
+    }
+
+    .THIS .box.search {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-left: 4px;
+        padding-right: 4px;
+        text-align: center;
+    }
+
+    .THIS .personal-details-wrapper {
+        padding-left: 0 !important;
+    }
+
+    .THIS box.product.search {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .THIS .filter-results {
+        padding: 0px !important;
+    }
+
+    .THIS .order-overview {
+        padding-left: 4px !important;
+        padding-right: 4px !important;;
+    }
+
+    .THIS lightning-combobox.category-dropdown {
+        padding-top: 0;
+        width: 100%;
+    }
+
+    .THIS .padding-min-on-mobile {
+        padding: 0.5rem;
+    }
+
+    .THIS .box.search .biglabel {
+        line-height: 12px;
+        top: 0px;
+        font-size: 20px;
+    }
+
+
+}
+
+@media only screen and (max-width: 600px) {
+
+
+    .THIS .box.brand .slds-form-element__label {
+        font-weight: 400;
+    }
+
+    .THIS .box.brand .slds-form-element__label {
+        padding-top: 0;
+    }
+
+    .THIS .login-modal .slds-p-around_small {
+        padding: 1px;
+    }
+}
+
+
+@media only screen and (max-width: 374px) {
+    .THIS a.contact-tel {
+        padding: 12px 8px !important;
+        min-width: 142px !important;
+    }
+
+    .THIS .test-result-wrapper {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .THIS .width-limited {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    .THIS .width-limited h3 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        text-align: center;
+        font-size: 20px !important;
+    }
+
+    .THIS h4 {
+        font-size: 20px !important;
+        margin-bottom: 6px !important;
+        text-align: center;
+    }
+
+    .THIS .outlined-box {
+        padding: 8px !important;
+    }
+
+    .THIS .slds-radio .slds-form-element__label {
+        font-size: 14px !important;
+        line-height: 22px !important;
+        white-space: pre-wrap;
+    }
+
+    .THIS lightning-radio-group.delivery_options .slds-form-element__control {
+        padding-left: 2px !important;
+    }
+
+    .THIS lightning-radio-group.delivery_options .slds-form-element__legend {
+        padding-left: 2px !important;
+    }
+
+    .THIS span.slds-radio {
+        margin-bottom: 12px !important;
+        height: 20px !important;
+    }
+
+    .THIS .product-row {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+    .THIS .row-wrap.over {
+        margin-bottom: 10px !important;
+    }
+
+    .THIS .row-wrap.subheader {
+        padding-top: 18px !important;
+        padding-bottom: 0px !important;
+        min-height: 64px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .THIS .order-overview.product {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+}

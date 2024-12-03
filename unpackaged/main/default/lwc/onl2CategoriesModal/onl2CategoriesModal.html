@@ -1,0 +1,99 @@
+<!--
+ - Created by Matija on 22.10.2024..
+ -->
+
+<!-- Onl 2 Categories Modal -->
+<template>
+
+    <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open" onclick={handleClose}>
+
+        <div class="slds-modal__container wide-as-possible"  onclick={handleClose}>
+
+            <header class="slds-modal__header" onclick={handleNOP}>
+
+                <lightning-button-icon icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close inside-close">
+                </lightning-button-icon>
+
+                <h2>Choose from our services</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;"  onclick={handleNOP}>
+
+                <lightning-layout
+                        if:true={showMedical}
+                        multiple-rows="true"
+                        horizontal-align="start"
+
+                >
+                    <lightning-layout-item
+                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                            class="category-wrapper"
+                            padding="around-small">
+                        <div class="section">
+                            Medical Services
+                        </div>
+                    </lightning-layout-item>
+
+                    <!--  ITERATE OVER Medical Categories -->
+                    <template if:true={medcategories}
+                              for:each={medcategories} for:item="cat">
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=6 large-device-size=3
+                                class="category-wrapper"
+                                padding="around-small"
+                                key={cat.label} data-cat={cat.value} onclick={handleChoice}>
+                            <div class="box">
+                                {cat.label}
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+
+
+                </lightning-layout>
+
+                <lightning-layout
+                        if:true={showDental}
+                        multiple-rows="true"
+                        horizontal-align="start"
+                >
+                    <lightning-layout-item
+                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                            class="category-wrapper"
+                            padding="around-small">
+                        <div class="section">
+                            Dental Services
+                        </div>
+                    </lightning-layout-item>
+
+                    <!--  ITERATE OVER Dental Categories -->
+                    <template if:true={dentcategories}
+                              for:each={dentcategories} for:item="cat">
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=6 large-device-size=3
+                                class="category-wrapper"
+                                padding="around-small"
+                                key={cat.label} data-cat={cat.value} onclick={handleChoice}>
+                            <div class="box">
+                                {cat.label}
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+
+
+                </lightning-layout>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open" onclick={handleClose}></div>
+
+
+</template>

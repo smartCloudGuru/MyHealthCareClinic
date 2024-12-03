@@ -1,0 +1,94 @@
+<!--
+ - Created 3.6.2024..
+ -->
+
+<!-- DT Plan Row -->
+<template>
+    <lightning-layout multiple-rows="false">
+        <lightning-layout-item if:false={isAccountRecord} size=1>
+            <template if:false={changingAssign}>
+                <lightning-button-icon if:false={assigned} icon-name="utility:add" alternative-text="Assign" title="Assign"
+                                       size="small" onclick={handleAssign}></lightning-button-icon>
+                <lightning-button-icon if:true={assigned} icon-name="utility:check" alternative-text="Assigned" title="Assigned" size="small"
+                                       variant="brand" onclick={handleDeAssign}></lightning-button-icon>
+            </template>
+            <template if:true={changingAssign}>
+                <lightning-button-icon
+                        icon-name="utility:hourglass" alternative-text="Working" title="Working" size="small" disabled></lightning-button-icon>
+            </template>
+        </lightning-layout-item>
+
+        <lightning-layout-item size=8>
+
+            <div class="slds-p-top_x-small slds-p-bottom_small">
+                <lightning-formatted-date-time value={plan.CreatedDate}
+                                               year="numeric"
+                                               month="2-digit"
+                                               day="2-digit"
+                                               time-zone="Europe/London"
+                ></lightning-formatted-date-time>&nbsp;-&nbsp;
+                <a href={planURL}>{plan.Name}</a>
+            </div>
+
+            <template if:true={plan.Aerona_Treatments__r}>
+                <template for:each={plan.Aerona_Treatments__r.records} for:item="treatment">
+                    <div class="at" key={treatment.Id}>{treatment.Sale_Item_Text__c}</div>
+                </template>
+            </template>
+        </lightning-layout-item>
+
+        <lightning-layout-item if:true={isAccountRecord} size=1>
+            &nbsp;
+        </lightning-layout-item>
+
+
+        <lightning-layout-item size=3 class="quote-button slds-text-align_right">
+            <lightning-button label="Generate Quote" disabled></lightning-button>
+        </lightning-layout-item>
+
+        <lightning-layout-item size=12 class="slds-p-left_x-large slds-p-top_medium">
+            <span class="mon-label">Total:</span>
+            <lightning-formatted-number value={plan.Amount} format-style="currency" currency-code="GBP"
+                                        class="mon-amount"></lightning-formatted-number>
+            <br/><span class="mon-label">Paid:</span>
+            <lightning-formatted-number value={plan.Retained_Charges__c} format-style="currency" currency-code="GBP"
+                                        class="mon-amount"></lightning-formatted-number>
+            <br/><span class="mon-label">Outstanding:</span>
+            <lightning-formatted-number value={plan.Outstanding_Amount__c} format-style="currency"
+                                        currency-code="GBP" class="mon-amount"></lightning-formatted-number>
+        </lightning-layout-item>
+
+        <lightning-layout-item size=1>
+            &nbsp;
+        </lightning-layout-item>
+        <lightning-layout-item size=3 class="slds-p-around_small">
+            <lightning-combobox label="Business Unit"
+                                options={bUnits}
+                                value={plan.Business_Unit__c}
+                                data-field="Business_Unit__c"
+                                placeholder="Business Unit"
+                                required
+                                onchange={handleBUChanged}></lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size=3 class="slds-p-around_small">
+            <lightning-input type="number"
+                             label="Probability (%)"
+                             data-field="Probability"
+                             placeholder="%" value={planProbability} step="1"
+                             formatter="percent-fixed"
+                             onblur={handleProbabilityChanged}
+            ></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item size=3 class="slds-p-around_small">
+            <lightning-combobox label="Payment Method"
+                                options={pMethods}
+                                value={plan.DT_Payment_Method__c}
+                                data-field="DT_Payment_Method__c"
+                                placeholder="Payment Method"
+                                onchange={handlePMChanged}></lightning-combobox>
+        </lightning-layout-item>
+
+
+        <lightning-layout-item size=12 class="divider"></lightning-layout-item>
+    </lightning-layout>
+</template>

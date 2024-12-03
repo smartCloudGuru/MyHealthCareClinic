@@ -1,0 +1,27 @@
+/**
+ * Created 13.3.2021..
+ */
+
+.product-name {
+    font-weight: 600;
+}
+
+.details {
+    padding-top: 12px;
+}
+
+lightning-button.edit-button {
+    margin-right:18px;
+}
+
+.priceitem
+{
+    min-width:100px;
+    padding-left:20px;
+    text-align: end;
+}
+
+.product-totalprice
+{
+    font-weight:500;
+}

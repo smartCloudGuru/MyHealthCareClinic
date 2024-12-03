@@ -1,0 +1,24 @@
+/**
+ * Created 22.2.2022..
+ */
+
+.min-height
+{
+    height:720px;
+    min-height:720px;
+}
+.asblock
+{
+    display: block;
+    margin-bottom: 20px;
+}
+.warn-amber
+{
+    /*color: darkgoldenrod;*/
+    /*font-weight: 500;*/
+}
+
+.pad-top
+{
+    line-height: 77px;
+}

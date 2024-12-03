@@ -1,0 +1,24 @@
+/**
+ * Created 10.11.2021..
+ */
+
+
+lightning-icon
+{
+    margin-right: 0.5rem;
+}
+
+div.smmaller {
+    font-weight: normal;
+}
+
+.notestable
+{
+    color: var(--lwc-colorTextActionLabel,rgb(68, 68, 68));
+    font-weight: var(--lwc-fontWeightRegular,400);
+}
+
+.notestable td
+{
+
+}

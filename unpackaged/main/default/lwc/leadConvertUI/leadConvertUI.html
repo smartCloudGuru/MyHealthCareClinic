@@ -1,0 +1,82 @@
+<!--
+ - Created 20.1.2023..
+ -->
+
+<!-- Lead Convert UI -->
+<template>
+    <template if:true={recordId}>
+
+    <span class="slds-m-around_medium slds-p-left_medium slds-p-right_medium">
+        <lightning-card>
+            <div class="title-div" slot="title">
+                <h1>Convert a lead</h1>
+            </div>
+            <template if:false={loading}>
+
+                <div class="min-height">
+                    <div if:true={clinicOptions} class="slds-m-around_medium">
+                        <lightning-combobox
+                                name="clinic"
+                                label="Clinic Booked"
+                                placeholder="Please select..."
+                                options={clinicOptions}
+                                required
+                                onchange={handleChangeClinic}></lightning-combobox>
+                    </div>
+
+                    <div if:true={hasDuplicates} class="slds-m-around_medium">
+                        We found some similar Patients that already exist.
+                        <br/>
+                        <br/>
+                        <table class="dupe-table">
+                            <thead>
+                                <tr><td>Patient Id</td><td>First Name</td><td>Last Name</td><td>Date of Birth</td><td>Email</td><td>Phone</td><td>Mobile</td></tr>
+                            </thead>
+                            <tbody>
+                                 <template for:each={options} for:item="dupe">
+                                     <tr if:true={dupe.obj} key={dupe.obj.Id}>
+                                         <td>{dupe.obj.Patient_Id__c}</td>
+                                         <td>{dupe.obj.FirstName}</td>
+                                         <td>{dupe.obj.LastName}</td>
+                                         <td>{dupe.obj.Date_of_Birth__c}</td>
+                                         <td>{dupe.obj.PersonEmail}</td>
+                                         <td>{dupe.obj.Phone}</td>
+                                         <td>{dupe.obj.PersonMobilePhone}</td>
+                                     </tr>
+                                 </template>
+                            </tbody>
+                            </table>
+                        <br/>To prevent creating duplicates, please select an existing Patient or proceed to create a new one:
+                        <br/>
+                        <br/>
+                        <div class="slds-m-left_large slds-m-right_large">
+                        <lightning-radio-group name="radioGroup"
+                                               label="Select an option"
+                                               options={options}
+                                               value={value}
+                                               required
+                                               onchange={handleSelectedOption}
+                                               type="radio"></lightning-radio-group>
+                            </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={loading} class="min-height slds-p-horizontal_small">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <p slot="footer" class="footer-min-height">
+                <template if:false={saving}>
+                    <lightning-button if:false={allSelected} disabled label="Convert" title="Convert"></lightning-button>
+                    <lightning-button if:true={allSelected} variant="brand" label="Convert" title="Convert"
+                                      onclick={handleConvert}></lightning-button>
+                </template>
+                <template if:true={saving}>
+                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                </template>
+            </p>
+
+        </lightning-card>
+    </span>
+    </template>
+</template>

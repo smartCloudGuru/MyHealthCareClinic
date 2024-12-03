@@ -1,0 +1,82 @@
+<!--
+ - Created 27.1.2022..
+ -->
+
+<!-- Create One Time Discount -->
+<template>
+    <lightning-card title="Cancel or Refund the Test">
+
+        <p if:false={loading} class="slds-p-horizontal_small">
+
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="width-limited">
+
+                <lightning-layout-item if:true={showCancel} size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    <lightning-input type="toggle"
+                                     label="Cancel the Test"
+                                     data-id="docancel"
+                                     message-toggle-active=""
+                                     message-toggle-inactive=""
+                                     checked={docancel}
+                                     onchange={handleDoCancelChange}></lightning-input>
+                </lightning-layout-item>
+
+<!--                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">-->
+<!--                    <lightning-input type="toggle"-->
+<!--                                     label="Create a Discount Coupon"-->
+<!--                                     data-id="docoupon"-->
+<!--                                     message-toggle-active=""-->
+<!--                                     message-toggle-inactive=""-->
+<!--                                     onchange={handleDoCouponChange}></lightning-input>-->
+<!--                </lightning-layout-item>-->
+
+                <lightning-layout-item if:true={showRefund} size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    <lightning-input type="toggle"
+                                     label="Perform a refund"
+                                     data-id="dorefund"
+                                     message-toggle-active=""
+                                     message-toggle-inactive=""
+                                     onchange={handleDoRefund}></lightning-input>
+                </lightning-layout-item>
+
+<!--                <lightning-layout-item if:true={docoupon} size=12 large-device-size=6 medium-device-size=6 small-device-size=12-->
+<!--                                       padding="around-medium">-->
+<!--                    <lightning-input type="text" label="Coupon Code" value={code} data-id="code" max-length=10></lightning-input>-->
+<!--                </lightning-layout-item>-->
+<!--                <lightning-layout-item if:true={docoupon} size=12 large-device-size=6 medium-device-size=6 small-device-size=12-->
+<!--                                       padding="around-medium">-->
+<!--                    <lightning-input type="text" label="Product Family" value={family} data-id="family" read-only></lightning-input>-->
+<!--                </lightning-layout-item>-->
+<!--                <lightning-layout-item if:true={docoupon} size=12 large-device-size=6 medium-device-size=6 small-device-size=12-->
+<!--                                       padding="around-medium">-->
+<!--                    <lightning-input type="number" label="Discount Amount" value={amount} data-id="amount" formatter="currency"-->
+<!--                                     step="0.01"></lightning-input>-->
+<!--                </lightning-layout-item>-->
+                <lightning-layout-item if:true={dorefund} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                       padding="around-medium">
+                    <lightning-input type="number" label="Refund Amount" value={amount} data-id="amount" formatter="currency"
+                                     step="0.01"></lightning-input>
+                </lightning-layout-item>
+<!--                <lightning-layout-item if:true={docoupon} size=12 large-device-size=6 medium-device-size=6 small-device-size=12-->
+<!--                                       padding="around-medium">-->
+<!--                    <lightning-input type="date" label="Valid until" value={valid} data-id="valid"></lightning-input>-->
+<!--                </lightning-layout-item>-->
+
+
+            </lightning-layout>
+
+        </p>
+
+        <p if:true={loading} class="slds-p-horizontal_small">
+            <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+        </p>
+        <p slot="footer">
+
+            <lightning-button if:true={allowsave}
+                    variant="brand" label="Save" title="Save" onclick={handleCreate}></lightning-button>
+            <!--            <lightning-button label="Close" title="Close" onclick={closeAction} class="slds-m-left_small"></lightning-button>-->
+        </p>
+    </lightning-card>
+
+    <span style="display:none">{recordId}</span>
+
+</template>

@@ -1,0 +1,40 @@
+<!--
+ - Created by Matija on 14.11.2023..
+ -->
+
+<!-- App Dental Tracker -->
+<template>
+
+
+
+    <lightning-card>
+
+        <div if:true={isOnAccountRecord} class="title">
+            Dental Treatment Plans
+        </div>
+
+<!--        <lightning-datatable-->
+<!--                key-field="id"-->
+<!--                data={plans}-->
+<!--                columns={columns}-->
+<!--                hide-checkbox-column="true"-->
+<!--                onrowaction={handleRowAction}>-->
+<!--        </lightning-datatable>-->
+
+
+        <div class="slds-p-around_small">
+            <template if:true={plans}
+                      for:each={plans} for:item="plan">
+                <c-dt_plan-row
+                        key={plan.Id}
+                        plan={plan}
+                        is-account-record={isOnAccountRecord}
+                        parent-opportunity-id={recordId}
+                ></c-dt_plan-row>
+            </template>
+        </div>
+
+
+    </lightning-card>
+
+</template>

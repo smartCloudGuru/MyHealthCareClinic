@@ -1,0 +1,77 @@
+<!--
+ - Created 12.9.2022..
+ -->
+
+<apex:page id="Member_Sign_Up" showHeader="false" sideBar="false" standardStylesheets="false" standardController="COVID_Test__c">
+
+    <head profile="http://www.w3.org/2005/10/profile">
+        <title>Member Sign Up</title>
+        <meta content="initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, minimal-ui" name="viewport"/>
+        <link rel="icon"
+              type="image/png"
+              href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png"/>
+        <style type="text/css">
+
+            html
+            {
+                --c-color-text: rgb(60, 60, 59) !important;
+                --c-color-background-header: #ededed !important;
+                --c-color-background-secondary: #fcfcfc !important;
+                --c-color-covid: #4cb05b !important;
+                --c-color-covidlight: #81c88b !important;
+                --c-color-appointment: #0874bb !important;
+                --c-color-appointment-light: #fafafa !important;
+                --c-color-product: #e06310 !important;
+                --c-color-product-light: #f6ae7f !important;
+
+                --c-color-main: #4cb05b !important;
+                --c-color-secondary: #0874bb !important;
+
+                --c-color-error: #bc0d0d !important;
+                --c-color-border: #e1e1e1 !important;
+
+                --c-color-dental: #002963;
+                --c-color-gp: #4cbf58;
+                --c-color-complete: #89888e;
+                --c-color-premium: #ce9735;
+            }
+            body {
+                margin: 0;
+            }
+        </style>
+        <style>
+            @font-face{font-family:"Museo";font-style:normal;font-weight:300;font-display:swap;src:url(https://myhealthcareclinic.com//fonts/MuseoSans-300.otf) format('opentype')}
+            @font-face{font-family:"Museo";font-style:normal;font-weight:500;font-display:swap;src:url(https://myhealthcareclinic.com//fonts/MuseoSans_500.otf) format('opentype')}
+            body,body p,body a,body li{font-family:"Museo";font-weight:300}
+            body h1,body h2,body h3,body h4,body h5,body h6{font-family:"Museo";font-weight:500}
+        </style>
+    </head>
+
+    <apex:includeLightning />
+
+    <div id="lightning"/>
+
+    <script type="application/javascript">
+        var stripe;
+        $Lightning.use("c:TestOutApp", function () {
+            $Lightning.createComponent("c:MemberSignUp",
+                {
+                    "config": {
+                        "termsUrl": "https://myhealthcareclinic.com/medical/covid-terms-conditions/",
+                        "privacyUrl": "https://myhealthcareclinic.com/privacy/",
+                        "logoUrl": "https://myhealthcareclinic.com/wp-content/uploads/logo-1.png",
+                        "contactTel": "0207 971 1787",
+                        "contactEmail": "info@myhealthcareclinic.com",
+                        "backToWebsiteUrl": "https://myhealthcareclinic.com",
+                        "backToWebsiteText": "Back to Homepage",
+                        "allowTestModes": true
+                    }
+                },
+                "lightning",
+                function (cmp) {
+
+                });
+        });
+
+    </script>
+</apex:page>

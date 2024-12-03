@@ -1,0 +1,123 @@
+<!--
+ - Created by Matija on 29.11.2024..
+ -->
+
+<!-- Mem Upgrade Form -->
+<template>
+
+    <div if:false={saved}>
+        <div if:true={saving} class="saved-note slds-m-top_xx-large slds-text-heading_large slds-p-around_large width-limited">
+            <br/>
+            Please wait...
+        </div>
+
+        <div if:true={saving} class="spinner-holder slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+
+        <div if:true={saveError} class="slds-align_absolute-center slds-text-color_error slds-m-top_xx-large">
+            <div if:false={saving}>
+                We are unable to process your request at this time. Please try later or call us at &nbsp; &nbsp;<strong>{_contactPhone}</strong>.
+            </div>
+        </div>
+
+        <div if:false={saving}>
+
+            <div class="header">
+                <div class="width-limited">
+                    <h2>Membership Upgrade Enquiry</h2>
+                </div>
+            </div>
+
+            <div class="width-limited mhc2">
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_medium">
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="First Name"
+                                         data-id="firstName"
+                                         placeholder="First name"
+                                         value={form.firstName}
+                                         required
+                                         max-length=64>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Last Name"
+                                         data-id="lastName"
+                                         placeholder="Last Name"
+                                         value={form.lastName}
+                                         required
+                                         max-length=64>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                        <lightning-input label="Email"
+                                         type="email"
+                                         data-id="email"
+                                         placeholder="Email"
+                                         required
+                                         value={form.email}
+                                         max-length=64>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+
+                    <!-- DIVIDER -->
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="big-divider">
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           padding="around-small">
+                        <lightning-combobox label="Select the plan you wish to upgrade to"
+                                            data-id="tier"
+                                            placeholder="Please select ..."
+                                            options={tierOptions}
+                                            onchange={handlePlanChange}
+                                            value={form.tier}
+                                            required
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+                <!-- submit button -->
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_small">
+                    <lightning-layout-item if:true={planSelected}
+                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="slds-align_absolute-center">
+                        <lightning-button if:false={saving} class="submit-button" variant="brand"
+                                          label="Submit"
+                                          onclick={handleSubmit}></lightning-button>
+                        <lightning-spinner if:true={saving} alternative-text="Loading" size="medium"></lightning-spinner>
+                    </lightning-layout-item>
+                    <lightning-layout-item if:false={planSelected}
+                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="slds-align_absolute-center">
+                        <lightning-button if:false={saving} class="submit-button" variant="brand"
+                                          label="Submit"
+                                          disabled
+                                          onclick={handleSubmit}></lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div if:true={saved}
+         class="slds-m-top_xx-large slds-p-around_large width-limited">
+        <p>Your request to upgrade has been received.</p>
+        <p>We will contact you shortly.</p>
+    </div>
+
+</template>

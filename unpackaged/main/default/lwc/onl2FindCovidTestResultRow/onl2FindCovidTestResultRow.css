@@ -1,0 +1,80 @@
+/**
+ * Created 12.3.2021..
+ */
+
+.box.product-row
+{
+    background-color: #FFF;
+}
+.location-name
+{
+    font-weight: 600;
+}
+
+.datetime
+{
+    color: var(--c-color-covid);
+    font-weight: 500;
+}
+
+.datetime.noslot
+{
+    color: var(--c-color-error);
+}
+
+.add-to-basket-cell
+{
+    margin-top: 0px;
+}
+
+.spinner-holder {
+    margin:0;
+    height:unset;
+    position: initial;
+}
+
+.confirmation-text
+{
+    padding-right:44px;
+    font-weight: 500;
+    color: var(--c-color-covid);
+}
+
+.subtest-cell
+{
+    padding-left:20px;
+    margin:0;
+    margin-top: 18px;
+    margin-bottom: 18px;
+}
+
+.add-to-basket-cell
+{
+    margin:0;
+    margin-top: 18px;
+    /*margin-bottom: 18px;*/
+}
+
+.bundled-test-line
+{
+    border-top: 1px solid #cdd4cd;
+    margin:0;
+    padding-bottom: 16px;
+}
+
+.product-availability
+{
+    border:none;
+    padding:0;
+}
+
+.quantity-label
+{
+    margin-right:12px;
+}
+
+.bundled-quantity-cell
+{
+    padding-bottom:12px;
+    text-align: end;
+}

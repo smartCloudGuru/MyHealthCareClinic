@@ -1,0 +1,88 @@
+<!--
+ - Created 12.11.2021..
+ -->
+
+<!-- App Opening Hours -->
+<template>
+
+    <h2 style="font-weight: bold; margin-bottom: 1.5rem; font-size: 120%">Work Types available at Service Territories (active locations only)</h2>
+
+    <lightning-tabset variant="vertical">
+        <template for:each={territories} for:item="ter">
+
+            <lightning-tab if:true={ter.serviceTerritory.IsActive} key={ter.serviceTerritory.Id} label={ter.serviceTerritory.Name}
+                           value={ter.serviceTerritory.Id}>
+
+
+                <div class="slds-p-left_medium">
+
+                    <a href={ter.serviceTerritory.url} style="font-weight: bold">{ter.serviceTerritory.Name}</a>
+                    <div if:true={ter.serviceTerritory.IsActive}>Active &check;</div>
+                    <div if:false={ter.serviceTerritory.IsActive} style="color: #bebebe;">not active</div>
+                    <div if:true={ter.serviceTerritory.Available_for_Click_Collect__c}>Click &amp; Collect &check;</div>
+                    <div if:false={ter.serviceTerritory.Available_for_Click_Collect__c} style="color: #bebebe;">no collect</div>
+
+                    <br/>
+                    <div style="font-weight: bold">Service Resources</div>
+
+                    <template for:each={ter.serviceTerritory.resources} for:item="sr" >
+                        <table key={sr.ServiceTerritoryId} style="width:700px;">
+                            <tbody>
+                            <tr>
+                                <td style="width:200px;"><a href={sr.link} target=_blank>{sr.ServiceResource.Name}</a></td>
+                                <td style="width:60px;"><span if:true={sr.inactive} style="font-weight: bold; color:red;">INACTIVE</span></td>
+                                <td style="width:240px;">
+                                    <span if:true={sr.skills}>{sr.skills}</span>
+                                    <span if:false={sr.skills} style="font-weight: bold; color:red;">NO SKILLS</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <br/>
+                    <div style="font-weight: bold">{ter.serviceTerritory.OperatingHours.Name}</div>
+                    <template for:each={ter.timeSlots} for:item="ts" >
+                        <table key={ts.Id} style="width:400px;">
+                            <tbody>
+                            <tr>
+                                <td style="width:200px;">{ts.DayOfWeek}</td>
+                                <td style="width:200px;">{ts.StartTime} - {ts.EndTime}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <br/>
+                    <table style="width:1050px;">
+                        <tbody>
+                        <tr>
+                            <td style="width:400px;font-weight: bold;padding-right:10px;">Work Type Group</td>
+                            <td style="font-weight: bold;">Work Type</td>
+                            <td style="font-weight: bold;">Operating Hours</td>
+                        </tr>
+                        <tr for:each={ter.wtgs} for:item="item" key={item.Id}>
+                            <td if:true={item.found} style="width:350px;">{item.group}</td>
+                            <td if:false={item.found} style="width:350px;color: #bebebe;">{item.group}</td>
+
+                            <td if:true={item.found} style="width:350px">{item.found}</td>
+                            <td if:false={item.found} style="color: #bebebe">n/a</td>
+
+                            <td if:true={item.found} style="width:350px;">
+                                <span if:true={item.hours}><a href={item.hoursurl}>{item.hours}</a></span>
+                                <span if:false={item.hours}>
+                                    <a href={ter.serviceTerritory.OperatingHours.link}>
+                                        {ter.serviceTerritory.OperatingHours.Name}
+                                    </a>
+                                </span>
+                            </td>
+                            <td if:false={item.found} style="color: #bebebe">n/a</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-tab>
+        </template>
+    </lightning-tabset>
+
+</template>

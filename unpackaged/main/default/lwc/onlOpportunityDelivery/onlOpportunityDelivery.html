@@ -1,0 +1,74 @@
+<!--
+ - Created 29.10.2021..
+ -->
+
+<!-- Onl Opportunity Delivery -->
+<template>
+    <lightning-card if:true={hasDelivery}>
+        <h3 slot="title">
+            <lightning-icon icon-name="standard:proposition" size="medium" class="slds-m-right_small"></lightning-icon>
+            This Opportunity contains product delivery
+        </h3>
+
+        <div if:true={updating} class="spinner-holder slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+
+        <p class="slds-p-around_small">
+            Total Quantity: <strong>{totalQuantity}</strong>
+        </p>
+
+        <lightning-layout multiple-rows="true">
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                <lightning-datatable
+                        key-field="id"
+                        hide-checkbox-column
+                        max-column-width=3000
+                        column-widths-mode="fixed"
+                        data={lineItems}
+                        columns={columns}>
+                </lightning-datatable>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={isClickCollect} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                   padding="around-small">
+                <lightning-record-view-form
+                        record-id={recordId}
+                        object-api-name="Opportunity"
+                >
+                    <lightning-output-field field-name="Pickup_Location__c"></lightning-output-field>
+                </lightning-record-view-form>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:false={isClickCollect} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                   padding="around-small">
+                        <div class="slds-form-element__label">Shipping address</div>
+                        <br/>{opp.Online_Shipping_First_Name__c}&nbsp;{opp.Online_Shipping_Last_Name__c}
+                        <br/>{opp.Online_Shipping_Address_Line_1__c}
+                        <br if:true={opp.Online_Shipping_Address_Line_2__c}/>{opp.Online_Shipping_Address_Line_2__c}
+                        <br if:true={opp.Online_Shipping_Address_Line_3__c}/>{opp.Online_Shipping_Address_Line_3__c}
+                        <br/>{opp.Online_Shipping_Postcode__c}&nbsp;{opp.Online_Shipping_City__c}
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <div style="text-align: center">
+            <lightning-button if:true={showInsertShipmentButton} label="Register shipment with DPD" class="slds-m-right_small"
+                              onclick={insertShipmentClicked}></lightning-button>
+<!--            <lightning-button if:false={isClickCollect} label="Print Address Label" class="slds-m-right_small"-->
+<!--                              onclick={printAddressLabelClicked}></lightning-button>-->
+            <lightning-button if:true={showMarkFulfilmentButton} label="Mark Fulfilment Done" variant="brand" class="slds-m-left_small"
+                              onclick={fulfilmentDoneClicked}></lightning-button>
+        </div>
+
+    </lightning-card>
+
+    <template if:true={triggerShowConfirmationModal}>
+        <c-onl-ok-modal modal-title="Are you sure?"
+                         text="Do you wish to send the shipment data to DPD? Please check all data before proceeding."
+                         onyes={doInsertShipment}
+                         onno={closeConfirmationModal}
+                         variant-yes-no></c-onl-ok-modal>
+    </template>
+
+</template>

@@ -1,0 +1,19 @@
+/**
+ * Created 14.3.2021..
+ */
+
+.name,
+.city {
+    font-weight: 500;
+}
+
+.distance {
+    font-weight: 300;
+}
+
+.street,
+.city {
+    white-space: pre;
+    overflow: hidden;
+    min-height: 20px;
+}

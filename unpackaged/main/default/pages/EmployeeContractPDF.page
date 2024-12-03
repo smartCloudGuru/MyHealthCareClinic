@@ -1,0 +1,75 @@
+<apex:page renderAs="pdf" applyBodyTag="false" controller="EmployeeContract_ctrl">
+
+    <head>
+        <style type="text/css">
+            table, td, th {  
+                border: 1px solid rgb(122, 122, 122);
+                text-align: left;
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th, td {
+                padding: 0px 15px;
+            }
+            
+            @page {
+                size:A4 portrait;
+                border: 1px solid black;  
+                padding: 15px;  
+            }
+        </style>
+    </head>
+
+    <body>
+        <apex:outputText value="{!pContent}" escape="false"/>
+        <center>
+            <b>{!employee.Contract_Document__r.Agreement_With__c}</b>
+        </center>
+        <div style="margin-top:30px;font-weight: bold;">
+            <span>
+                <u>For and on behalf of {!employee.Contract_Document__r.For_and_on_behalf_of__c}</u>
+            </span>
+        </div>
+        <br/>
+        <br/>
+        <div>
+            <lable> Signature:</lable>&nbsp;&nbsp;
+            <apex:image url="{!$Resource.HealthcareSign}" style="float:center;width:150px; height:45px;" />
+        </div>
+        <div>
+            <lable> Name:</lable>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            MyHealthcare Clinic
+        </div>
+        <div>
+            <lable> Date: </lable>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!employee.Contract_Signed_Date__c}" />
+            </apex:outputText>
+        </div>
+        <div><br/><br/>
+            <lable> Employee: I agree to the above terms</lable>
+            <br/><br/>
+        </div>
+        <br/>
+        <div>
+            <lable> Signature: </lable>&nbsp;&nbsp;
+            <img src="/servlet/servlet.ImageServer?id={!signImage}&oid={!$Organization.Id}" width="150" height="70" ></img>
+        </div>
+        <div>
+            <lable> Name: </lable>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;{!employee.First_Name__c}&nbsp;{!employee.Ee_Middle_Name__c}&nbsp;{!employee.Surname__c}
+        </div>
+        <div>
+            <lable> Date: </lable>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!employee.Contract_Signed_Date__c}" />
+            </apex:outputText>
+        </div>
+
+    </body>
+
+</apex:page>

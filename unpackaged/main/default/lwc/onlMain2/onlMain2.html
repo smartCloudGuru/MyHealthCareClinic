@@ -1,0 +1,119 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Online COVID test shop Main -->
+<template>
+
+    <!-- navigation always on top -->
+    <div class="header-container">
+
+        <template if:true={sm_page.main}>
+            <div class="header slds-text-align_right width-limited">
+                <lightning-button
+                        title={basketLabel}
+                        label={basketLabel}
+                        icon-name="utility:cart"
+                        class="mhc-button basket-button"
+                        onclick={navigateToCheckout}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <template if:true={sm_showCheckoutForms}>
+            <div class="header width-limited">
+                <lightning-button
+                        if:true={smallFactor}
+                        label="Back"
+                        icon-name="utility:chevronleft"
+                        class="mhc-button back-button no-margin"
+                        onclick={handleBackFromCart}></lightning-button>
+            </div>
+        </template>
+    </div>
+
+
+    <!-- a la carte options -->
+    <c-onl-menu if:true={sm_page.main} current-active-option={sm_menuSelection} onmenuoption={handleMenuOption}
+                store-config={storeConfig}>
+
+    </c-onl-menu>
+
+    <div class="find-lists">
+        <!-- page=main / find covid tests -->
+        <c-onl-find-covid-tests2
+                data-cfct
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}
+                onadd={handleScheduleTest}
+        >
+        </c-onl-find-covid-tests2>
+
+        <!-- page=main / find appointments -->
+        <c-onl-find-appointments
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}>
+        </c-onl-find-appointments>
+
+        <!-- page=main / find products -->
+        <c-onl-find-products
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}
+                onadd={handleAddToBasket}>
+        </c-onl-find-products>
+    </div>
+
+<!--    &lt;!&ndash; Step 2 - checkout confirmation forms (personal details, shipping info) &ndash;&gt;-->
+<!--    <c-onl-checkout2-->
+<!--            if:true={sm_showCheckoutForms}-->
+<!--            store-config={storeConfig}-->
+<!--            oncontinue={handleDoCheckout}-->
+<!--    >-->
+<!--    </c-onl-checkout2>-->
+
+    <!-- Step 2 - order overview  -->
+    <c-onl-order-overview2
+            if:true={sm_showFulfillmentItems}
+            params={checkoutParams}
+            default-location={step1DefaultLocation}
+            opportunity-id={opportunityId}
+            onpayment={handleContinueToPayment}
+            store-config={storeConfig}
+    >
+    </c-onl-order-overview2>
+
+
+    <div if:true={basketCount} class="footer-buttons">
+        <template if:true={sm_page.main}>
+            <div class="header slds-text-align_right width-limited">
+                <lightning-button
+                        title={basketLabel}
+                        label={basketLabel}
+                        icon-name="utility:cart"
+                        class="mhc-button basket-button"
+                        onclick={navigateToCheckout}>
+                </lightning-button>
+            </div>
+        </template>
+    </div>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenScheduleModal}>
+        <c-onl-schedule-modal2
+                store-config={storeConfig}
+                test-product-to-schedule={testProductToSchedule}
+                default-location={defaultLocation}
+                onclose={closeScheduleModal}
+                onbooked={handleBooked}
+                ongocheckout={navigateToCheckout}
+        ></c-onl-schedule-modal2>
+    </template>
+
+
+</template>

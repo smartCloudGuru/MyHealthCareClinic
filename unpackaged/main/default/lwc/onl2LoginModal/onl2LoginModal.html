@@ -1,0 +1,546 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Login Modal -->
+<template>
+    <div role="dialog" class={modalCss}>
+
+        <div class="slds-modal__container login">
+
+            <header class="slds-modal__header">
+                <lightning-button-icon if:false={step.booking} icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close">
+                </lightning-button-icon>
+                <h2 class="slds-text-heading_medium">Login or Register</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                <!-- register part-->
+                <lightning-layout
+                        if:false={loading}
+                        multiple-rows="true"
+                        horizontal-align="start"
+                        class="slds-p-around_medium login-modal-register mhc2">
+                    <lightning-layout-item if:true={step.email}
+                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="slds-align_absolute-center">
+                        <p style="margin-bottom:0">Not registered yet?</p>
+                    </lightning-layout-item>
+
+
+                    <template if:true={step.register}>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <p style="margin-bottom:0">Patient Registration</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <p style="margin-bottom:0">If you are booking for somebody else (for example your child), kindly fill in the <strong>patient's</strong> details only</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={msgRegister} class="slds-align_absolute-center member-msg"
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            {msgRegister}
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="text"
+                                             label="Patient's First Name"
+                                             placeholder="First Name"
+                                             data-formfield="firstName"
+                                             max-length=20
+                                             required
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="text"
+                                             label="Patient's Last Name"
+                                             placeholder="Last Name"
+                                             data-formfield="lastName"
+                                             max-length=20
+                                             required
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <!--                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">-->
+                        <!--                        <lightning-input type="date"-->
+                        <!--                                         label="Date of Birth"-->
+                        <!--                                         date-style="short"-->
+                        <!--                                         data-formfield="regDob"-->
+                        <!--                                         max-length=20-->
+                        <!--                                         required-->
+                        <!--                                         onchange={handleRegisterFormChange}-->
+                        <!--                        ></lightning-input>-->
+                        <!--                    </lightning-layout-item>-->
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3
+                                               class="text-as-label">
+                            Patient's Date of Birth:
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 padding="around-small">
+                            <lightning-combobox
+                                    label="Day"
+                                    data-id="dob_d"
+                                    placeholder=""
+                                    required
+                                    options={ddOptions}
+                                    onchange={validateDOB}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 padding="around-small">
+                            <lightning-combobox
+                                    label="Month"
+                                    data-id="dob_m"
+                                    placeholder=""
+                                    required
+                                    options={mmOptions}
+                                    onchange={validateDOB}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 padding="around-small">
+                            <lightning-combobox
+                                    label="Year"
+                                    data-id="dob_y"
+                                    placeholder=""
+                                    required
+                                    options={yyOptions}
+                                    onchange={validateDOB}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="email"
+                                             label="E-mail"
+                                             data-formfield="regEmail"
+                                             placeholder="E-mail"
+                                             max-length=70
+                                             required
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="email"
+                                             label="Confirm E-mail"
+                                             data-formfield="regEmail2"
+                                             placeholder="Confirm E-mail"
+                                             max-length=70
+                                             required
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-combobox
+                                    label="Gender"
+                                    data-formfield="gender"
+                                    placeholder=""
+                                    required
+                                    options={genderOptions}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="password"
+                                             label="Choose a Password (min 8 characters)"
+                                             data-formfield="password1"
+                                             max-length=32
+                                             pattern={passwordPattern}
+                                             required
+                                             autocomplete="new-password"
+                                             name="input1"
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input type="password"
+                                             label="Confirm Password"
+                                             data-formfield="password2"
+                                             max-length=32
+                                             autocomplete="new-password"
+                                             required
+                                             name="input1"
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="text"
+                                             label="Phone Number"
+                                             data-formfield="regPhone"
+                                             max-length=24
+                                             required
+                                             onchange={handleRegisterFormChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <c-onl2-autofill-input label="Postal Code &amp; Address Search"
+                                                   onsearch={handlePostcodeSearch}
+                                                   onselectionchange={handlePostcodeSelection}
+                            ></c-onl2-autofill-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input label="Address line 1"
+                                             data-formfield="address1"
+                                             placeholder="Address line 1"
+                                             required
+                                             max-length=30>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Address line 2"
+                                             data-formfield="address2"
+                                             placeholder="Address line 2"
+                                             max-length=30>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Address line 3"
+                                             data-formfield="address3"
+                                             placeholder="Address line 3"
+                                             max-length=30>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Postal code"
+                                             data-formfield="postalCode"
+                                             placeholder="Postal code"
+                                             required
+                                             max-length=12
+                            >
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="City"
+                                             data-formfield="city"
+                                             placeholder="City"
+                                             required
+                                             max-length=30
+                            >
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input label="County/State"
+                                             data-formfield="county"
+                                             placeholder="County/State"
+                                             max-length=30
+                            >
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                    </template>
+
+                    <lightning-layout-item
+                            if:true={step.email}
+                            size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-medium"
+                            class="slds-align_absolute-center">
+                        <lightning-button
+                                label="Register with us"
+                                class="mhc-button primary-button slds-align_absolute-center no-margin"
+                                onclick={handleStartRegister}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item if:true={step.register}
+                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-medium"
+                                           class="slds-align_absolute-center">
+                        <lightning-button
+                                label="Register"
+                                class="mhc-button primary-button slds-align_absolute-center no-margin"
+                                onclick={handleRegister}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+
+                </lightning-layout>
+
+                <template if:false={step.finish}>
+                    <lightning-layout
+                            if:false={loading}
+                            multiple-rows="true"
+                            horizontal-align="start"
+                            class="slds-align_absolute-center slds-p-around_medium login-modal login-modal-login mhc2">
+
+                        <lightning-layout-item if:true={step.email}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="login-width-limit">
+                            <p style="margin-bottom:0">Returning Patient</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={step.email}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="login-width-limit">
+                            <lightning-input type="text"
+                                             label="E-mail or username"
+                                             data-formfield="email"
+                                             value={defaultPersonalDetails.email}
+                                             max-length=64
+                                             required
+                                             onchange={handleEmailFormChange}
+                            >
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={step.email}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="login-width-limit">
+                            <lightning-input type="password"
+                                             label="Password"
+                                             placeholder="Password"
+                                             data-formfield="password"
+
+                                             max-length=32
+                                             required
+                                             name="input1"
+                            ></lightning-input>
+                            <lightning-layout-item if:true={msgEmail} class="member-msg"
+                                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <p>{msgEmail}</p>
+                            </lightning-layout-item>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                class="slds-align_absolute-center">
+                            <lightning-button
+                                    label="Login" if:true={step.email}
+                                    class="mhc-button primary-button single slds-m-top_medium"
+                                    onclick={handleLogin}>
+                            </lightning-button>
+                            <lightning-button
+                                    label="Back to Login" if:true={step.showBack}
+                                    class="mhc-button no-margin"
+                                    onclick={handleBackToLogin}>
+                            </lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={step.email}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center slds-m-top_small">
+                            <span><a href="javascript:" onclick={handleForgotPassword}>Forgot password?</a></span>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:false={step.finish}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-medium"
+                                               class="slds-align_absolute-center">
+                            <p style="margin-bottom:0">If you need assistance logging in, please contact us at<br/>{storeConfig.contactTel} or <a
+                                    href=mailto:{storeConfig.contactEmail}>{storeConfig.contactEmail}</a></p>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+
+
+                <!-- FORGOT PASSWORD part-->
+                <template if:true={step.forgot}>
+                    <lightning-layout
+                            if:false={loading}
+                            multiple-rows="true"
+                            horizontal-align="start"
+                            class="slds-p-around_medium login-modal-register slds-align_absolute-center">
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                class="login-width-limit"
+                                padding="around-small">
+                            <p class="no-margin">Please provide your e-mail, and we'll send you instructions to reset your password:</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="login-width-limit"
+                                               padding="around-small">
+                            <lightning-input type="email"
+                                             label="E-mail"
+                                             data-formfield="email4pass"
+                                             max-length=64
+                                             required
+                            >
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                class="login-width-limit slds-align_absolute-center"
+                                padding="around-small">
+                            <lightning-button
+                                    label="Confirm"
+                                    class="mhc-button primary-button single slds-m-top_small"
+                                    onclick={handlePassChangeRequest}>
+                            </lightning-button>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+
+
+                <!-- multiple accounts found part-->
+<!--                <template if:true={step.multipleConnected}>-->
+<!--                    <lightning-layout-->
+<!--                            if:false={loading}-->
+<!--                            multiple-rows="true"-->
+<!--                            horizontal-align="start"-->
+<!--                            class="slds-p-around_medium login-modal-multiple slds-align_absolute-center">-->
+
+<!--                        <lightning-layout-item-->
+<!--                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12-->
+<!--                                class="login-width-limit"-->
+<!--                                padding="around-small">-->
+<!--                            <p class="no-margin">You have multiple accounts in our system. Please select who you are booking for:</p>-->
+<!--                        </lightning-layout-item>-->
+
+<!--                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12-->
+<!--                                               class="login-width-limit"-->
+<!--                                               padding="around-small">-->
+<!--                            <lightning-combobox label="Book for:"-->
+<!--                                                placeholder="Please select …"-->
+<!--                                                options={connectedAccounts}-->
+<!--                                                onchange={handleAccountChanged}-->
+<!--                                                value={selectedAccountToBook}>-->
+<!--                            </lightning-combobox>-->
+<!--                        </lightning-layout-item>-->
+
+<!--                        <lightning-layout-item-->
+<!--                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12-->
+<!--                                class="login-width-limit slds-align_absolute-center"-->
+<!--                                padding="around-small">-->
+<!--                            <lightning-button-->
+<!--                                    label="Continue"-->
+<!--                                    class="mhc-button primary-button single slds-m-top_small"-->
+<!--                                    onclick={handleContinueFromMultiple}>-->
+<!--                            </lightning-button>-->
+<!--                        </lightning-layout-item>-->
+<!--                    </lightning-layout>-->
+<!--                </template>-->
+
+                <!-- FINISH PASS CHANGE part-->
+                <template if:true={step.finishedPassRequest}>
+                    <lightning-layout
+                            if:false={loading}
+                            multiple-rows="true"
+                            horizontal-align="start"
+                            class="slds-p-around_medium">
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <p>
+                                Please check your e-mail for a password reset e-mail – it can take up to 5 minutes for the link to be sent.
+                            </p>
+                            <p style="margin-bottom:0">
+                                If you do not receive a link, there may be a problem with your account so please email us on <a
+                                    href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a>
+                            </p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                class="slds-align_absolute-center">
+                            <lightning-button
+                                    label="Close"
+                                    class="mhc-button primary-button slds-align_absolute-center no-margin"
+                                    onclick={handleClose}>
+                            </lightning-button>
+
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+
+
+                <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+
+                <!-- FINISH part-->
+                <template if:true={step.finish}>
+                    <lightning-layout
+                            if:false={loading}
+                            multiple-rows="true"
+                            horizontal-align="start"
+                            class="slds-p-around_medium">
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <p>Thank you for registering.</p>
+                            <p style="margin-bottom:0">
+                                An e-mail has been sent to your e-mail address.
+                                <br/>
+                                To continue, please enter the&nbsp;<strong>activation code</strong>&nbsp;provided in that e-mail:</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="text"
+                                             label=""
+                                             data-id="activationCode"
+                                             max-length=5
+                                             required
+                                             variant="label-hidden"
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={msgActivation}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <p class="error-msg">{msgActivation}</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:false={loadingActivationCode} size=12 small-device-size=12 medium-device-size=12
+                                               large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <lightning-button
+                                    label="Proceed"
+                                    class="mhc-button primary-button slds-align_absolute-center no-margin"
+                                    onclick={handleProceed}>
+                            </lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={loadingActivationCode}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <div class="spinner-holder slds-align_absolute-center">
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+
+
+                        <!--                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"-->
+                        <!--                                               class="slds-align_absolute-center">-->
+                        <!--                            <lightning-button-->
+                        <!--                                    label="Close"-->
+                        <!--                                    class="mhc-button slds-align_absolute-center no-margin"-->
+                        <!--                                    onclick={handleClose}>-->
+                        <!--                            </lightning-button>-->
+
+                        <!--                        </lightning-layout-item>-->
+                    </lightning-layout>
+                </template>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

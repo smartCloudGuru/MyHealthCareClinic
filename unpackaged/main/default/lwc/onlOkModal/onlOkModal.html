@@ -1,0 +1,46 @@
+<!--
+ - Created 2.11.2021..
+ -->
+
+<!-- Onl Ok Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_small slds-fade-in-open">
+
+        <div class="slds-modal__container">
+
+            <header class="slds-modal__header">
+                <h2 class="slds-text-heading_medium">{modalTitle}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" style="position: relative;">
+                <div class="slds-card__body">
+                    <p>{text}</p>
+
+                    <template if:true={text2}>
+                        <p>{text2}</p>
+                    </template>
+
+                    <template if:true={text3}>
+                        <p>{text3}</p>
+                    </template>
+                </div>
+
+                <div class="mc2-modal-footer slds-align_absolute-center">
+
+                    <button if:false={variantYesNo} type="button" class="slds-button" onclick={handleOK}>
+                        OK
+                    </button>
+
+                    <lightning-button if:true={variantYesNo} type="button" class="slds-button" onclick={handleNo} label="No" variant="brand-outline">
+                    </lightning-button>
+
+                    <lightning-button if:true={variantYesNo} type="button" class="slds-button" onclick={handleYes} label="Yes" variant="brand">
+                    </lightning-button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

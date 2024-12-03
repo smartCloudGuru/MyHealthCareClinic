@@ -1,0 +1,35 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Test Summary Row -->
+<template>
+
+    <lightning-layout multiple-rows="true" horizontal-align="start" class="box single-test-row">
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="test-details-cell">
+            <div class="product-name">{test.Test_Type__c}</div>
+            <div class="product-turnaround">Turnaround time: {test.Turnaround_Time_Global__c}</div>
+        </lightning-layout-item>
+
+        <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                               class="appointment">
+            <div class="datetime">Scheduled for {scheduledStartFormatted}</div>
+        </lightning-layout-item>
+
+        <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="details">
+            <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" class="ico" size="small"></lightning-icon>
+            <c-onl-location service-territory={test.Scheduled_Appointment__r.ServiceTerritory} class="location"></c-onl-location>
+        </lightning-layout-item>
+
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="details">
+            <lightning-icon icon-name="utility:user" alternative-text="Details" title="Details" class="ico" size="small"></lightning-icon>
+            <div class="persona">{test.Provided_First_Name__c} {test.Provided_Last_Name__c},&nbsp;<span class="newline-on-small-factor">{test.Provided_Email__c}</span>
+            </div>
+        </lightning-layout-item>
+
+
+    </lightning-layout>
+
+</template>

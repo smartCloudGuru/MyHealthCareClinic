@@ -1,0 +1,34 @@
+<!--
+ - Created by Matija on 4.9.2023..
+ -->
+
+<!-- App Integration Aerona -->
+<template>
+    <lightning-card>
+        <div slot="title" class="smmaller">
+            Aerona integration options
+        </div>
+<!--        <div slot="actions">-->
+<!--            <lightning-button-icon icon-name="utility:refresh" size="small" alternative-text="Refresh" class="slds-m-left_xx-small"-->
+<!--                                   onclick={doRefresh}></lightning-button-icon>-->
+<!--        </div>-->
+        <div class="slds-p-left_medium slds-p-right_medium">
+            <div class="slds-m-around_small">
+                Manually call Aerona API:
+            </div>
+            <div class="slds-m-around_small">
+                <lightning-button onclick={handleGetClinicians}
+                                  title="Get All Clinicians"
+                                  label="Get All Clinicians">
+
+                </lightning-button>
+            </div>
+            <div if:true={getCliniciansResponse} class="slds-m-around_small rtbox">
+                <strong>Get All Clinicians response:</strong><br/><br/>
+            <lightning-formatted-rich-text
+                    value={getCliniciansResponse}
+            ></lightning-formatted-rich-text>
+            </div>
+        </div>
+    </lightning-card>
+</template>

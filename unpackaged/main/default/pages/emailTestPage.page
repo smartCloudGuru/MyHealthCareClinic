@@ -1,0 +1,7 @@
+<!--
+ - Created by zokito on 5/14/21.
+ -->
+
+<apex:page id="emailTestPage">
+    <c:eml_ConfirmationEmailTemplate recordId="{!$CurrentPage.parameters.param}"/>
+</apex:page>

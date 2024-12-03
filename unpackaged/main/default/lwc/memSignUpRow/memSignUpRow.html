@@ -1,0 +1,12 @@
+<!--
+ - Created 12.9.2022..
+ -->
+
+<!-- Mem Sign Up Row -->
+<template>
+    <div class="sub-box">
+        {row.identifier}
+        <br/>{row.firstName} {row.lastName} ({row.dob_d}/{row.dob_m}/{row.dob_y}, {row.email})
+        <div class="commands"><a href="javascript:" onclick={handleEdit}>[edit]</a>&nbsp;&nbsp;<a href="javascript:" onclick={handleRemove}>[remove]</a></div>
+    </div>
+</template>

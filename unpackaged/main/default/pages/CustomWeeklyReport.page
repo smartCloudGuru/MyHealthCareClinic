@@ -1,0 +1,1793 @@
+<apex:page controller="CustomWeeklyReport_Ctrl" docType="html-5.0" sidebar="false" action="{!searchEnquire}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <meta http-equiv="x-ua-compatible" content="ie=edge" />
+          <title>Custom Report</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css"/>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+          <!-- Import the Design System style sheet -->
+          <apex:slds />
+        
+            
+            <style>
+                .requiredLoaderBG{
+                    background-color: rgba(92, 173, 243, 0.22);
+                    opacity:0.9;
+                    filter:alpha(opacity=70);
+                    background-image:url(/dashboards/img/landmark_spinner_1589EE.gif);
+                    background-position: center center; 
+                    background-repeat: no-repeat;
+                    height: 100%;
+                    left: 0;
+                    position: fixed;
+                    text-align: center;
+                    top: 0;
+                    width: 100%;
+                    z-index: 1;
+                    background-size: 7%;
+                }
+                .tableCls{
+                    border: 1px  solid #c0c0c0;
+                    border-collapse: collapse !important;
+                }
+                .headerCls{
+                    background-color: #787676 !important;
+                    color: white !important;
+                    font-weight: bold !important;
+                }
+                .footerCls{
+                    background-color: #c0c0c02e !important;
+                    color: #0d0d0d !important;
+                    font-weight: bold !important;
+                }
+            </style>
+        </head>
+        <body> 
+            <apex:form >     
+                <div class="demo-only" style="/*width: 100%;*/">
+                  <div class="slds-form slds-form_compound">
+                    <fieldset class="slds-form-element">
+                      <legend class="slds-form-element__label slds-text-title_caps" style="border: 1px solid grey;
+                width: 100%;
+                padding: 9px;
+                background: #787676;
+                color: #fff;"><b><center>Weekly Report</center></b></legend><br/>
+                      <div class="slds-form-element__group">
+                        <div class="slds-form-element__row ">
+                          <div class="slds-form-element slds-size_2-of-12" style="width:130px;    padding-left: 35px;">
+                            <label class="slds-form-element__label" for="input-01" style="width:inherit"><b>Select Date</b></label> 
+                          </div>
+                          <div class="slds-form-element slds-size_2-of-12"> 
+                             <apex:input type="date" value="{!outputdate}"  style="width:180px" styleclass="slds-input"/>
+                          </div> 
+                        </div>
+                      </div>      
+                    </fieldset> 
+                    <fieldset class="slds-form-element">
+                      <div class="slds-form-element__group">
+                        <div class="slds-form-element__row ">
+                          <div class="slds-form-element slds-size_2-of-12" style="width:130px;    padding-left: 35px;">
+                            <label class="slds-form-element__label" for="input-01" style="width:inherit"><b>Sites</b></label>   
+                          </div>
+                          <div class="slds-form-element slds-size_2-of-12"> 
+                             <apex:selectList id="countries" value="{!objsites}" size="1" required="true" styleclass="slds-input" Style="width: 180px; ">
+                               <apex:selectOptions value="{!sites}"/>
+                            </apex:selectList>
+                          </div>
+                          <div class="slds-form-element slds-size_1-of-12" style="margin-left: -17px;">
+                            <apex:commandButton oncomplete="CalculateSum()"  value="Run Report" id="theButtonll" style="background: #1797c0; color: white; color: white; margin-bottom: 20px; padding: 6px; " 
+                                        action="{!searchEnquire}" reRender="pbtId0,pbtId1,panlId,pbtId2,pbtId3,pbtId4,pbtId5,pbtId6,pbtId7,pbtId8,pbtId9,pbtId10,pbtId11,pbtId12,
+                                        pbtId13, pbtId14,pbtId15,pbtId16,pbtId17,pbtId18,pbtId19,pbtId20,pbtId21,pbtId22,pbtId23" status="ajaxStatus" /> 
+                          </div>
+                        </div>
+                      </div>          
+                    </fieldset> 
+                  </div>
+                </div>  
+                <apex:outputPanel id="pbtId0"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Enquires #</div>
+                              </th>
+                              <th scope="col" class="tableCls headerCls"> 
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total</div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody>  
+                              <apex:variable var="index" value="{!0}" />
+                              <apex:repeat value="{!objMWrap.objlstWFDs }" var="wf" > 
+                                  <tr id="trId">
+                                      <td class='tableCls detailItem'> {!wf.detailItem} </td>
+                                      <td class='tableCls pbtId0_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId0_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId0_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId0_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId0_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId0_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId0_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId0_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" /> 
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls totdetailItem'>Total</td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId0_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>  
+                <apex:outputPanel id="pbtId1"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">1st Appointments <br/> booked #</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>  
+                              <apex:variable var="index" value="{!0}" />
+                              <apex:repeat value="{!objMWrapForApp.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'> {!wf.detailItem} </td>
+                                      <td class='tableCls pbtId1_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId1_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId1_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId1_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId1_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId1_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId1_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId1_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId1_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId2"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Conversion of Enq<br/> to 1st Appts %</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" /> 
+                              <apex:repeat value="{!objMWEnqToAppt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'> {!wf.detailItem} </td>
+                                      <td class='tableCls pbtId2_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId2_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId2_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId2_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId2_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId2_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId2_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId2_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId2_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId3"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">All Appointments seen<br/> # (Members &amp; IOS)</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>   
+                              <apex:variable var="index" value="{!0}" /> 
+                              <apex:repeat value="{!objAllAppnts.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'> {!wf.detailItem} </td>
+                                      <td class='tableCls pbtId3_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId3_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId3_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId3_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId3_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId3_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId3_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId3_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId3_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId4"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">New Patients Seen<br/> (1st Appt. to BU)</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />   
+                              <apex:repeat value="{!objNewPatents.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'> {!wf.detailItem} </td>
+                                      <td class='tableCls pbtId4_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId4_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId4_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId4_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId4_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId4_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId4_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId4_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId4_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId5"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Implant &amp; Ortho Sales</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />     
+                              <apex:repeat value="{!objImp_Ortho.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId5_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId5_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId5_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId5_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId5_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId5_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId5_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId5_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" /> 
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId5_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId6"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">New Members signed #</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />        
+                              <apex:repeat value="{!objNewMemberSigned.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId6_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId6_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId6_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId6_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId6_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId6_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId6_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId6_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />  
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId6_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId7"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Sales (Invoiced sales) £</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>   
+                              <apex:variable var="index" value="{!0}" />  
+                              <apex:repeat value="{!salesInvoiced.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId7_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId7_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId7_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId7_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId7_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId7_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId7_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId7_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />   
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId7_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId8"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">GP Enq. > 1st Appt.<br/> Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>   
+                              <apex:variable var="index" value="{!0}" /> 
+                              <apex:repeat value="{!GP_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId8_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId8_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId8_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId8_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId8_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId8_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId8_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId8_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />   
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId8_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId9"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Dentist Enq. > 1st Appt. <br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />    
+                              <apex:repeat value="{!Dentist_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId9_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId9_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId9_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId9_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId9_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId9_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId9_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId9_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />    
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId9_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId10"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Implant Enq. > 1st Appt. <br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />       
+                              <apex:repeat value="{!Implant_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId10_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId10_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId10_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId10_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId10_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId10_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId10_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId10_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />     
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId10_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId11"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Ortho Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />         
+                              <apex:repeat value="{!Ortho_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId11_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId11_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId11_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId11_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId11_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId11_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId11_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId11_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />     
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId11_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId12"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Pathology Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>   
+                              <apex:variable var="index" value="{!0}" />
+                              <apex:repeat value="{!Pathology_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId12_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId12_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId12_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId12_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId12_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId12_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId12_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId12_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />      
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId12_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId13"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Fertility Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />   
+                              <apex:repeat value="{!Fertility_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId13_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId13_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId13_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId13_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId13_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId13_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId13_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId13_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />      
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId13_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId14"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Medical Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>   
+                              <apex:variable var="index" value="{!0}" />
+                              <apex:repeat value="{!Medical_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId14_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId14_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId14_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId14_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId14_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId14_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId14_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId14_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />      
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId14_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId15"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Therapists Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />  
+                              <apex:repeat value="{!Therapists_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId15_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId15_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId15_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId15_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId15_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId15_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId15_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId15_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />      
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId15_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId16"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Physio Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>  
+                              <apex:variable var="index" value="{!0}" />   
+                              <apex:repeat value="{!Physio_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId16_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId16_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId16_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId16_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId16_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId16_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId16_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId16_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />       
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId16_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId17"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Mother Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />     
+                              <apex:repeat value="{!Mother_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId17_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId17_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId17_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId17_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId17_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId17_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId17_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId17_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />        
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId17_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId18"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Skin Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />       
+                              <apex:repeat value="{!Skin_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId18_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId18_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId18_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId18_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId18_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId18_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId18_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId18_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr>
+                                  <apex:variable var="index" value="{!index + 1}" />         
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId18_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId19"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Diagnostics Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />          
+                              <apex:repeat value="{!Diagnostics_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId19_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId19_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId19_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId19_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId19_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId19_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId19_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId19_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />         
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId19_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId20"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Occupational Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />             
+                              <apex:repeat value="{!Occupational_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId20_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId20_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId20_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId20_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId20_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId20_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId20_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId20_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />         
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId20_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId21"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">Membership Enq. > 1st Appt.<br/>Non-conversion Reason</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/> 
+                              <apex:variable var="index" value="{!0}" />               
+                              <apex:repeat value="{!Membership_EnqTo1st_Appt.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId21_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId21_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId21_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId21_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId21_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId21_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId21_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId21_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />         
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId21_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId22"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate">TOTAL - Non-Conversion<br/> Reasons (Core BUs)</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>
+                              <apex:variable var="index" value="{!0}" />                  
+                              <apex:repeat value="{!totalNonConvReason.objlstWFDs}" var="wf"  >
+                                  <tr id="trId">
+                                      <td class='tableCls'><apex:outputText value="{!wf.detailItem}" escape="false"></apex:outputText>  </td>
+                                      <td class='tableCls pbtId22_detailDay1_{!index}'> {!wf.detailDay1} </td>
+                                      <td class='tableCls pbtId22_detailDay2_{!index}'> {!wf.detailDay2} </td>
+                                      <td class='tableCls pbtId22_detailDay3_{!index}'> {!wf.detailDay3} </td>
+                                      <td class='tableCls pbtId22_detailDay4_{!index}'> {!wf.detailDay4} </td>
+                                      <td class='tableCls pbtId22_detailDay5_{!index}'> {!wf.detailDay5} </td>
+                                      <td class='tableCls pbtId22_detailDay6_{!index}'> {!wf.detailDay6} </td>
+                                      <td class='tableCls pbtId22_detailDay7_{!index}'> {!wf.detailDay7} </td>
+                                      <td class='tableCls pbtId22_detailTotal_{!index}'> {!wf.detailTotal}</td>
+                                  </tr> 
+                                  <apex:variable var="index" value="{!index + 1}" />         
+                              </apex:repeat> 
+                              <tr>
+                                  <td class='tableCls footerCls'>Total</td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay1'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay2'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay3'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay4'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay5'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay6'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailDay7'> </td>
+                                  <td class='tableCls footerCls pbtId22_totdetailTotal'> </td>
+                              </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel><br/>
+                <apex:outputPanel id="pbtId23"> 
+                    <apex:outputPanel >  
+                        <table id="tableId" style="width:100%" class="slds-table slds-table_bordered slds-table_cell-buffer tableCls">
+                          <thead>
+                            <tr class="slds-text-title_caps"> 
+                              <th scope="col" class='tableCls headerCls' style="width: 22%;">
+                                <div class="slds-truncate"> </div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay1}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay2}</div> 
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay3}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay4}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay5}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay6}</div>
+                              </th>
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">{!objMWrap.objWPH.headerDay7}</div>
+                              </th> 
+                              <th scope="col" class='tableCls headerCls'>
+                                <div class="slds-truncate">Total </div>
+                              </th> 
+                            </tr>
+                          </thead>
+                          <tbody><br/>  
+                                  <tr id="trId">
+                                      <td class='tableCls detailItem'> Core BU Enquiries </td>
+                                      <td class='tableCls pbtId01_totdetailDay1'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay2'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay3'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay4'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay5'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay6'> </td>
+                                      <td class='tableCls pbtId01_totdetailDay7'> </td>
+                                      <td class='tableCls pbtId01_totdetailTotal'> </td>
+                                  </tr>
+                                  <tr id="trId1">
+                                      <td class='tableCls'> 1st appts Booked </td>
+                                      <td class='tableCls pbtId110_totdetailDay1'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay2'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay3'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay4'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay5'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay6'> </td>
+                                      <td class='tableCls pbtId110_totdetailDay7'> </td>
+                                      <td class='tableCls pbtId110_totdetailTotal'> </td>
+                                  </tr> 
+                                  <tr id="trId2">
+                                      <td class='tableCls'> Non-converted </td>
+                                      <td class='tableCls pbtId22_totdetailDay1'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay2'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay3'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay4'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay5'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay6'> </td>
+                                      <td class='tableCls pbtId22_totdetailDay7'> </td>
+                                      <td class='tableCls pbtId22_totdetailTotal'> </td>
+                                  </tr> 
+                          </tbody> 
+                        </table>  
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:actionstatus startStyleClass="requiredLoaderBG" id="ajaxStatus" />
+            </apex:form> 
+        </body>
+        <script>
+            $(document).ready(function() {
+                CalculateSum();
+             });
+              
+            function CalculateSum(){ 
+                for(var k=0; k<23; k++){
+                    var totalDays = 0; 
+                    var tblRows = $('[id$="pbtId'+k+'"] table tr').length-2;
+                    //console.log('------1661',tblRows);
+                    var rowSum = 0;
+                    for(var j = 0;j<tblRows ;j++){  
+                        rowSum = 0;                
+                        for(var i=1;i<8;i++){   
+                                              
+                            rowSum += parseFloat($('.pbtId'+k+'_detailDay'+i+'_'+j).text());                         
+                        }
+                        $('.pbtId'+k+'_detailTotal_'+j).text(rowSum);
+                        
+                    }
+                    for(var i=1;i<8;i++){ 
+                        var sumdetailDay = 0;                
+                        for(var j = 0;j<tblRows ;j++){
+                            var colVal = parseFloat($('.pbtId'+k+'_detailDay'+i+'_'+j).text());
+                            sumdetailDay+=colVal;     
+                        }
+                        $('.pbtId'+k+'_totdetailDay'+i).text(sumdetailDay);                           
+                    }  
+                    var totalSum = 0;
+                    $('[class*="pbtId'+k+'_detailTotal_"]').each(function(){
+                        totalSum  += parseFloat($(this).text());
+                    });
+                    $('.pbtId'+k+'_totdetailTotal').text(totalSum);
+                 }
+                 //console.log('--------0',parseFloat($('.pbtId0_detailDay3_12').text())/parseFloat($('.pbtId1_detailDay3_12').text()));
+                 //console.log('--------1',parseFloat($('.pbtId1_detailDay3_12').text()));
+                 CalculateConversion();
+            } 
+             function CalculateConversion(){ 
+                var cellVal = 0;
+                var tblRows = $('[id$="pbtId0"] table tr').length-2; 
+                for(var i=0; i<tblRows; i++){
+                    for(var j=1; j<8; j++){   
+                        if(parseFloat($('.pbtId0_detailDay'+j+'_'+i).text()) === 0){
+                            $('.pbtId2_detailDay'+j+'_'+i).text('0%'); 
+
+                        }else{  
+                           if(parseFloat($('.pbtId1_detailDay'+j+'_'+i).text()) === 0){
+                               $('.pbtId2_detailDay'+j+'_'+i).text('0%');
+                           }else{
+                               $('.pbtId2_detailDay'+j+'_'+i).text((((parseFloat($('.pbtId1_detailDay'+j+'_'+i).text())/parseFloat($('.pbtId0_detailDay'+j+'_'+i).text()))*100).toFixed(2))+'%');
+                           } 
+                       }
+                    }
+                    if($('.pbtId0_detailTotal_'+i).text() == undefined || $('.pbtId0_detailTotal_'+i).text() == null || parseFloat($('.pbtId0_detailTotal_'+i).text()) == 0 ){
+                        $('.pbtId2_detailTotal_'+i).text('0.00%');
+                    }else{
+                        $('.pbtId2_detailTotal_'+i).text((((parseFloat($('.pbtId1_detailTotal_'+i).text())/parseFloat($('.pbtId0_detailTotal_'+i).text()))*100).toFixed(2))+'%');
+                    } 
+                }  
+                for(var i=1; i<8; i++){
+                    if(parseFloat($('.pbtId1_totdetailDay'+i).text()) === 0  ){
+                        $('.pbtId2_totdetailDay'+i).text('0%'); 
+                    }else{
+                        if(parseFloat($('.pbtId1_totdetailDay'+i).text()) === 0 && parseFloat($('.pbtId0_totdetailDay'+i).text()) === 0){
+                            $('.pbtId2_totdetailDay'+i).text('0%');
+                        }else{
+                            $('.pbtId2_totdetailDay'+i).text((((parseFloat($('.pbtId1_totdetailDay'+i).text())/parseFloat($('.pbtId0_totdetailDay'+i).text()))*100).toFixed(2))+'%');
+                        }
+                    }
+                    if(parseFloat($('.pbtId0_totdetailTotal').text()) === 0){
+                        $('.pbtId2_totdetailTotal').text('0.00%');
+                    }else{
+                        $('.pbtId2_totdetailTotal').text((((parseFloat($('.pbtId1_totdetailTotal').text()))/(parseFloat($('.pbtId0_totdetailTotal').text()))*100).toFixed(2))+'%'); 
+                    }
+                    var totdetailDay = $('.pbtId0_totdetailDay'+i).text(); 
+                    $('.pbtId01_totdetailDay'+i).text($('.pbtId0_totdetailDay'+i).text());
+                    $('.pbtId110_totdetailDay'+i).text($('.pbtId1_totdetailDay'+i).text());
+                    //$('.pbtId22_totdetailDay'+i).text($('.pbtId2_totdetailDay'+i).text());
+                    var tncr = 0 ;
+                    var tt = 0 ;
+                    for(var j=0; j<10; j++){
+                        tncr = tncr+parseFloat($('.pbtId22_detailDay'+i+'_'+j).text());
+                        tt = tt+parseFloat($('.pbtId22_detailTotal_'+j).text());
+                    }
+                    $('.pbtId22_totdetailDay'+i).text(tncr);
+                    $('.pbtId22_totdetailTotal').text(tt); 
+                }
+                $('.pbtId01_totdetailTotal').text($('.pbtId0_totdetailTotal').text());
+                $('.pbtId110_totdetailTotal').text($('.pbtId1_totdetailTotal').text());
+                //$('.pbtId22_totdetailTotal').text($('.pbtId2_totdetailTotal').text());
+                
+                for(var i=1; i<=7;i++){ 
+                    if($('.pbtId5_detailDay'+i+'_0').text().trim() !== '0' && $('.pbtId4_detailDay'+i+'_1').text().trim() !== '0'){
+                        $('.pbtId5_detailDay'+i+'_2').text((((parseFloat($('.pbtId5_detailDay'+i+'_0').text()))/(parseFloat($('.pbtId4_detailDay'+i+'_1').text()))*100).toFixed(2))+'%');
+                    }else{
+                        $('.pbtId5_detailDay'+i+'_2').text('0%');
+                    }
+                    if($('.pbtId5_detailDay'+i+'_1').text().trim() !== '0' && $('.pbtId4_detailDay'+i+'_2').text().trim() !== '0'){
+                        $('.pbtId5_detailDay'+i+'_3').text((((parseFloat($('.pbtId5_detailDay'+i+'_1').text()))/(parseFloat($('.pbtId4_detailDay'+i+'_2').text()))*100).toFixed(2))+'%');
+                    }else{
+                        $('.pbtId5_detailDay'+i+'_3').text('0%');
+                    }
+                }
+                if($('.pbtId5_detailTotal_0').text().trim() !== '0'){
+                    $('.pbtId5_detailTotal_2').text((((parseFloat($('.pbtId5_detailTotal_0').text()))/(parseFloat($('.pbtId4_detailTotal_1').text()))*100).toFixed(2))+'%');    
+                }else{
+                    $('.pbtId5_detailTotal_2').text('0%');
+                }
+                if($('.pbtId5_detailTotal_1').text().trim() !== '0'){
+                    $('.pbtId5_detailTotal_3').text((((parseFloat($('.pbtId5_detailTotal_1').text()))/(parseFloat($('.pbtId4_detailTotal_2').text()))*100).toFixed(2))+'%');    
+                }else{
+                    $('.pbtId5_detailTotal_3').text('0%');
+                } 
+                for(var i=1;i<=7;i++){ 
+                    var ttIOS = parseFloat($('.pbtId5_detailDay'+i+'_0').text())+parseFloat($('.pbtId5_detailDay'+i+'_1').text()); 
+                    var ttNPS = parseFloat($('.pbtId4_detailDay'+i+'_1').text())+parseFloat($('.pbtId4_detailDay'+i+'_2').text());  
+                    if(ttIOS !== 0 && ttNPS !== 0){    
+                        $('.pbtId5_totdetailDay'+i).text(((ttIOS/ttNPS*100).toFixed(2))+'%');
+                    }else{ 
+                        $('.pbtId5_totdetailDay'+i).text('0%');
+                    }
+                } 
+                var impTT = parseFloat($('.pbtId5_detailTotal_0').text())+parseFloat($('.pbtId5_detailTotal_1').text());
+                var npsTT = parseFloat($('.pbtId4_detailTotal_1').text())+parseFloat($('.pbtId4_detailTotal_2').text());
+                if(impTT !== 0 && npsTT !== 0){
+                     $('.pbtId5_totdetailTotal').text((((impTT/npsTT)*100).toFixed(2))+'%');
+                }else{                    
+                    $('.pbtId5_totdetailTotal').text('0%');
+                }  
+            }
+        </script>
+    </html> 
+</apex:page>

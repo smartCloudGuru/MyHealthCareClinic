@@ -1,0 +1,30 @@
+/**
+ * Created 26.3.2021..
+ */
+
+:host {
+    background-color: #FFF;
+    display: block;
+}
+
+.error-msg {
+    margin-top: 10px;
+}
+
+.shipping-form{
+    margin-top:24px;
+}
+
+.label-link
+{
+    color: #FFF;
+    text-decoration: underline;
+    top: 1px;
+    position: relative;
+}
+
+.label-link a
+{
+    color: #FFF;
+    font-weight:600;
+}

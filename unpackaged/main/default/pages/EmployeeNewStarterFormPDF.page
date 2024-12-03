@@ -1,0 +1,421 @@
+<apex:page renderAs="pdf" standardController="Employee__c" applyBodyTag="false" extensions="EmployeeNewStarterFormPDF_ctrl">
+    <head>
+        <style type="text/css">
+            @page {
+                size:A4 portrait;
+                border: 1px solid black;    
+            }
+            .htmlDetailElementTable img{
+                width: 200px !important; 
+            }
+        </style>
+    </head>
+    <center>
+        <apex:image value="{!$Resource.Myhealthcarecliniclogo}" width="150" height="50" />
+        <br/>
+        <h3>EMPLOYEE - NEW STARTER FORM</h3>
+    </center>
+
+    <p style="background-color:#E8E8E8;padding:4px 3px;margin-top:25px;">
+        <span>RIGHT TO WORK IN THE UK?</span>
+    </p>
+    <table>
+        <tr>
+            <td>
+                <b>Do you have Right to work in the UK?</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>                
+                <apex:outputPanel rendered="{!employee.Do_you_have_Right_to_work_in_the_UK__c != null}">
+                    {!employee.Do_you_have_Right_to_work_in_the_UK__c}
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!employee.Do_you_have_Right_to_work_in_the_UK__c == null}">
+                    Yes
+                </apex:outputPanel>
+            </td>
+        </tr>
+    </table>
+
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>PERSONAL DETAILS</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td width="60%">
+                <b>Ee First Name</b>
+            </td>
+            <td width="40%">
+                <b>Middle Name</b>
+            </td>            
+        </tr>
+        <tr>
+            <td>
+                {!employee.First_Name__c}
+            </td>
+            <td>
+                {!employee.Ee_Middle_Name__c}
+            </td>            
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <b>Ee Surname</b>                
+            </td>            
+            <td width="40%">
+                <b>Ee Title</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Surname__c}
+            </td>            
+            <td>
+                {!employee.Title__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="60%">
+                <b>Ee Email Address For Payslip</b>                
+            </td>
+            <td width="40%">
+                <b>Ee Mobile Number</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Email_Address_For_Payslip__c}
+            </td>
+            <td>
+                {!employee.Mobile_Number__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="60%">
+                <b>Ee Other Contact Number</b>                
+            </td>
+            <td width="40%">
+                <b>Nationality</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Telephone_Number__c}
+            </td>
+            <td>
+                {!employee.Nationality__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="60%">
+                <b>National Insurance Number</b>                
+            </td>
+            <td width="40%">
+                <b>Ee Date Of Birth</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <apex:outputPanel rendered="{!employee.National_Insurance_Number__c!=null}">
+                    {!employee.National_Insurance_Number__c}
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!employee.National_Insurance_Number__c==null}">
+                    Not Available
+                </apex:outputPanel>                
+            </td>
+            <td>
+                <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                    <apex:param value="{!employee.Date_Of_Birth__c}" /> 
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="60%">
+                <b>Ee Address</b>
+            </td>
+            <td width="40%">
+                                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="width:90%">
+                    {!employee.Ee_Full_Address__c}
+                </div>
+            </td>
+            <td>
+                
+            </td>
+        </tr>
+    </table>
+
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>EMERGENCY CONTACT DETAILS</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td width="60%">
+                <b>ICE Name</b>                
+            </td>
+            <td width="40%">
+                <b>ICE Relationship</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Name__c}
+            </td>
+            <td>
+                {!employee.Relationship__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td width="60%">
+                <b>ICE Mobile Number</b>                
+            </td>
+            <td width="40%">
+                <b>ICE Email Address
+                </b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Mobile_Number__c}
+            </td>
+            <td>
+                {!employee.Emergency_Email_Address__c}
+            </td>
+        </tr>        
+    </table>   
+    
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>UK BANK DETAILS (ACCOUNT MUST BE IN YOUR NAME)</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td width="60%">
+                <b>Your Name On Bank Account</b>                
+            </td>
+            <td width="40%">
+                <b>Bank Account Number</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Name_On_Bank_Account__c}
+            </td>
+            <td>
+                {!employee.Bank_Account_Number__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <b>Sort Code</b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {!employee.Sort_Code__c}
+            </td>
+        </tr>
+    </table>
+    
+    <div style="page-break-after: always"/>
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>EMPLOYEE STATEMENT</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                <b>You need to select only one of the following statements A, B or C</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Employee_Statement__c}
+            </td>
+        </tr>
+    </table>
+
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>STUDENT LOAN</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                <b>You will have a Plan 1 Student Loan if:</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                You lived in Scotland or Northern Ireland when you started your course, or
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                You will have a Plan 2 Student Loan if you lived in England or Wales and started your course on or after 1 September 2012.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <b>Do you have a Student Loan which is not fully repaid?</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Repaying_Student_Loan__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <b>Did you finish your student loan studies before the last 6 April?</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Your_Studies_Before_The_Last_6_April__c}
+            </td>
+        </tr>
+    </table>
+    
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>HEALTH</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                <b>Might you require any reasonable adjustments in order to do the role that you are being hired to perform?</b>                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {!employee.Mental_Physical_Disability_Or_Illness__c}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr style="display:{!IF(employee.Mental_Physical_Disability_Or_Illness__c == 'Yes','','none')}">
+            <td colspan="2">
+                <b>If yes, please give details:</b>                
+            </td>
+        </tr>
+        <tr style="display:{!IF(employee.Mental_Physical_Disability_Or_Illness__c == 'Yes','','none')}">
+            <td>
+                {!employee.Disability_Or_Illness_Details__c}
+            </td>
+        </tr>
+    </table>    
+    
+    <p style="background-color:#E8E8E8;padding:4px 3px;">
+        <span>APPLICANTS DECLARATION – READ AND UNDERSTAND BEFORE SIGNING.</span>
+    </p>
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                <b>Yes</b> - I confirm that the information given above is complete and correct, and that I understand that any incomplete,
+                untrue or misleading information given to the employer will entitle the employer to reject my application,
+                withdraw any employment offer made, or, if I am employed, dismiss me without notice.                
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Important:</b> General Data Protection Regulations - GDPR Personal Data Consent: By signing and submitting this form you hereby authorise MyHealthcare Clinic to process your personal data and provide information as necessary to third parties including accountants, payroll and legal providers that support our human resources, payroll and company operations; be they in the European Union, the USA or other countries outside United Kingdom GDPR.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Yes</b> - I give consent as stated above.
+            </td>
+        </tr>        
+    </table>
+    <div style="margin-top:10px"/>    
+    <table width="100%">
+        <tr>
+            <td width="40%">
+                <b>Name</b>           
+            </td>
+            <td width="40%">
+                <b>Date</b>           
+            </td>
+            <td width="20%">
+                <b>Signature</b>           
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                {!employee.First_Name__c} {!employee.Ee_Middle_Name__c} {!employee.Surname__c}
+            </td>
+            <td valign="top">
+                <apex:outputText value="{0,date,dd'/'MM'/'yyyy}">
+                    <apex:param value="{!employee.Signed_Date__c}" /> 
+                </apex:outputText>         
+            </td>
+            <td valign="top">
+                <apex:outputField value="{!employee.Signature__c}" style="width:150px;height:100px;"/>
+            </td>
+        </tr>
+    </table>
+
+</apex:page>

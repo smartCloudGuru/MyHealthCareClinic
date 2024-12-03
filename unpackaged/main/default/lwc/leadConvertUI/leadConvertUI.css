@@ -1,0 +1,34 @@
+/**
+ * Created 20.1.2023..
+ */
+.min-height {
+    min-height: 380px;
+}
+
+.footer-min-height
+{
+    height: 32px;
+    min-height: 32px;
+}
+.title-div {
+   text-align: center;
+}
+
+.asblock {
+    display: block;
+    margin-bottom: 20px;
+    padding: 6px;
+}
+
+table thead tr td {
+    font-weight: bold;
+}
+
+table tbody tr td {
+    border-top: 1px solid #5c5c5d;
+}
+
+.dupe-table {
+    margin: auto;
+    width: 90%;
+}

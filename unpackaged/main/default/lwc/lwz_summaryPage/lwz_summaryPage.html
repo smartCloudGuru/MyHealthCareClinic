@@ -1,0 +1,51 @@
+<!--
+ - Created by Matija on 14.9.2023..
+ -->
+
+<!-- LWZ Summary Page -->
+<template>
+
+    <div if:true={success}>
+
+        <div if:true={conversionRequested}>
+
+            <lightning-layout multiple-rows="true" horizontal-align="space">
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    Lead has been processed successfully and conversion done.
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    <lightning-button
+                            if:true={convertedToAccountId}
+                            class="slds-align_absolute-center"
+                            title="Go to Account"
+                            label="Go to Account"
+                            variant="brand"
+                            onclick={navigateToAccount}></lightning-button>
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    <lightning-button
+                            if:true={convertedToOpportunityId}
+                            class="slds-align_absolute-center"
+                            title="Go to Opportunity"
+                            label="Go to Opportunity"
+                            variant="brand"
+                            onclick={navigateToOpportunity}></lightning-button>
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+        </div>
+
+        <div if:false={conversionRequested}>
+            Lead has been processed successfully.
+        </div>
+    </div>
+
+    <div if:false={success}>
+        Lead processing failed with the following error message: {message}
+    </div>
+
+</template>

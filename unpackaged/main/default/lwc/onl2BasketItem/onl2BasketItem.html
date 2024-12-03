@@ -1,0 +1,45 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Basket Item -->
+<template>
+    <div class="basket-item">
+        <div class="quantity-and-name">
+            <span if:false={itemIsCoupon}>
+                <span class={typeClass}>&nbsp;</span>
+                {item.Quantity}x&nbsp;{itemName}
+            </span>
+            <span if:true={itemIsCoupon}>
+                COUPON: {itemName}
+            </span>
+        </div>
+
+        <div if:false={inEdit} class="edit-options">
+            <a href="javascript:" onclick={handleRemove}>remove</a>
+        </div>
+
+        <div if:true={inRemove} class="edit-options">
+            <span class="newline-on-small-factor">Are you sure?&nbsp;&nbsp;</span>
+            <a href="javascript:" onclick={handleRemoveYes}>yes, remove</a>
+            <a href="javascript:" onclick={handleRemoveCancel}>cancel</a>
+        </div>
+
+        <lightning-formatted-number if:false={itemIsCoupon} value={item.TotalPrice} format-style="currency" currency-code="GBP" class="price">
+        </lightning-formatted-number>
+
+        <div if:true={item.COVID_Tests__r}>
+            <template for:each={item.COVID_Tests__r.records} for:item="test">
+                <div key={test.Id} class="test-row">
+                    <c-onl-test-summary-row test={test}></c-onl-test-summary-row>
+                </div>
+            </template>
+        </div>
+
+        <div if:true={itemIsCoupon} class="price">
+            Coupon value will be applied at the next step
+        </div>
+
+
+    </div>
+</template>

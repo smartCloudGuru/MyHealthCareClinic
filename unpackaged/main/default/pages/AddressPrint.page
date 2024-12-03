@@ -1,0 +1,97 @@
+<!--
+ - Created by zokito on 4/13/21.
+ -->
+
+<apex:page id="AddressPrint"
+           standardController="Opportunity"
+           applyBodyTag="false"
+           renderAs="advanced_pdf"
+           showHeader="false">
+    <head>
+        <style>
+            @page {
+                margin: 0.33in;
+                size: 4in 6in;
+            }
+
+            body {
+                font-family: sans-serif, serif;
+                margin: 0;
+                padding: 0;
+                font-size: 13px;
+                line-height: 28px;
+            }
+
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+    <div class="address-wrapper">
+
+        <div style="padding:0;">
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="2" style="border-bottom:2px solid black;">Order No. {!Opportunity.Online_Order_Number__c}
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%;vertical-align: top;line-height: 20px;padding-top:10px">
+                    <strong>From:</strong>
+                </td>
+                <td style="width: 80%;vertical-align: top; line-height: 20px;padding-left:1em;padding-top:10px;">
+                    <strong>MyHealthcare Clinic</strong>
+                    <br/>18 Wimpole Street<br/>W1G 8GD
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+        </table>
+        </div>
+        <div style="border:1px solid black; padding:1em;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 20%;vertical-align: top; font-size: 120%">
+                    <strong>To:</strong>
+                </td>
+                <td style="width: 80%;vertical-align: top; font-size: 120%;">
+                    <strong>{!Opportunity.Online_Shipping_First_Name__c}&nbsp;{!Opportunity.Online_Shipping_Last_Name__c}</strong>
+                    <br/>
+                    {!Opportunity.Online_Shipping_Address_Line_1__c}
+                    <apex:outputPanel layout="none" rendered="{!Opportunity.Online_Shipping_Address_Line_2__c != null}">
+                        <br/>
+                        {!Opportunity.Online_Shipping_Address_Line_2__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!Opportunity.Online_Shipping_Address_Line_3__c != null}">
+                        <br/>
+                        {!Opportunity.Online_Shipping_Address_Line_3__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!Opportunity.Online_Shipping_Postcode__c != null}">
+                        <br/>
+                        {!Opportunity.Online_Shipping_Postcode__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!Opportunity.Online_Shipping_City__c != null}">
+                        <br/>
+                        {!Opportunity.Online_Shipping_City__c}
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!Opportunity.Online_Shipping_Country__c != null}">
+                        <br/>
+                        {!Opportunity.Online_Shipping_Country__c}
+                    </apex:outputPanel>
+                </td>
+            </tr>
+        </table>
+        </div>
+
+
+    </div>
+    </body>
+
+</apex:page>

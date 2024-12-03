@@ -1,0 +1,59 @@
+<!--
+ - Created 2.4.2024..
+ -->
+
+<!-- TLP Authenticate -->
+<template>
+    <p class="dev-build">a010</p>
+
+    <div class="page-width-limited">
+
+    <lightning-layout
+            multiple-rows="true"
+            horizontal-align="start"
+            class="slds-p-top_medium field-width-limit no-margin-button-form mhc2 key-landing">
+
+        <lightning-layout-item
+                if:false={loading}
+                size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+            <div class="key-field">
+                <lightning-input type="password"
+                                 label="Please provide your access key:"
+                                 data-formfield="accKey"
+                                 max-length=32
+                                 autocomplete="off"
+                                 name="accessKey"
+                                 class="slds-align_absolute-center max-150"
+                ></lightning-input>
+            </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+                if:true={noAccess}
+                size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+            <div if:false={loading} class="error slds-align_absolute-center">
+                Provided key is not acceptable
+            </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+                if:false={loading}
+                size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+            <lightning-button
+                    label="Proceed"
+                    class="mhc-button primary-button slds-align_absolute-center no-margin"
+                    onclick={handleProceed}>
+            </lightning-button>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+                if:true={loading}
+                size="12" small-device-size="12" medium-device-size="12" large-device-size="12" padding="around-medium">
+            <div class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+
+    </div>
+</template>

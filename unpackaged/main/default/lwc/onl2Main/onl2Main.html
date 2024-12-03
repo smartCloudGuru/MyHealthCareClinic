@@ -1,0 +1,159 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Online COVID test shop Main -->
+<template>
+
+    <!-- navigation always on top -->
+
+    <template if:false={hideRegistering}>
+        <template if:true={loggedin}>
+            <div class="header-container" if:true={sm_page.main}>
+                <div class="header slds-text-align_right width-limited">
+                    <div class="login-info">
+                        <strong><a href="javascript:" onclick={handleLogout}>Log out</a></strong>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </template>
+
+
+    <template if:false={hideBrowsing}>
+
+        <template if:false={direct}>
+
+            <template if:false={randoxPage}>
+                <div class="find-lists" if:true={sm_page.main}>
+
+                    <c-onl2-find-appointments
+                            if:true={showAppointmentSearch}
+                            data-cfps
+                            data-selected={sm_menuSelection}
+                            store-config={storeConfig}
+                            query-parameters={queryParameters}
+                            onbook={handleBookAppointment}
+                            dev={dev}
+                            mobile-app={mobileApp}
+                            default-personal-details={}
+                    >
+                    </c-onl2-find-appointments>
+                </div>
+            </template>
+
+            <template if:true={randoxPage}>
+                <div class="find-lists" if:true={sm_page.main}>
+
+                    <c-onl-randox-landing
+                            query-parameters={queryParameters}
+                            store-config={storeConfig}
+                            onbook={handleBookAppointment}
+                            dev={dev}
+                    >
+                    </c-onl-randox-landing>
+
+                </div>
+            </template>
+
+
+        </template>
+
+    </template>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenScheduleModal}>
+        <c-onl2-schedule-modal
+                store-config={storeConfig}
+                test-product-to-schedule={testProductToSchedule}
+                app-product-to-schedule={appProductToSchedule}
+                test-to-schedule={testToSchedule}
+                app-to-schedule={appToSchedule}
+                default-personal-details={defaultPersonalDetails}
+                default-location={defaultLocation}
+                onclose={closeScheduleModal}
+                onbooked={handleBooked}
+                ongocheckout={navigateToCheckout}
+                dev={dev}
+        ></c-onl2-schedule-modal>
+    </template>
+
+    <!-- open login modal -->
+    <template if:true={triggerOpenLoginModal}>
+        <c-onl2-login-modal
+                store-config={storeConfig}
+                before-login-ctx={bookCtx}
+                default-personal-details={defaultPersonalDetails}
+                onclose={closeLoginModal}
+                onlogin={handleLoginUID}
+                branding={branding}
+                onsessionchange={handleSessionChange}
+                dev={dev}
+        ></c-onl2-login-modal>
+    </template>
+
+    <!-- open book modal -->
+    <template if:true={triggerOpenBookModal}>
+        <c-onl2-book-modal
+                store-config={storeConfig}
+                book-session={preloginBookSession}
+                default-personal-details={defaultPersonalDetails}
+                book-context={bookCtx}
+                onclose={closeBookModal}
+                onpayment={handleContinueToPayment}
+                ondologin={handleLoginNeeded}
+                onsessionchange={handleSessionChange}
+                query-parameters={queryParameters}
+                branding={branding}
+                direct={direct}
+                dev={dev}
+        ></c-onl2-book-modal>
+    </template>
+
+    <!--    <template if:false={cookiesDefined}>-->
+    <!--        <section aria-describedby="dialog-body-id-110" aria-labelledby="dialog-heading-id-5"-->
+    <!--                 class="cookie-banner slds-popover slds-popover_prompt slds-popover_prompt_bottom" role="dialog">-->
+    <!--            <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close" title="Close dialog">-->
+    <!--                <svg class="slds-button__icon" aria-hidden="true">-->
+    <!--                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>-->
+    <!--                </svg>-->
+    <!--                <span class="slds-assistive-text">Close dialog</span>-->
+    <!--            </button>-->
+    <!--            <div class="slds-popover__body" id="dialog-body-id-110">-->
+    <!--                <div class="slds-media">-->
+    <!--                    <div class="slds-media__body">-->
+    <!--                        <div class="slds-media">-->
+    <!--                            <div class="slds-media__body width-limited">-->
+    <!--                                <h2 id="dialog-heading-id-5" class="slds-popover_prompt__heading">We value your privacy</h2>-->
+    <!--                                <p>We use cookies to gather data about how you use our site. This helps us improve our site and ensures we offer you-->
+    <!--                                    the-->
+    <!--                                    best service.</p>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--            <footer class="slds-popover__footer">-->
+    <!--                <div class="slds-grid slds-grid_vertical-align-center">-->
+    <!--                    <div class="width-limited">-->
+    <!--                        <div style="padding:10px;display: inline-table;">-->
+    <!--                            <lightning-button-->
+    <!--                                    label="Reject"-->
+    <!--                                    class="mhc-button"-->
+    <!--                                    onclick={handleRejectCookies}>-->
+    <!--                            </lightning-button>-->
+    <!--                        </div>-->
+    <!--                        &nbsp;&nbsp;&nbsp;-->
+    <!--                        <div style="padding:10px;display: inline-table;">-->
+    <!--                            <lightning-button-->
+    <!--                                    label="Accept usage cookies"-->
+    <!--                                    class="mhc-button action-button"-->
+    <!--                                    onclick={handleAcceptCookies}>-->
+    <!--                            </lightning-button>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </footer>-->
+    <!--        </section>-->
+    <!--    </template>-->
+</template>

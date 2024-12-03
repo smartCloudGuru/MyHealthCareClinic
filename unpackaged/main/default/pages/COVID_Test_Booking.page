@@ -1,0 +1,89 @@
+<!--
+ - Created by zokito on 3/15/21.
+ -->
+
+<apex:page id="COVID_Test_Booking" showHeader="false" sideBar="false" standardStylesheets="false" standardController="COVID_Test__c">
+    <head profile="http://www.w3.org/2005/10/profile">
+        <title>COVID-19 Test Booking</title>
+        <meta content="initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, minimal-ui" name="viewport"/>
+        <link rel="icon"
+              type="image/png"
+              href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png"/>
+        <style type="text/css">
+
+            html
+            {
+                --c-color-text: rgb(60, 60, 59) !important;
+                --c-color-background-header: #ededed !important;
+                --c-color-background-secondary: #fcfcfc !important;
+                --c-color-covid: #4cb05b !important;
+                --c-color-covidlight: #81c88b !important;
+                --c-color-appointment: #0874bb !important;
+                --c-color-appointment-light: #fafafa !important;
+                --c-color-product: #e06310 !important;
+                --c-color-product-light: #f6ae7f !important;
+
+                --c-color-main: #4cb05b !important;
+                --c-color-secondary: #0874bb !important;
+
+                --c-color-error: #bc0d0d !important;
+                --c-color-border: #e1e1e1 !important;
+            }
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <apex:includeLightning />
+    <apex:includeScript value="https://js.stripe.com/v3/"/>
+
+
+    <div id="lightning"/>
+
+    <script type="application/javascript">
+        var stripe;
+        $Lightning.use("c:TestOutApp", function () {
+            $Lightning.createComponent("c:OnlineStore",
+                {
+                    "storeConfig": {
+                        "termsUrl": "https://myhealthcareclinic.com/medical/covid-terms-conditions/",
+                        "product": true,
+                        "privacyUrl": "https://myhealthcareclinic.com/privacy/",
+                        "logoUrl": "https://myhealthcareclinic.com/wp-content/uploads/logo-1.png",
+                        "covid": true,
+                        "contactTel": "0207 971 1787",
+                        "contactEmail": "coronatesting@myhealthcareclinic.com",
+                        "appointment": false,
+                        "storeName": "My Healthcare",
+                        "forceDisplayTabs": true,
+                        "backToWebsiteUrl": "https://myhealthcareclinic.com/medical/covid-19-testing/",
+                        "backToWebsiteText": "Back to Covid Website",
+                        "backToStoreText": "Back to our Store",
+                        "displayLocations": true,
+                        "allowTestModes": true
+                    }
+                },
+                "lightning",
+                function (cmp) {
+                    $A.eventService.addHandler({"event": "c:PaymentClicked", "handler": initiatePayment});
+                });
+        });
+
+        //Function to call Lightning Component Function
+        var initiatePayment = function (event) {
+            if (!stripe) {
+                stripe = Stripe("{!$Setup.OnlineStoreSettings__c.Stripe_Public_Key__c}");
+            }
+
+            stripe.redirectToCheckout({sessionId: event.getParam("sessionId")}).then(function (result) {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+        };
+    </script>
+</apex:page>

@@ -1,0 +1,38 @@
+/**
+ * Created 23.9.2022..
+ */
+
+.force-width
+{
+    width: 86% !important;
+    max-width: 86rem !important;
+}
+
+p {
+    font-size: 14px;
+    line-height: 26px;
+    margin-bottom: 4px;
+}
+
+.divider {
+    height: 8px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 8px;
+}
+
+.slds-card__body h2
+{
+    font-size: 18px;
+    margin-top: 6px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+@media only screen and (max-width: 767px) {
+    .force-width {
+        margin: 0;
+        padding: 8px;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}

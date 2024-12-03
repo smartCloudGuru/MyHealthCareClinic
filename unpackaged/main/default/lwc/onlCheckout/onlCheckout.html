@@ -1,0 +1,175 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Booking Overview -->
+<template>
+
+    <div class="header width-limited">
+        <h1>Checkout</h1>
+    </div>
+
+    <div if:true={basketProcessed}>
+
+        <div if:true={hasItemsInBasket} class="width-limited checkout-basket">
+
+            <div class="basket-overview big">
+                <div class="basket-info">{basketCount} item(s) in cart | Total <span class="price-total"> <lightning-formatted-number
+                        value={basketSum} format-style="currency" currency-code="GBP"></lightning-formatted-number></span>
+                </div>
+                <div class="slds-p-around_medium basket-items">
+                    <template for:each={_basket} for:item="item">
+                        <c-onl-basket-item key={item.Id}
+                                           item={item}
+                                           onremove={handleRemoveItemFromBasket} onplusone={handlePlusOne} onminusone={handleMinusOne}></c-onl-basket-item>
+                    </template>
+                </div>
+
+
+                <div if:true={showCoupon} class="coupon-cell slds-align_absolute-center">
+                    <lightning-input label=""
+                                     data-formfield="coupon"
+                                     class="coupon-input"
+                                     variant="label-hidden"
+                                     placeholder="Coupon code?"
+                                     autocomplete="off"
+                                     onchange={couponChanged}
+                                     max-length=12>
+                    </lightning-input>
+                    <lightning-button label="Apply"
+                                      class="mhc-button coupon-button slds-m-left_medium"
+                                      onclick={checkCoupon}></lightning-button>
+                </div>
+                <p if:true={triggerCouponNotValid} class="error-msg slds-align_absolute-center">Entered coupon is not valid</p>
+
+            </div>
+        </div>
+
+
+        <div if:true={basketProcessed}>
+            <div if:false={hasItemsInBasket} class="width-limited">
+                <h3 class="empty-basket-notice">Your cart is empty</h3>
+            </div>
+
+            <div class="row-wrap" if:true={hasItemsInBasket}>
+                <div class="width-limited">
+                    <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                            <h3>Please provide your personal details</h3>
+                            <p if:true={basketRequiresScheduling}>You will be able to enter personal details for other persons booked later.</p>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="First Name"
+                                             data-formfield="firstName"
+                                             placeholder="First Name"
+                                             max-length=30
+                                             value={_defaults.firstName}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="Last Name"
+                                             data-formfield="lastName"
+                                             placeholder="Last Name"
+                                             max-length=30
+                                             value={_defaults.lastName}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="Email"
+                                             placeholder="Email"
+                                             data-formfield="email"
+                                             max-length=50
+                                             type="email"
+                                             value={_defaults.email}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="Phone No."
+                                             data-formfield="phone"
+                                             placeholder="Phone No."
+                                             max-length=20
+                                             value={_defaults.phone}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+
+                    </lightning-layout>
+
+
+                    <lightning-layout if:true={basketRequiresDelivery} multiple-rows="true" horizontal-align="start" class="shipping-form">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                            <h3>Delivery address</h3>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="Street"
+                                             placeholder="Street"
+                                             data-formfield="street"
+                                             max-length=50
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="City"
+                                             data-formfield="city"
+                                             placeholder="City"
+                                             max-length=30
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                            <lightning-input label="Postal code"
+                                             data-formfield="postalcode"
+                                             placeholder="Postal code"
+                                             max-length=10
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+
+                    <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_large">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_terms"
+                                             label="Tick here to confirm you have read and understood our Cancellation policy and other important"
+                                             name="check_terms" required onchange={revalidate} checked={_defaults.checktac}></lightning-input>
+                            <span class="slds-show_inline-block label-link"> <a href={storeConfig.termsUrl} target="_blank">T&Cs</a></span>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_share"
+                                             label="Tick here to confirm that you understand that your data & test result may be shared with Public Health England & NHS Track & Trace for Covid Monitoring purposes"
+                                             name="check_share" required  checked={_defaults.checkshare} onchange={revalidate}></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" data-formfield="check_marketing" label="Tick here to stay up to date on the latest Covid & general health topics. We never share your data and promise to only send you
+helpful information."
+                                             name="check_marketing"></lightning-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-text-align_right">
+                            <lightning-button label="Continue"
+                                              class="mhc-button form-button small-top-margin"
+                                              onclick={doContinue}></lightning-button>
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>

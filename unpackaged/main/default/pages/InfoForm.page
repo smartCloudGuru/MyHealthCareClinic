@@ -1,0 +1,36 @@
+<!--
+ - Created by zokito on 4/19/21.
+ -->
+
+<apex:page id="InfoForm" showHeader="false" sideBar="false" standardStylesheets="false">
+    <head profile="http://www.w3.org/2005/10/profile">
+        <title>COVID-19 Test Booking</title>
+        <meta content="initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, minimal-ui" name="viewport"/>
+        <link rel="icon"
+              type="image/png"
+              href="https://myhealthcareclinic.com/wp-content/uploads/fav-mhc.png"/>
+        <style type="text/css">
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <apex:includeLightning />
+
+
+    <div id="lightning"/>
+
+    <script type="application/javascript">
+        var stripe;
+        $Lightning.use("c:InfoForm", function () {
+            $Lightning.createComponent("c:OnlineTestForm",
+                {
+                },
+                "lightning",
+                function (cmp) {
+                    console.log("app created");
+                });
+        });
+    </script>
+</apex:page>

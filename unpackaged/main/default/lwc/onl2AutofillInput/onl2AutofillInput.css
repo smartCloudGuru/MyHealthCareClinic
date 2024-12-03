@@ -1,0 +1,22 @@
+/**
+ * Created 9.9.2021..
+ */
+
+:host{
+    display: block;
+}
+
+.slds-combobox__input,
+.slds-combobox__input {
+    box-shadow: none;
+}
+
+
+.slds-combobox_container.has-custom-error {
+    border: none !important;
+}
+
+.form-error {
+    color: rgb(194, 57, 52);
+    display: block;
+}

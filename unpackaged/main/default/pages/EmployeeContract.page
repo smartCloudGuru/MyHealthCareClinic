@@ -1,0 +1,784 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeContract_ctrl">
+
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-1.8.js')}" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.js')}" />
+        <apex:stylesheet value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.css')}" />
+        <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.Myhealthcare_Appt,'/css/style.css')}" />
+
+        <style type="text/css">
+            .tooltip {
+                cursor: pointer;
+                position: relative;
+                display: inline-block;
+                /*border-bottom: 1px dotted black;*/
+            }
+
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 158px;
+                background-color: #ffdbdb;
+                color: #000;
+                text-align: center;
+                border-radius: 6px;
+                border: 1px solid red;
+                padding: 5px 0;
+                position: absolute;
+                z-index: 1;
+                bottom: 100%;
+                left: 50%;
+                margin-left: -5px;
+                margin-bottom: 3px;
+            }
+
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+            }
+
+            #ctopHeaderId {
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: 0;
+                z-index: 999;
+            }
+
+            #cContentId {
+                padding-top: 0px;
+                position: absolute;
+                left: 0;
+                right: 0;
+            }
+
+            body {
+                overflow: hidden;
+                font-size: 15px !important;
+            }
+
+            .overlay {
+                position: fixed;
+                top: 221px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: block;
+                background-color: #000;
+                opacity: 0.57;
+                filter: "alpha(opacity=57)";
+                -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=57)";
+                z-index: 10;
+            }
+
+            .col1 {
+                padding-left: 20px !important;
+                padding-top: 15px!important;
+                padding-bottom: 15px !important;
+            }
+
+            .col2 {
+                padding-right: 20px !important;
+                padding-top: 15px!important;
+                padding-bottom: 15px !important;
+            }
+
+            .col11,
+            .col22 {
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+
+            .col12 {
+                padding-left: 20px !important;
+                padding-bottom: 15px !important;
+            }
+
+            .btn-main:hover {
+                background-color: #f7ba00 !important;
+                border-color: #f7ba00 !important;
+                color: #333 !important;
+            }
+
+            .btn-main {
+                background-color: #ffce00 !important;
+                border-color: #ffce00 !important;
+                color: #333 !important;
+                float: right;
+            }
+
+            .requiredLoaderBG {
+                background-color: rgba(92, 173, 243, 0.22);
+                opacity: 0.9;
+                filter: alpha(opacity=70);
+                background-image:url({!$Resource.Spinner});
+                background-position: center center;
+                background-repeat: no-repeat;
+                height: 100%;
+                left: 0;
+                position: fixed;
+                text-align: center;
+                top: 0;
+                width: 100%;
+                z-index: 1;
+                background-size: 7%;
+            }
+
+            div_signcontract {
+                width: 99%;
+            }
+
+            .popupHeader {
+                margin: 10px;
+            }
+
+
+            .myFormStyle {
+                background-color: #023107;
+                margin: 0px;
+            }
+
+            .pgLabel {
+                color: #fff;
+                font-weight: bold;
+                margin-right: 7px;
+            }
+
+            .pgText {
+
+                margin-left: 7px;
+            }
+
+            .tdBorder {
+
+                border: 1px solid;
+                border-right: none;
+            }
+
+
+            .text-block {
+                position: absolute; //bottom: 250px;
+                right: 400px;
+                left: 300px;
+                background-color: #fff;
+                color: Black;
+                padding: 50px; //padding-right: 20px;
+                font-family: initial;
+                margin: auto;
+                border-radius: 10px;
+            }
+
+            .overlay-pad {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                background-color: rgba(0, 0, 0, 0.7);
+                width: 100%;
+                height: 100%;
+            }
+
+            .so-pannel{
+                background-color: #D2D3D0;
+            }
+
+            .so-main-section{
+                margin-left: 20% !important;
+                margin-right: 20% !important; 
+                background-color: white;
+            }
+
+            .so-section__outer{
+                width:100%;
+                padding: 5rem 4rem;
+                padding-bottom: 2.8rem;
+            }
+           
+            .so-section__inner{
+
+            }
+
+            .so-bg-header{
+                padding-top: 14%;
+                font-size: 20px;
+                background-size: cover;
+                width: 100%;
+                height: 100vh;
+                min-height:100%; 
+                padding-left: 34%;
+                padding-right: 7%;
+                color: #001d85;
+            }
+
+            .so-main-heading{
+                font-weight: bold !important;
+                text-align: center;               
+            }
+
+            .so-center-aligned{
+                text-align: center;
+            }
+
+            .so-heading{
+                font-weight: bold !important;
+            }
+
+            .so-li-bold{
+                font-weight: bold;
+            }
+
+            .so-h1{
+                font-size: 22px !important;
+            }
+
+            .so-h2{
+                font-size: 15px !important;
+            }
+
+            .so-section__inner-div{
+                margin-left: -25px;
+            }
+
+            .so-line-height{
+                line-height: 30px;
+            }
+
+            OL { counter-reset: item; line-height: 30px;}
+            OL::before{padding-right:0.5em;}
+            LI { display: block; margin-left: 25px !important; line-height: 30px;}
+            LI:before { font-weight:600;content: counters(item, ".") " "; counter-increment: item }
+
+            @media only screen and (max-device-width: 480px){
+                .so-main-section{
+                    margin-left: 2% !important;
+                    margin-right: 2% !important; 
+                    background-color: white;
+                }
+
+                .so-section__outer{
+                    padding-left: 1.5rem;
+                    padding-right: 1.5rem;
+                    width:100%;
+                }
+
+                .col22{
+                    padding-left: 0px !important;
+                    padding-right: 20px !important;
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                }
+
+                .col12{
+                    height: 24px;
+                }
+
+                #cHeaderId{
+                    height: 265px !important;
+                }
+
+                .so-continue-text{
+                    margin-top: -16px;
+                }
+
+                .overlay {
+                    top: 260px;
+                }
+                .text-block {
+                    right: 10px !important;
+                    left: 10px !important;
+                }
+                body{
+                    overflow-x: hidden !important;
+                }
+            }
+            table.table {
+                margin-top: 10px;
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #000;
+            }
+
+            .table th, .table td {
+                padding: 0px 15px;
+                border: 1px solid #000;
+            }
+        </style>
+        <apex:slds />
+    </head>
+
+    <div id="msgerId" style="font-size: 20px;
+                                background: #ff9d9d;
+                                padding: 0px 34%;
+                                text-shadow: 0px 0px 1px #ff030380;
+                                margin: 0px 6%;
+                                border-radius: 12px;
+                                box-shadow: 4px 4px 1px 0px;">
+        <apex:pageMessages id="errorMsgId" />
+    </div>
+    <apex:form rendered="{!!isError}">
+        <apex:outputPanel id="pnlId">
+            <div class="content" style="    line-height: 30px;">
+
+                <body>
+                    <div class="overlay-pad" />
+                    <apex:outputPanel rendered="{!!IsNull(employee.Contract_Signature__c)}">
+                        <div class="so-bg-header" style="background: url({!$Resource.MhcBackground}) no-repeat center center fixed;">
+                            <div class="text-block">
+                                <i>
+                                    Thank you for signing and returning your contract. You will receive a signed copy by email for your records.
+                                    You can also 
+                                    <a style="text-decoration: underline !important;"
+                                        href="{!contractDownloadLink}" title="Click to Download Membership Contract">click here</a> and download a copy now.
+                                </i>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!IsNull(employee.Contract_Signature__c)}">
+                        <div Id="ctopHeaderId" style="display:none">
+                            <table>
+                                <tr style="height:30px;background-color:#006119/*#005cb9*/">
+                                    <td class="col11">
+                                        <span style="color:#fff;font-size: 16px;">Select the sign field to add your signature or click on Finish button.</span>
+                                    </td>
+                                    <td class="col22">
+                                        <a style="font-size: 15px; font-weight: bold;" class="slds-button  slds-button_outline-brand btn-main" onclick="finishbtn();">Finish</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="height: 221px;" id="cHeaderId">
+                            <table width="20%">
+                                <tr>
+                                    <td class="col1">
+                                        <h1 style="font-size:20px;font-weight:bold">Please Review &amp; Act on This Document</h1>
+                                    </td>
+                                    <td class="col2">
+                                        <apex:image url="{!$Resource.Myhealthcarecliniclogo}" style="float: right;width: 160px; position: absolute;right: 20px;z-index: -1;"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="col12">
+                                        <table style="width:20%">
+                                            <tr>
+                                                <td>
+                                                    <img src="{!$Resource.PublicDocIconOfContract}" style="width:40px;border:1px solid grey;background-color:#e4e4e4" />
+                                                </td>
+                                                <td>
+                                                    <b>{!$User.FirstName} {!$User.LastName}</b>
+                                                    <br/> MyHealthcare Clinic
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="col12" style="height:34px;vertical-align: top;">
+                                        <div class="so-continue-text" style="color: #fff;position: fixed;font-size: 15px;">
+                                            Please review contract by clicking on Continue button and electronically sign.
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="height:30px;background-color:#006119/*#005cb9*/">
+                                    <td class="col11">
+                                        <span style="color:#fff;font-size: 16px;">Please review below document.</span>
+                                    </td>
+                                    <td class="col22">
+                                        <a style="font-size: 15px; font-weight: bold;z-index: 9999;" class="slds-button  slds-button_outline-brand btn-main" onclick="continuebtn();">Continue</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="so-pannel" id="cContentId">
+
+                            <!--Contract Pages-->
+                            <div style="height:10px;background-color: #D2D3D0;">&nbsp;</div>
+                            
+                            <div class="so-main-section">
+                                
+                                <div class="so-section__outer">
+
+                                    <apex:outputText value="{!pContent}" escape="false"/>
+                                </div>
+                            
+                                <!--Signature Page-->                                
+                                <div style="height:10px;background-color: #D2D3D0;">&nbsp;</div>
+
+                                <div style="margin: 0px 64px !important;height:794px">
+                                    
+                                    <p>
+                                        <br/>
+                                            <center><b>{!employee.Contract_Document__r.Agreement_With__c}</b></center>
+                                        <br/>
+                                    </p>
+                                    <p >
+                                        <b><u>For and on behalf of {!employee.Contract_Document__r.For_and_on_behalf_of__c}</u></b><br/>
+                                        Signature:&nbsp;<apex:image url="{!$Resource.Myhealthcarecliniclogo}" style="float:center;width:100px; height:40px;" /><br/>
+                                        Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Myhealthcare Clinic<br/>
+                                        Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                <apex:param value="{!TODAY()}" />
+                                            </apex:outputText>
+                                    </p><br/>
+                                    <p >
+                                        <b><u>Employee:</u></b> I agree to the above terms<br/>
+                                        <div >
+                                            Signature:&nbsp; 
+                                            <div class="tooltip">
+                                                <span class="tooltiptext blink">Required: Sign Here</span>
+                                                <img src="{!$Resource.Contractformsignature}" id="cSignImgId"  title="Click Here to Sign." style="float:center;width:90px; height:50px;"  onclick="openSignatureModel();"/>
+                                            </div>
+                                        </div>
+                                    </p>
+                                    <p >
+                                        Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!employee.First_Name__c}&nbsp;{!employee.Surname__c}<br/>
+                                        Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                <apex:param value="{!TODAY()}" />
+                                            </apex:outputText>
+                                    </p>
+                                </div>
+
+                                <!--End Contract Content/Pages-->                                
+                                <div style="background-color: #D2D3D0;">&nbsp;</div>
+
+                                <div class="overlay"></div>
+                            </div>
+
+                            <!-- Signature Popup -->
+                            <div class="demo-only" id="modelId" style="height: 640px;display:none;">
+                                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+                                    class="slds-modal slds-fade-in-open">
+                                    <div class="slds-modal__container">
+                                        <header class="slds-modal__header">
+                                            <a class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="closeSignatureModel()"
+                                                style="  width: 2rem;height: 2rem;position: absolute;top: 5px;right: 0;">
+                                                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" style="fill: rgb(107, 109, 112);">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.8.0#close"
+                                                    />
+                                                </svg>
+                                                <span class="slds-assistive-text">Close</span>
+                                            </a>
+                                            <h2 class="slds-text-heading_medium slds-hyphenate" id="modal-heading-01" style="font-size: 1.0rem;    font-weight: bold;"
+                                                data-aura-rendered-by="57:57;a">Patient Signature</h2>
+                                        </header>
+                                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                            <div data-role="page" id="mainPage">
+                                                <apex:pageMessages ></apex:pageMessages>
+                                                <div data-role="header">
+                                                </div>
+                                                <!-- /header -->
+                                                <div data-role="content" id="divPopUpSignContract">
+                                                    <div style="color:red;font-weight:bold; display:none" id="msgDivId">Please Accept &amp; Sign in order to submit.</div>
+                                                    <div class="ui-content popUpHeight">
+                                                        <div style="display: none; ">
+                                                            <div style="width:100%;border: 1px solid #000;height: 180px;">
+                                                                <div style="margin-left: 28%;margin-top: 50px;">
+                                                                    <apex:outputText escape="false" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="div_signcontract" style="width: 100%;border: 1px solid #000; ">
+                                                            <canvas id="canvas" style="width: 100% !important;">Canvas is not supported</canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <footer class="slds-modal__footer" style="display: block !important;">
+                                            <a class="slds-button slds-button_outline-brand" onclick="closeSignatureModel()">Cancel</a>
+                                            <input id="btnClearSign" type="button" data-inline="true" data-mini="true" data-theme="b" value="Clear" onclick="init_Sign_Canvas()"
+                                                class="slds-button slds-button_destructive" />
+                                            <input type="button" value="Save" class="slds-button slds-button_brand" onclick="onUpdate();" />
+                                            <apex:inputText value="{!imgSource}" id="setVal" style="display:none;" />
+                                        </footer>
+                                    </div>
+                                </section>
+                                <div class="slds-backdrop slds-backdrop_open"></div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </body>
+
+            </div>
+        </apex:outputPanel>
+        <apex:actionFunction action="{!onUpdate}" name="onUpdateHandeler" reRender="msgId" status="ajaxId" oncomplete="sendAndUploadContractHelper();"
+        />
+        <apex:actionFunction action="{!sendAndUploadContract}" name="sendAndUploadContractHelper" reRender="pnlId,msgId" status="ajaxId" />
+        <apex:actionStatus id="ajaxId" startStyleClass="requiredLoaderBG"></apex:actionStatus>
+
+    </apex:form>
+    
+    <script type="text/javascript">
+
+        var isSign = false;
+        var leftMButtonDown = false;
+
+        jQuery(function () {
+            
+            init_Sign_Canvas();
+        });
+
+
+        function fun_submit() {
+            
+            if (isSign) {
+
+                $('#btnSubmitSign').toggleClass('btnDisabled', true).attr('disabled', 'disabled');
+                $('#signdocId').show();
+                var canvas = $("#canvas").get(0);
+                var imgData = canvas.toDataURL();
+                jQuery('#page').find('p').remove();
+                jQuery('#page').find('img').remove();
+                jQuery('#page').append(jQuery('<p>Your Sign:</p>'));
+                jQuery('#page').append($('<img style="width:100%" id="srcImgId"/>').attr('src', imgData));                
+                jQuery('[id$=setVal]').val(imgData);
+            } else {
+
+                jQuery('.alertModelId').show();
+            }
+        }
+        function closePopUp() {
+
+            jQuery('#divPopUpSignContract').hide();
+            jQuery('#divPopUpSignContract').popup('close');
+            jQuery('#divPopUpSignContract').popup('close');
+        }
+
+        function init_Sign_Canvas() {
+
+            isSign = false;
+            leftMButtonDown = false;
+
+            //Set Canvas width
+            var sizedWindowWidth = 588;
+            $("#canvas").width(sizedWindowWidth);
+            $("#canvas").height(200);
+            var canvas = $("#canvas").get(0);
+
+            if (!canvas) {
+                return;
+            }
+
+            canvasContext = canvas.getContext('2d');
+
+            if (canvasContext) {
+                canvasContext.canvas.width = sizedWindowWidth;
+                canvasContext.canvas.height = 200;
+
+                canvasContext.fillStyle = "#fff";
+                canvasContext.fillRect(0, 0, sizedWindowWidth, 100);
+
+                canvasContext.moveTo(50, 150);
+                canvasContext.lineTo(sizedWindowWidth - 50, 150);
+                canvasContext.stroke();
+
+                canvasContext.fillStyle = "#000";
+                canvasContext.font = "20px Arial";
+                canvasContext.fillText("x", 40, 155);
+            }
+            // Bind Mouse events
+            $(canvas).on('mousedown', function (e) {
+                if (e.which === 1) {
+                    leftMButtonDown = true;
+                    canvasContext.fillStyle = "#000";
+                    var x = e.pageX - $(e.target).offset().left;
+                    var y = e.pageY - $(e.target).offset().top;
+                    canvasContext.moveTo(x, y);
+                }
+                e.preventDefault();
+                return false;
+            });
+
+            $(canvas).on('mouseup', function (e) {
+                if (leftMButtonDown && e.which === 1) {
+                    leftMButtonDown = false;
+                    isSign = true;
+                }
+                e.preventDefault();
+                return false;
+            });
+
+            // draw a line from the last point to this one
+            $(canvas).on('mousemove', function (e) {
+                if (leftMButtonDown == true) {
+                    canvasContext.fillStyle = "#000";
+                    var x = e.pageX - $(e.target).offset().left;
+                    var y = e.pageY - $(e.target).offset().top;
+                    canvasContext.lineTo(x, y);
+                    canvasContext.stroke();
+                }
+                e.preventDefault();
+                return false;
+            });
+
+
+            //bind touch events
+            $(canvas).on('touchstart', function (e) {
+                leftMButtonDown = true;
+                canvasContext.fillStyle = "#000";
+                var t = e.originalEvent.touches[0];
+                var x = t.pageX - $(e.target).offset().left;
+                var y = t.pageY - $(e.target).offset().top;
+                canvasContext.moveTo(x, y);
+
+                e.preventDefault();
+                return false;
+            });
+
+            $(canvas).on('touchmove', function (e) {
+                canvasContext.fillStyle = "#000";
+                var t = e.originalEvent.touches[0];
+                var x = t.pageX - $(e.target).offset().left;
+                var y = t.pageY - $(e.target).offset().top;
+                canvasContext.lineTo(x, y);
+                canvasContext.stroke();
+
+                e.preventDefault();
+                return false;
+            });
+
+            $(canvas).on('touchend', function (e) {
+                if (leftMButtonDown) {
+                    leftMButtonDown = false;
+                    isSign = true;
+                }
+
+            });
+        }
+
+        function quantityChange(inx) {
+            calTotalMemberPrice(inx);
+            calTotalNonMemberPrice(inx);
+        }
+
+        function calTotalMemberPrice(inx) {
+            var mpVal = $('.mpcls' + inx).val();
+            if (mpVal === undefined || mpVal.trim() === '') {
+                mpVal = 0;
+            } else {
+                mpVal = parseFloat($('.mpcls' + inx).val());
+            }
+            $('.tmpcls_' + inx).text((parseFloat($('.optionCls' + inx).val()) * mpVal).toFixed(2));
+        }
+
+        function calTotalNonMemberPrice(inx) {
+            var nmpVal = $('.nmpcls' + inx).val();
+            if (nmpVal === undefined || nmpVal.trim() === '') {
+                nmpVal = 0;
+            } else {
+                nmpVal = parseFloat($('.nmpcls' + inx).val());
+            }
+            $('.tnmpcls_' + inx).text((parseFloat($('.optionCls' + inx).val()) * nmpVal).toFixed(2));
+        }
+
+        function clearSearchBx() {
+            $("#text-input-id-1").val('').keyup();
+        }
+
+        $(document).ready(function () {
+            
+            var ttnmprice = 0.0;
+            $('.tbltr').each(function (inx) {
+                
+                ttnmprice += parseFloat($('.ttnmpcls_' + inx).text());
+            });
+
+            $('.paybleAmtCls').text(ttnmprice);
+            var bodypnl = $(this);
+            setTimeout(function () { bodypnl.scrollTop(0, 0); }, 1000);
+        });
+
+        function closeModel() {
+
+            jQuery('.alertModelId').hide();
+            jQuery('.requiredLoaderBG').hide();
+        }
+
+        function closePaymentModel() {
+            
+            jQuery('.paymentModelId').hide();
+        }
+
+        function fun_paymentPopUp() {
+
+            if (isSign) {
+
+                jQuery('.paymentModelId').show();
+            } else {
+
+                jQuery('.alertModelId').show();
+            }
+        }
+
+        function openSignatureModel() {
+
+            jQuery('#modelId').show();
+        }
+
+        function closeSignatureModel() {
+
+            jQuery('#modelId').hide();
+        }
+
+        function removeCS(inx) {
+
+            var j$ = jQuery.noConflict();
+            var selObject = j$('.objectNameCls_' + inx).text();
+            deleteCS(selObject);
+        }
+
+        function onUpdate() {
+            $('#msgDivId').hide();
+            if (isSign) {
+
+                fun_submit();
+                onUpdateHandeler();
+                closeSignatureModel();
+            } else {
+
+                $('#msgDivId').show();
+            }
+        }
+
+        function continuebtn() {
+
+            $('body').css('overflow', 'auto');
+            $('.overlay').hide();
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                $('#cContentId').css('padding-top','70px');
+            } else{
+                $('#cContentId').css('padding-top','50px');
+            }
+            $('#ctopHeaderId').show();
+            $('#cHeaderId').hide();
+        }
+        function finishbtn() {
+
+            $('#cSignImgId').attr('style', 'float:center;width:90px; height:50px;border:3px dotted red');
+            $('.tooltiptext').css({ 'visibility': 'visible' });
+            /*if (window.scrollY < 1600 || window.scrollY > 1700) {
+                window.scrollTo(0, 1600);
+            }*/
+            $("html, body").animate({
+                scrollTop: $(
+                    'html, body').get(0).scrollHeight
+            }, 10);
+            blink('.blink');
+        }
+
+        function blink(selector) {
+            $(selector).fadeOut('slow', function () {
+                $(this).fadeIn('slow', function () {
+                    blink(this);
+                });
+            });
+        }
+        
+        $(document).ready(function () {
+            var bodypnl = $(this);
+            setTimeout(function () { bodypnl.scrollTop(0, 0); }, 1000);
+        });
+
+    </script>
+</apex:page>

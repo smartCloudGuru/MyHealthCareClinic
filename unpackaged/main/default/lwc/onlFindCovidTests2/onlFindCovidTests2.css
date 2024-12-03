@@ -1,0 +1,14 @@
+/**
+ * Created 15.4.2021..
+ */
+
+.search-cell
+{
+    text-align: end;
+}
+
+.row-wrap
+{
+    padding-top: 0;
+    background-color: var(--c-color-covid);
+}

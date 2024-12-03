@@ -1,0 +1,45 @@
+/**
+ * Created 23.3.2021..
+ */
+
+:host {
+    background-color: #FFF;
+}
+.row-wrap
+{
+    background-color: var(--c-color-product);
+    padding:0;
+    max-height:126px;
+    height:126px;
+}
+
+p.faux-center
+{
+    padding-top: 43px;
+}
+
+.box.search-wrapper {
+    margin-top: 0;
+    padding: 0;
+    background-color: #ededed;
+}
+
+.box.search
+{
+    background-color: var(--c-color-product);
+    margin:0;
+    margin-bottom: 18px;
+    padding-bottom: 20px;
+}
+
+.box.search h3
+{
+    font-size: 24px;
+    color: #FFF;
+}
+
+.product-row-wrapper
+{
+    /*background-color: #00b050;*/
+    padding-top:2px;
+}

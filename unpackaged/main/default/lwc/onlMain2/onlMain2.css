@@ -1,0 +1,17 @@
+/**
+ * Created 22.3.2021..
+ */
+
+c-onl-find-appointments,
+c-onl-find-covid-tests,
+c-onl-find-products
+{
+    display: none;
+}
+
+c-onl-find-appointments[data-selected="appointment"],
+c-onl-find-covid-tests[data-selected="covid"],
+c-onl-find-products[data-selected="product"]
+{
+    display: contents;
+}

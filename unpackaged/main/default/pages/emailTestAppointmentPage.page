@@ -1,0 +1,49 @@
+<!--
+ - Created by zokito on 5/14/21.
+
+ example url https://myhealthcareclinic--c.vf.force.com/apex/emailTestAppointmentPage?param=08pPx000001MderIAC
+ -->
+
+<apex:page id="emailTestPage">
+    <head>
+
+        <style>
+            .width-limited
+            {
+                max-width:640px;
+                margin:auto;
+                padding:20px;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingConfirmationTemplate recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingReschedulingTemplate recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingCancellationTemplate recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+
+    <strong>TLC</strong>
+
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingConfirmationTemplate_TLC recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingReschedulingTemplate_TLC recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+    <hr/>
+    <div class="width-limited" style="page-break-after:always;">
+        <c:emailBookingCancellationTemplate_TLC recordId="{!$CurrentPage.parameters.param}"/>
+    </div>
+
+    </body>
+</apex:page>

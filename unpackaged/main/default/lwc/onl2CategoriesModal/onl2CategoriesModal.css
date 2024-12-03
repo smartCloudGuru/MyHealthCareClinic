@@ -1,0 +1,45 @@
+/**
+ * Created by Matija on 22.10.2024..
+ */
+
+.category-wrapper {
+    padding: 12px;
+}
+
+.box {
+    margin-bottom: 0;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.category-wrapper .box {
+    cursor: pointer;
+}
+
+.category-wrapper .box:hover {
+    background-color: #e4f5e8;
+}
+
+.wide-as-possible {
+    min-width: unset !important;
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .wide-as-possible {
+        min-width: unset !important;
+        max-width: unset !important;
+        width: 100%;
+        padding: 0;
+        height: 100%;
+        display: flex;
+    }
+
+}
+
+@media only screen and (max-width: 600px) {
+    .slds-modal__content
+    {
+        height:100%;
+    }
+}

@@ -1,0 +1,31 @@
+/**
+ * Created by Matija on 25.9.2023..
+ */
+
+.slds-card__header {
+    background-color: #f3f3f3;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #c9c9c9;
+}
+
+lightning-icon {
+    margin-right: 0.5rem;
+}
+
+div.title {
+    font-weight: bold;
+    line-height: 1.25rem;
+    background-color: #f3f3f3;
+    padding-bottom: 0.7rem;
+}
+
+a.popup-on-hover {
+    border-bottom: var(--lwc-borderWidthThin, 1px) dotted;
+    text-decoration: none;
+}
+
+.hoverpopup
+{
+    position: absolute;
+    z-index: 1000;
+}

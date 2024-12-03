@@ -1,0 +1,86 @@
+<!--
+ - Created by Matija on 22.9.2023..
+ -->
+
+<!-- Lwz Classify Lead -->
+<template>
+
+    <div class="slds-tabs_card">
+        <lightning-progress-indicator if:false={loading} current-step={currentStep} type="path" variant="base">
+            <lightning-progress-step label="New" value="lead-new" onclick={handlePathChanged}></lightning-progress-step>
+            <lightning-progress-step label="Working" value="lead-working" onclick={handlePathChanged}></lightning-progress-step>
+            <lightning-progress-step label="Waiting List" value="waiting-list" onclick={handlePathChanged}></lightning-progress-step>
+            <lightning-progress-step label="Not an Enquiry" value="disqualify" onclick={handlePathChanged}></lightning-progress-step>
+            <lightning-progress-step label="Lost" value="no-sale" onclick={handlePathChanged}></lightning-progress-step>
+            <lightning-progress-step label="Convert" value="sale" onclick={handlePathChanged}></lightning-progress-step>
+        </lightning-progress-indicator>
+
+
+    </div>
+
+    <!--    <lightning-layout multiple-rows="true" horizontal-align="space">-->
+
+    <!--        <lightning-layout-item size=12 large-device-size=3 medium-device-size=3 small-device-size=12 padding="around-small"-->
+    <!--                               onclick={handleSaleSelected} class={cssSelected}>-->
+    <!--            <div class="outcome-choice lightgreen">-->
+    <!--                <div class="option-name">Enquiry - Sale</div>-->
+    <!--            </div>-->
+    <!--        </lightning-layout-item>-->
+
+    <!--        <lightning-layout-item size=12 large-device-size=3 medium-device-size=3 small-device-size=12 padding="around-small"-->
+    <!--                               onclick={handleNoSaleSelected} class={cssSelected}>-->
+    <!--            <div class="outcome-choice lightred">-->
+    <!--                <div class="option-name">Enquiry Lost</div>-->
+    <!--            </div>-->
+    <!--        </lightning-layout-item>-->
+
+    <!--        <lightning-layout-item size=12 large-device-size=3 medium-device-size=3 small-device-size=12 padding="around-small"-->
+    <!--                               onclick={handleWaitingListSelected} class={cssSelected}>-->
+    <!--            <div class="outcome-choice lightyellow">-->
+    <!--                <div class="option-name">Add to Waiting List</div>-->
+    <!--            </div>-->
+    <!--        </lightning-layout-item>-->
+
+
+    <!--        <lightning-layout-item size=12 large-device-size=3 medium-device-size=3 small-device-size=12 padding="around-small"-->
+    <!--                               onclick={handleDisqualifySelected} class={cssSelected}>-->
+    <!--            <div class="outcome-choice lightgray">-->
+    <!--                <div class="option-name">Not an Enquiry</div>-->
+    <!--            </div>-->
+    <!--        </lightning-layout-item>-->
+
+
+    <!--    </lightning-layout>-->
+
+
+    <template if:true={showModal}>
+
+        <div role="dialog" class={dialogClass}>
+
+            <div class="slds-modal__container">
+
+                <header class="slds-modal__header lwz-modal-header">
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Close"
+                                           title="Close"
+                                           onclick={handleModalClose}
+                                           class="slds-modal__close lwz-btn-close">
+                    </lightning-button-icon>
+                </header>
+
+                <lightning-flow
+                        flow-api-name='Lead_Wizard_Flow'
+                        flow-input-variables={flowInputVariables}
+                        onstatuschange={handleStatusChange}
+                        class="fix-overflow"
+                >
+                </lightning-flow>
+
+
+            </div>
+        </div>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

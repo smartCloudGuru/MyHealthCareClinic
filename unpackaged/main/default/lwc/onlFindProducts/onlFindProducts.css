@@ -1,0 +1,18 @@
+/**
+ * Created 23.3.2021..
+ */
+
+:host {
+    background-color: #FFF;
+}
+.row-wrap
+{
+    background-color: var(--c-color-product);
+    padding:0;
+    max-height:126px;
+    height:126px;
+}
+p.faux-center
+{
+    padding-top: 43px;
+}

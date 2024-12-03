@@ -1,0 +1,40 @@
+<!--
+ - Created 15.9.2022..
+ -->
+
+<!-- Mem Sign Up Gc After Redirect -->
+<template>
+
+    <div class="width-limited slds-text-align_left p16">
+
+        <template if:true={loading}>
+            <div class="saved-note slds-m-top_xx-large slds-p-around_large">
+                <br/>
+                <p class="fs18"> Please wait ...</p>
+            </div>
+            <div class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={success}>
+
+            <h2 class="slds-var-m-top_xx-large">Thank you for choosing a MyHealthcare Clinic Membership Plan </h2>
+
+            <p>Welcome to personalised healthcare from your own team of private doctors and dentists.</p>
+
+            <p>A direct debit will be setup to collect your monthly payments, and you will receive a confirmation email shortly.</p>
+
+            <p>If you have any questions in the meantime, please contact us at <a href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a> or on <a href="tel:02070995555">0207 099 5555</a>.</p>
+
+        </template>
+
+        <template if:true={error}>
+            <h2 class="slds-var-m-top_xx-large slds-text-color_error">Error</h2>
+            <p if:true={msgError} class="slds-var-m-top_large slds-m-bottom_large slds-text-color_error">{msgError}</p>
+            <p if:false={msgError}>We are unable to process your request at this time.</p>
+            <p>Please email us at <a href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a> or call us if you need assistance.</p>
+        </template>
+
+    </div>
+</template>

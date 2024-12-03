@@ -1,0 +1,20 @@
+<!--
+ - Created 14.3.2021..
+ -->
+
+<!-- Onl Location -->
+<template>
+
+    <div class="location" if:false={allOneLine}>
+        <div if:true={name} class="name">{name}<span if:false={dontShowDistance} class="distance newline-on-small-factor">, {distanceFormatted}</span></div>
+        <div if:true={city} class="city">{city}<span if:true={postalCode}>, {postalCode}</span></div>
+        <div if:true={street} class="street">{street}</div>
+    </div>
+
+    <span class="location" if:true={allOneLine}>
+        <span if:true={name}>{name}<span if:false={dontShowDistance} class="distance newline-on-small-factor">, {distanceFormatted}</span></span>,&nbsp;
+        <span if:true={street}>{street}</span>,&nbsp;
+        <span if:true={city}>{city}<span if:true={postalCode}>, {postalCode}</span></span>
+    </span>
+
+</template>

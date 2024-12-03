@@ -1,0 +1,688 @@
+<apex:page standardController="Account" extensions="AddMember_ctrl" tabStyle="Account" sidebar="false" showHeader="false"> 
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+<head>
+     
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-1.8.js')}"/>
+    <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.js')}"/>    
+    <apex:stylesheet value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.css')}"/>  
+
+<script  >
+    $(document).ready(function(){
+        $('[id$="updateContractId"]').attr('disabled','disabled');
+    });
+    function closePatModel(){
+        jQuery('#modelId').hide();
+    }
+            
+    function openModelPopup(index){
+        if(index){
+            assignIndex(index);
+        }
+        jQuery('#modelId').show();
+    }
+    function saveHandler(){
+        onSave();        
+    }
+    function accountModelClose(){
+        if($('.errorM3').length == 0 && $('.warningM3').length == 0){
+            closePatModel();
+            $(".blankcls").val('');
+        }
+    }
+    function rerenderTbl(inx,aId,isSelectPat){
+        Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.AddMember_ctrl.rerenderTbl}',aId,'{!$CurrentPage.parameters.id}',isSelectPat,
+             function(result, event){
+                 if(event.status){ 
+                     console.log('result',result);
+                     if(result != null){ 
+                         $('.mlcls'+inx).text(result.Membership_Level__c);     
+                         $('.mtcls'+inx).text(result.Membership_Type__c); 
+                         if(result.Membership_Type__c === undefined || result.Membership_Type__c === ''){
+                             $('.mtcls'+inx).text(result.Membership_Type__c); 
+                         }                       
+                         if(result.Date_of_Birth__c){
+                             var dob = new Date(result.Date_of_Birth__c);
+                             var month = (dob.getMonth()+1),dayOfMonth = dob.getDate();                         
+                             month = month < 10 ? '0' + month : month;
+                             dayOfMonth = dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth;
+                             $('.dobcls'+inx).text(dayOfMonth+'/'+month+'/'+dob.getFullYear());  
+                         }
+                         $('.pecls'+inx).text(result.PersonEmail);  
+                         $('.pmcls'+inx).text(result.PersonMobilePhone); 
+                         $('.tmmcls'+inx).text((result.Total_Monthly_Membership_Fee__c != undefined && result.Total_Monthly_Membership_Fee__c != null && result.Total_Monthly_Membership_Fee__c != '')?'£'+result.Total_Monthly_Membership_Fee__c.toFixed(2):'£0.00');
+                         if(inx > 0){    
+                             memberDetails();
+                         }
+                     }                 
+                 }
+                 else{
+                      alert('Error: '+event.message);
+                 }
+                
+             }, 
+              {escape: true}
+        );
+    }
+    function resetTblRow(){
+        var inx = '{!patIndex}';
+        //alert(inx);
+        $('.mlcls'+inx).text('');     
+        $('.mtcls'+inx).text(''); 
+        $('.mtcls'+inx).text('');
+        $('.dobcls'+inx).text('');
+        $('.pecls'+inx).text('');  
+        $('.pmcls'+inx).text(''); 
+        $('.tmmcls'+inx).text('£0.00');        
+    }
+    function memberDetails(){
+        Visualforce.remoting.Manager.invokeAction(
+             '{!$RemoteAction.AddMember_ctrl.getMemberDetails}',null,'{!$CurrentPage.parameters.id}',
+             function(result, event){
+                 $('#membershipDetails').html(result);
+             },{escape: false}
+         );
+    }
+    /*function next(){
+        if('{!$CurrentPage.parameters.action}' === 'sc'){
+            window.location.href = '/apex/MembershipContractPreview?action=sc&token={!$CurrentPage.parameters.id}&ml={!$CurrentPage.parameters.ml}&mt={!$CurrentPage.parameters.mt}';
+        }else{
+            window.location.href = '/apex/MembershipInPersonContract?action=ip&token={!$CurrentPage.parameters.id}&ml={!$CurrentPage.parameters.ml}&mt={!$CurrentPage.parameters.mt}';
+        }
+    }*/
+    function openOpporunityModel(inx,accountId){
+        console.log(accountId);
+        $('[id$="memtypeId"]').val('');
+        $('#selectedOppIndexId').val(inx);
+        $('#selectedAccountId').val(accountId);
+        jQuery('#oppModelId').show();
+    }
+    function closeOpporunityModel(){
+        $('#oppErMsgId').text('');
+        $('#selectedOppIndexId').val('');
+        $('#selectedAccountId').val('');
+        jQuery('#oppModelId').hide();
+    }
+    function addAnotherMembership(){
+        $('.requiredLoaderBG').show();
+        var memtypeId = $('[id$="memtypeId"]').val();
+        if(memtypeId == ''){
+            $('#oppErMsgId').text('Membership Type is required!');
+            $('.requiredLoaderBG').hide();
+        }else{
+            $('#oppErMsgId').text('');
+            Visualforce.remoting.Manager.invokeAction(
+                 '{!$RemoteAction.AddMember_ctrl.addAnotherMembership}',$('#selectedAccountId').val(),memtypeId,
+                 function(result, event){
+                     console.log('----------',result);
+                     rerenderTbl($('#selectedOppIndexId').val(),$('#selectedAccountId').val(),false);                                          
+                     $('#modelId').hide();//closeOpporunityModel();
+                     $('.requiredLoaderBG').hide();
+                 },{escape: false}
+             );
+         }
+    }
+    //rerenderTbl(1,'{!$CurrentPage.parameters.id}',false);
+    function enableSaveButton(){
+        $('[id$="updateContractId"]').removeAttr('disabled');
+    }
+    function testCloseTab() {
+        //First find the ID of the current tab to close it
+        sforce.console.getEnclosingTabId(closeSubtab);
+    }
+
+    var closeSubtab = function closeSubtab(result) {
+        //Now that we have the tab ID, we can close it
+        var tabId = result.id;
+        sforce.console.closeTab(tabId);
+    };
+    function onCancelBtn() {
+        //Now that we have the tab ID, we can close it
+        //testCloseTab();
+        try{
+
+        }catch(e){
+            //window.location = "/{!$CurrentPage.parameters.id}";
+        }
+        window.location = "/{!$CurrentPage.parameters.id}";
+    }
+</script>  
+<style>
+.requiredLoaderBG{
+                background-color: rgba(92, 173, 243, 0.22);
+                opacity:0.9;
+                filter:alpha(opacity=70);
+                background-image:url(/dashboards/img/landmark_spinner_1589EE.gif);
+                background-position: center center; 
+                background-repeat: no-repeat;
+                height: 100%;
+                left: 0;
+                position: fixed;
+                text-align: center;
+                top: 0;
+                width: 100%;
+                z-index: 999999;
+                background-size: 7%;
+            } 
+/*table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 70%;
+    
+}*/
+/*body {
+        background-image: url("{!$Resource.MhcBackground}") !important; 
+        //background-repeat:repeat;
+     }*/
+.modeltblcls td {
+    /*border: 1px solid #dddddd;*/
+    text-align: center;
+    padding: 8px 0px 0px 0px;
+    text-align: left;
+}
+.datePicker {
+    z-index: 9999 !important;
+}
+#ctopHeaderId{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 999;
+}
+.col11, .col22 {
+    padding-left: 2.5% !important;
+    padding-right: 2.5% !important;
+    padding-top: 4px!important;
+    padding-bottom: 5px !important;
+}
+.btn-main:hover {
+    background-color: #f7ba00 !important;
+    border-color: #f7ba00 !important;
+    color: #333 !important;
+    border: 1px solid #f7ba00!important;
+}
+.btn-main {
+    background-color: #ffce00 !important;
+    border-color: #ffce00 !important;
+    color: #333 !important; 
+}
+.finp{
+    width: 150px !important;
+}
+.requiredCls{
+    color: red;
+}
+.requiredInput {
+    position: relative;
+    height: 100%;
+}
+.requiredInput .requiredBlock {
+    background-color: #c00;
+    position: absolute;
+    left: -4px;
+    width: 3px;
+    top: 1px;
+    bottom: 1px;
+}
+
+.slds-scope .slds-modal__container {
+    margin: 0 auto;
+    width: 55% !important;
+    max-width: 55rem !important;
+    min-width: 20rem;
+}
+.page_section{
+    border-top: 1px solid #cdcdcd;
+    border-bottom: 1px solid #cdcdcd;
+    padding: 5px 10px;
+    margin-bottom: 13px;
+    background-color: #003757;
+    font-weight: bold;
+    color: #fff;
+}
+.message table td:first-child{
+    width: 30px !important;
+}
+.picklistArrowRight,.picklistArrowleft{
+    min-height: 20px !important;
+    border: none !important; 
+}
+.multiSelectPicklistTable tr:first-child{
+    display: none !important;
+}
+.multiSelectPicklistTable{
+    border: 1px solid #dddbda;
+}
+</style>
+<apex:slds />
+      </head>
+    <apex:form >
+        
+        <div Id="ctopHeaderId">
+             <table>
+                 <tr style="height:28px;background-color:#7a7a7a;/*#006119;#005cb9*/">
+                     <td class="col11" style="padding-left:10px !important">
+                        <span class="slds-icon_container slds-icon-doctype-gdoc" >
+                          <svg class="slds-icon" style="/*width: 2.5rem;height: 2.5rem;*/" aria-hidden="true">
+                            <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/doctype-sprite/svg/symbols.svg#gdoc')}"></use>
+                          </svg>
+                        </span>&nbsp;
+                        <span style="color:#fff; font-weight: bold;">Update Membership or Add/Remove Members in order to send Membership Contract</span>
+                     </td>
+                     <td class="col22" style="text-align:right">
+                         <a style="font-size: 14px; font-weight: bold;" class="slds-button  slds-button_outline-brand " href="/{!$CurrentPage.parameters.id}">Cancel</a>&nbsp;&nbsp;
+                         <apex:commandButton value="Next" style="font-size: 14px; font-weight: bold;" styleClass="slds-button  slds-button_brand btn-main" reRender="uperId" action="{!next}" status="ajaxStatus"/>
+                         <!--a style="font-size: 15px; font-weight: bold;" class="slds-button  slds-button_brand btn-main" onclick="next()">Next</a -->                        
+                     </td>
+                 </tr>
+            </table>
+        </div>        
+        <div style="height:40px"/>
+            <apex:pageMessages id="uperId"/>
+            <div class="page_section">           
+               <span class="slds-icon_container slds-icon-custom-custom5" >
+                  <svg class="slds-icon" aria-hidden="true">
+                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/custom-sprite/svg/symbols.svg#custom83')}"></use>
+                  </svg>
+                </span>&nbsp;
+                Update Membership
+            </div>
+            
+            <div>
+                <table  class="slds-table slds-table_bordered slds-table_col-bordered" style="margin-left: 40px;width: 65%;border-left:1px solid rgb(221, 219, 218);border-right:1px solid rgb(221, 219, 218);">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="slds-text-title_caps" scope="col">
+                                Membership Status
+                            </th>
+                            <th class="slds-text-title_caps" scope="col">
+                                Membership Type
+                            </th>
+                            <th class="slds-text-title_caps" scope="col">
+                                Membership Add On
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" >
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <apex:inputField value="{!selectedPatients[0].Member_Status__c}" styleClass="slds-input" onchange="enableSaveButton();"/>  
+                                <apex:inputField value="{!selectedPatients[0].Patient_Type__c}" styleClass="slds-input" style="display:none"/>                               
+                            </td>                            
+                            <td valign="top">
+                                <apex:inputField value="{!selectedPatients[0].Membership_Type__c}" styleClass="slds-input" onchange="enableSaveButton();"/> 
+                            </td>
+                            <td valign="top">
+                                <apex:inputField value="{!selectedPatients[0].Membership_Add_On__c}" styleClass="slds-input picklistArrowleft " onchange="enableSaveButton();"/>
+                            </td>
+                            <td valign="top">
+                                <apex:commandButton id="updateContractId" value="Update" action="{!updateMembership}" reRender="pb,uperId" status="ajaxStatus" styleClass="slds-button  slds-button_brand"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page_section" style="margin-top:13px">
+                <span class="slds-icon_container slds-icon-custom-custom103" >
+                  <svg class="slds-icon" aria-hidden="true">
+                    <use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/custom-sprite/svg/symbols.svg#custom103')}"></use>
+                  </svg>
+                </span>&nbsp;
+                Membership Contract Members
+            </div>
+            <apex:pageMessages id="pgerId"/>
+            <apex:outputPanel id="pb">
+                <table align="center" class="slds-table slds-table_bordered slds-table_col-bordered" style="width: 95%;border-left:1px solid rgb(221, 219, 218);border-right:1px solid rgb(221, 219, 218);">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="slds-text-title_caps" scope="col" width="1%">
+                                #
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="19%">
+                                 Patient Name
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Member Level
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Member Type
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Member Price
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Date Of Birth
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Email
+                            </th>
+                            <th class="slds-text-title_caps" scope="col" width="15%">
+                                Phone
+                            </th>
+                            <th style="display:{!IF(IsUserHaveRemovePermission,'','none')}" class="slds-text-title_caps" scope="col" width="5%">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <apex:variable value="{!1}" var="index"/>
+                    <apex:repeat value="{!selectedPatients}" var="a">
+                        <tr style="background-color:{!If(index==1,'#01f964','')}">
+                            <td>
+                                <b>{!index}.</b>
+                            </td>
+                            <td>
+                                 <apex:outputPanel rendered="{!index > 1}">
+                                     <c:AutoCompleteV2 listId2NotInclude="{!listId2NotInclude}" WhereClause="{!whereClause}" allowClear="true" syncManualEntry="false" labelField="Name" SObject="Account" valueField="Id" targetField="{!a.Id}" style="width:200px" index="{!index}"/>
+                                     <apex:image style="margin: 0px 14px 0px 4px;" value="{! $Resource.PlusSign}" height="20px" width="20px" onclick="openModelPopup({!index});"/>
+                                 </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!index == 1}">
+                                     <apex:outputText value="{!a.Name} (Member Group Payer)"/>
+                                 </apex:outputPanel>
+                                 <!--apex:inputText value="{!a.Id}" styleClass="selectedAccountCls{!index}" disabled="true" style="width:200px!important;display:none;"/ -->
+                                 <script>rerenderTbl({!index},'{!a.Id}',false)</script>
+                            </td>
+                            <td class="mlcls{!index}" >
+                                <apex:outputField value="{!a.Membership_Level__c}" style="width:200px!important;"/>
+                            </td>
+                            <td class="mtcls{!index}">
+                                <apex:outputField value="{!a.Membership_Type__c}" style="width:200px!important;"/>
+                            </td>
+                            <td class="tmmcls{!index}">
+                                <apex:outputPanel rendered="{!!IsBlank(a.Total_Monthly_Membership_Fee__c)}">
+                                    <apex:outputField value="{!a.Total_Monthly_Membership_Fee__c}" style="width:200px!important;"/>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!IsBlank(a.Total_Monthly_Membership_Fee__c)}">
+                                    £0.00
+                                </apex:outputPanel>
+                            </td>
+                            <td class="dobcls{!index}">
+                                <apex:outputField value="{!a.Date_of_Birth__c}" style="width:200px!important;"/>
+                            </td>
+                            <td class="pecls{!index}" >
+                                <apex:outputField value="{!a.PersonEmail}" style="width:200px!important;"/>
+                            </td>
+                            <td class="pmcls{!index}" >
+                                <apex:outputField value="{!a.PersonMobilePhone}" style="width:200px!important;"/>
+                            </td>
+                            <td style="display:{!IF(IsUserHaveRemovePermission,'','none')}">
+                                <apex:outputPanel rendered="{!index > 1}">
+                                    <a href="#" onclick="removePatient({!index})">Remove</a>
+                                </apex:outputPanel>
+                                <!--a href="#" onclick="openOpporunityModel({!index},'{!a.Id}')">Add Another Membership</a -->
+                            </td>
+                        </tr>
+                        <apex:variable value="{!index+1}" var="index"/>
+                    </apex:repeat> 
+                </table>  
+                <table style="width: 95%;margin-top: 10px;margin-left: auto;margin-right: auto;">
+                    <tr>
+                        <td align="left" width="35%">
+                            <div  style="/*width: 95%;margin:auto;padding-top:10px;*/"> 
+                                <a class="slds-button slds-button_success" style="color:#fff" onclick="resetNewPatForm();">Create &amp; Add New Patient</a>
+                                <apex:commandButton value="Add Existing Patient" styleClass="slds-button slds-button_brand"  action="{!addMore}" reRender="pb" status="ajaxStatus"/>
+                            </div>
+                        </td>
+                        <td align="center" >
+                            <div align="center" id="membershipDetails" style="background-color: #026f98;
+                                                        font-size: 18px;
+                                                        border-radius: 20px;
+                                                        color: #fff;">
+                                <apex:outputText value="{!memberDetails}"  escape="false"/>
+                            </div>
+                        </td>
+                        <td align="right" width="21%">
+                            <div align="right" style="/*float: right;*/">
+                                <a style="font-size: 14px; font-weight: bold;" class="slds-button  slds-button_neutral " href="/{!$CurrentPage.parameters.id}">Cancel</a>
+                                <apex:commandButton value="Next" style="font-size: 14px; font-weight: bold;" styleClass="slds-button  slds-button_brand btn-main" reRender="uperId" action="{!next}" status="ajaxStatus"/>
+                                <!--a style="font-size: 15px; font-weight: bold;" class="slds-button  slds-button_brand btn-main" onclick="next()">Next</a -->
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>                           
+            <apex:outputPanel layout="block" id="modelBoxId">       
+                <div class="demo-only" id="modelId" style="display:none;">
+                  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                      <header class="slds-modal__header">
+                        <a href="#" onclick="closePatModel();" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
+                          </svg>
+                          <span class="slds-assistive-text">Close</span>
+                        </a>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add New Patient Form</h2>
+                      </header>
+                      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                          <apex:pagemessages id="msgId"/>
+                          <apex:outputPanel id="dupePatId">
+                              <apex:outputPanel rendered="{!IF(existingPatient.size != 0, true,false)}">
+                                  <table style="border-left: 1px solid rgb(221, 219, 218);border-right: 1px solid rgb(221, 219, 218);"
+                                         class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                      <thead>
+                                          <tr class="slds-line-height_reset">
+                                            <th>
+                                                Action
+                                            </th>
+                                            <th>
+                                                Name
+                                            </th>
+                                            <th>
+                                                Email
+                                            </th>
+                                              <th>
+                                                  Phone
+                                              </th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                      <apex:repeat value="{!existingPatient}" var="ep">
+                                        <tr>
+                                            <td>
+                                                <a href="#" onclick="selectDuplicatePat('{!ep.Id}');">Select</a>
+                                            </td>
+                                            <td>
+                                                {!ep.Name}
+                                            </td>
+                                            <td>
+                                                {!ep.PersonEmail}
+                                            </td>
+                                            <td>
+                                                {!ep.Phone}
+                                            </td>
+                                        </tr>
+                                      </apex:repeat>
+                                      </tbody>
+                                  </table>
+                              </apex:outputPanel>
+                          </apex:outputPanel>
+                        <table class="modeltblcls">
+                            <tr>
+                                <td>
+                                    First Name
+                                </td>
+                                <td>
+                                    <apex:inputText value="{!objAccount.FirstName}"  styleClass="slds-input finp blankcls"/>
+                                </td>
+                                <td>
+                                    Last Name 
+                                </td>
+                                <td>
+                                    <div class="requiredInput"><div class="requiredBlock"></div> 
+                                        <apex:inputText value="{!objAccount.LastName}" styleClass="slds-input finp blankcls"/> 
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Mobile Number
+                                </td>
+                                <td>
+                                    <apex:inputText value="{!objAccount.PersonMobilePhone}" styleClass="slds-input finp blankcls"/>
+                                </td>
+                                <td>
+                                    Email
+                                </td>
+                                <td>
+                                    <apex:inputText value="{!objAccount.PersonEmail}" styleClass="slds-input finp blankcls" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Date Of Birth
+                                </td>
+                                <td>
+                                    <div class="requiredInput"><div class="requiredBlock"></div>
+                                        <apex:inputField value="{!objAccount.Date_of_Birth__c}" styleClass="slds-input finp blankcls"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    Gender
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Gender__c}" styleClass="slds-input finp blankcls"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Membership Level
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Membership_Level__c}" styleClass="slds-input finp"/>
+                                </td>
+                                <td>
+                                    Patient Type
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Patient_Type__c}" html-disabled="true" styleClass="slds-input finp"/>
+                                </td>                            
+                            </tr>
+                            <tr>
+                                <td>
+                                    Membership Type
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Membership_Type__c}" html-disabled="true" styleClass="slds-input finp"/>
+                                </td>                                  
+                                <td>
+                                    Payment Frequency
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Payment_Frequency__c}" html-disabled="true" styleClass="slds-input finp"/>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                    Home Clinic
+                                </td>
+                                <td>
+                                    <div class="requiredInput"><div class="requiredBlock"></div>
+                                        <apex:inputField value="{!objAccount.Home_Clinic__c}"  styleClass="slds-input finp"/>
+                                    </div>
+                                </td>                                  
+                                <td>
+                                    Relation With payer
+                                </td>
+                                <td>
+                                    <div class="requiredInput"><div class="requiredBlock"></div>
+                                        <apex:inputField value="{!objAccount.Relation_With_Payer__c}"  styleClass="slds-input finp"/>
+                                    </div>
+                                </td>
+                            </tr>
+                                
+                            <tr>
+                                <td>
+                                    Membership Add On
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objAccount.Membership_Add_On__c}" html-disabled="true" styleClass="slds-input picklistArrowleft"/>
+                                </td>                              
+                            </tr>
+                        </table>
+                      </div>
+                      <footer class="slds-modal__footer">
+                        <a class="slds-button slds-button_neutral"   href="#" onclick="closePatModel();" >Cancel</a >
+                        <a class="slds-button slds-button_brand"  onclick="saveHandler();" id="ajaxStatus">Save</a>
+                      </footer>
+                    </div>
+                  </section>
+                  <div class="slds-backdrop slds-backdrop_open"></div>    
+              </div>
+              <!--div class="demo-only" id="oppModelId" style="height: 640px;display:none;">
+                  <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container" style="width: 25% !important;">
+                      <header class="slds-modal__header">
+                        <a href="#" onclick="closeOpporunityModel();" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
+                          </svg>
+                          <span class="slds-assistive-text">Close</span>
+                        </a>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Another Membership</h2>
+                      </header>
+                      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <apex:pagemessages id="oppmsgId"/>
+                        <div id="oppErMsgId" style="color: red;font-weight: bold;"/>
+                        <table class="modeltblcls">                                                        
+                            <tr>
+                                <td>
+                                    Membership Type
+                                </td>
+                                <td>
+                                    <div class="requiredInput"><div class="requiredBlock"></div> 
+                                        <apex:inputField value="{!objOpportunity.Membership_Type__c}" id="memtypeId" styleClass="slds-input finp"/> 
+                                    </div>
+                                </td> 
+                            <tr>
+                            </tr>
+                                <td>
+                                    Payment Frequency
+                                </td>
+                                <td>
+                                    <apex:inputField value="{!objOpportunity.Payment_Frequency__c}" html-disabled="true" styleClass="slds-input finp"/>
+                                    <input type="hidden" id="selectedAccountId"/>
+                                    <input type="hidden" id="selectedOppIndexId"/>
+                                </td>                              
+                            </tr>
+                        </table>
+                      </div>
+                      <footer class="slds-modal__footer">
+                        <a class="slds-button slds-button_neutral"   href="#" onclick="closeOpporunityModel();" >Cancel</a >
+                        <a class="slds-button slds-button_brand"  onclick="addAnotherMembership();" id="ajaxStatus">Save</a>
+                      </footer>
+                    </div>
+                  </section>
+                  <div class="slds-backdrop slds-backdrop_open"></div>    
+              </div -->
+          </apex:outputPanel>  
+          <apex:actionFunction action="{!onSave}" name="onSave" reRender="msgId,pb,dupePatId" status="ajaxStatus" oncomplete="accountModelClose();"/>
+          <apex:actionFunction name="assignIndex" oncomplete="memberDetails();" reRender="msgId,pb">
+              <apex:param value="" name="index" assignTo="{!patIndex}"/>
+          </apex:actionFunction>
+          <apex:actionFunction name="rerenderTblPnl" reRender="pb,oppmsgId" status="ajaxStatus"/>
+          <!--apex:actionFunction name="rerenderTbl" reRender="pb" status="ajaxStatus" oncomplete="dataToRerenderinTbl();">
+              <apex:param value="" name="index" assignTo="{!patIndex}"/>
+          </apex:actionFunction>
+          <apex:actionFunction action="{!rerenderTbl}" name="dataToRerenderinTbl" reRender="pb" status="ajaxStatus"/-->
+          <apex:actionFunction action="{!removePatient}" name="removePatient" reRender="msgId,pb" status="ajaxStatus">
+              <apex:param value="" name="index" assignTo="{!patIndex}"/>
+          </apex:actionFunction>
+          <apex:actionFunction action="{!quickRemove}" name="quickRemove" reRender="msgId,pb" status="ajaxStatus" oncomplete="resetTblRow();">
+              <apex:param value="" name="index" assignTo="{!patIndex}"/>
+              <apex:param value="" name="selectedRemoveAccId" assignTo="{!selectedRemoveAccId}"/>
+          </apex:actionFunction>
+          <apex:actionFunction action="{!resetNewPatForm}" name="resetNewPatForm" reRender="msgId,pb,dupePatId" status="ajaxStatus" oncomplete="openModelPopup(null);"/>
+          <apex:actionFunction action="{!selectDuplicatePat}" name="selectDuplicatePat" reRender="msgId,pb,dupePatId" status="ajaxStatus" oncomplete="accountModelClose();">
+              <apex:param value="" name="spId" assignTo="{!selectPatientId}"/>
+          </apex:actionFunction>
+        <apex:actionStatus startStyleClass="requiredLoaderBG" id="ajaxStatus"/>
+    </apex:form> 
+</html>   
+</apex:page>

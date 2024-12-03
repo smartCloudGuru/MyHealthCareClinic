@@ -1,0 +1,63 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Basket Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_small slds-fade-in-open">
+
+        <div class="basket slds-modal__container">
+
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close">
+                </lightning-button-icon>
+                <h2>Your basket</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium" style="position: relative;">
+
+                <div if:true={message} class="basket-message">&check;&nbsp;{message}</div>
+
+                <div class="basket-overview-parent">
+                    <div class="basket-overview">
+
+                        <div class="basket-info">Total&nbsp;
+                            <span class="price-total">
+                                <lightning-formatted-number
+                                        value={basketSum}
+                                        format-style="currency"
+                                        currency-code="GBP">
+                                  </lightning-formatted-number>
+                            </span>
+                        </div>
+
+                        <div class="slds-p-around_medium basket-items" if:true={hasTestsInBasket}>
+                            <template for:each={basket} for:item="item">
+                                <c-onl-basket-item
+                                        key={item.id}
+                                        item={item}
+                                        onremove={handleRemoveItemFromBasket} onplusone={handlePlusOne} onminusone={handleMinusOne}></c-onl-basket-item>
+                            </template>
+                        </div>
+
+                        <div if:false={hasTestsInBasket} class="basket-empty">
+                            No items in basket
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer mhc-button">
+                    <button type="button" class="slds-button" onclick={handleClose}>Close</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

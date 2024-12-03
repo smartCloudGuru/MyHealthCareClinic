@@ -1,0 +1,114 @@
+/**
+ * Created by Matija on 22.9.2023..
+ */
+
+.max-height {
+    display: none;
+}
+
+.max-height-unset {
+    display: unset;
+}
+
+.asblock {
+    display: block;
+    margin-bottom: 20px;
+    padding: 0px;
+}
+
+.border-left {
+    border-left: 1px solid #c9c9c9;
+}
+
+.outcome-choice {
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    height: 30px;
+    padding: 4px;
+    text-align: center;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+
+.lightgreen {
+    background-color: #ebffeb;
+}
+
+.lightyellow {
+    background-color: #feffeb;
+}
+
+.lightblue {
+    background-color: #ebf6ff;
+}
+
+.lightred {
+    background-color: #ffebeb;
+}
+
+.lightgray {
+    background-color: #f3f3f3;
+}
+
+.outcome-choice.lightgreen:hover {
+    border: 1px solid #c9c9c9;
+    box-shadow: 0 0px 5px 0 green;
+}
+
+
+.outcome-choice.lightyellow:hover {
+    border: 1px solid #c9c9c9;
+    box-shadow: 0 0px 5px 0 #aeb306;
+}
+
+.outcome-choice.lightgray:hover {
+    border: 1px solid #f3f3f3;
+    box-shadow: 0 0px 5px 0 gray;
+}
+
+.outcome-choice.lightred:hover {
+    border: 1px solid #c9c9c9;
+    box-shadow: 0 0px 5px 0 red;
+}
+
+.option-name {
+    margin-bottom: 0.4rem;
+}
+
+span.name {
+    font-weight: 500;
+}
+
+
+.option-desc {
+    text-align: initial;
+    /*height: 7.1rem;*/
+}
+
+.option-desc2 {
+    text-align: initial;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.lwz-btn-close {
+    background-color: white;
+    top: 0px;
+    right: 0px;
+    border: none;
+    margin: 4px;
+}
+
+.lwz-modal-header {
+    height: 42px
+}
+
+.fix-overflow {
+    overflow: scroll;
+    background-color: white;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

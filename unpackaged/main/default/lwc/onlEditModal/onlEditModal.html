@@ -1,0 +1,95 @@
+<!--
+ - Created 14.3.2021..
+ -->
+
+<!-- Onl Edit Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_small slds-fade-in-open">
+
+        <div class="slds-modal__container">
+
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close">
+                </lightning-button-icon>
+                <h2>Update personal details</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium" style="position: relative;">
+
+                <div class="box">
+                    <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                            <h3 if:false={isBundleEdit}>Provide personal details for this test</h3>
+                            <h3 if:true={isBundleEdit}>Provide personal details for bundled tests</h3>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="First Name"
+                                             data-formfield="firstName"
+                                             placeholder="First Name"
+                                             value={test.Provided_First_Name__c}
+                                             max-length=50
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Last Name"
+                                             data-formfield="lastName"
+                                             placeholder="Last Name"
+                                             value={test.Provided_Last_Name__c}
+                                             max-length=50
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Email"
+                                             placeholder="Email"
+                                             data-formfield="email"
+                                             type="email"
+                                             max-length=60
+                                             value={test.Provided_Email__c}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Phone No."
+                                             data-formfield="phone"
+                                             placeholder="Phone No"
+                                             max-length=20
+                                             value={test.Provided_Phone_Number__c}
+                                             required>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item
+                                if:true={errorMessage}
+                                size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small"
+                                class="errorMessage slds-align_absolute-center">
+                            {errorMessage}
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+                </div>
+
+
+                <div class="modal-footer mhc-button">
+                    <lightning-button label="Close"
+                                      class="mhc-button close-modal-button"
+                                      onclick={handleClose}></lightning-button>
+                    <lightning-button label="Update"
+                                      class="mhc-button action-button save-personal-details-button"
+                                      onclick={handleSave}></lightning-button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

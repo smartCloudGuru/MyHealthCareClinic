@@ -1,0 +1,116 @@
+<!--
+ - Created 30.3.2024..
+ -->
+
+<!-- TLP Cancel -->
+<template>
+
+    <p class="dev-build">c008</p>
+
+    <div class="page-width-limited">
+
+        <template if:true={loading}>
+            <div class="min-height slds-p-horizontal_small">
+                <lightning-spinner alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={loading}>
+
+            <template if:false={cancellationOK}>
+                <lightning-layout if:true={appointmentToCancel}
+                                  multiple-rows="true"
+                                  horizontal-align="start">
+
+                    <!-- cancel text and button -->
+                    <template if:false={appointmentToCancel.Cancelled__c}>
+                        <lightning-layout-item
+                                size=12
+                                small-device-size=12
+                                medium-device-size=12
+                                large-device-size=12
+                                class="box no-border slots-column slds-m-top_x-large">
+
+                            You are about to cancel&nbsp;<span class="bolder">{appointmentToCancel.Work_Type_Group__r.Name}</span>&nbsp;appointment
+                            scheduled for&nbsp;
+                            <lightning-formatted-date-time value={appointmentToCancel.Scheduled_Start__c}
+                                                           year="numeric"
+                                                           month="long"
+                                                           day="2-digit"
+                                                           weekday="long"
+                                                           hour="2-digit"
+                                                           hour12={ampm}
+                                                           minute="2-digit"
+                                                           time-zone="Europe/London"
+                                                           class="bolder"></lightning-formatted-date-time>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-m-top_large">
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center">
+                            <lightning-button label="Confirm Cancellation"
+                                              class="mhc-button action-button no-margin"
+                                              onclick={doCancel}></lightning-button>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={cancellationFailed}
+                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-m-top_large standout-warn">
+                            We are unable to cancel this appointment at this time. Please try again or contact us directly for assistance.
+                        </lightning-layout-item>
+
+                    </template>
+
+                    <!-- msg if already cancelled -->
+                    <lightning-layout-item
+                            if:true={appointmentToCancel.Cancelled__c}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12
+                            class="box no-border slots-column slds-m-top_x-large">
+
+                        Appointment for&nbsp;
+                        <lightning-formatted-date-time value={appointmentToCancel.Scheduled_Start__c}
+                                                       year="numeric"
+                                                       month="long"
+                                                       day="2-digit"
+                                                       weekday="long"
+                                                       hour="2-digit"
+                                                       hour12={ampm}
+                                                       minute="2-digit"
+                                                       time-zone="Europe/London"
+                                                       class="bolder"></lightning-formatted-date-time>
+                        &nbsp;has already been cancelled
+                    </lightning-layout-item>
+
+                </lightning-layout>
+            </template>
+        </template>
+
+        <template if:true={cancellationOK}>
+            <p class="slds-m-top_x-large"><span class="bolder">{appointmentToCancel.Work_Type_Group__r.Name}</span>&nbsp;appointment scheduled for&nbsp;
+                <lightning-formatted-date-time value={appointmentToCancel.Scheduled_Start__c}
+                                               year="numeric"
+                                               month="long"
+                                               day="2-digit"
+                                               weekday="long"
+                                               hour="2-digit"
+                                               hour12={ampm}
+                                               minute="2-digit"
+                                               time-zone="Europe/London"
+                                               class="bolder"></lightning-formatted-date-time>
+                &nbsp;has now been cancelled. You will receive a confirmation email soon.
+            </p>
+        </template>
+
+        <template if:true={fetchFailed}>
+            <p class="slds-m-top_x-large">The appointment you are trying to reach does not exist. Please check the validity of the link that got you to this page.</p>
+        </template>
+
+    </div>
+
+</template>

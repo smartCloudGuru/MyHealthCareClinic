@@ -1,0 +1,77 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl Product Row -->
+<template>
+    <div if:true={product}>
+
+        <lightning-layout multiple-rows="true" horizontal-align="start" class={boxClass}>
+
+            <lightning-layout-item if:true={hasHighlight} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="highlight slds-text-align_center">
+                <marquee>&nbsp;{product.product.Store_Highlight__c}</marquee>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={hasMembershipHighlight} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="highlight membership slds-text-align_center">
+                <span>&nbsp;{product.product.Store_Highlight__c}</span>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={hasImage} style={backgroundImageStyle}
+                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="image">&nbsp;
+            </lightning-layout-item>
+            <lightning-layout-item if:false={hasImage}
+                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="no-image">&nbsp;
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="title slds-text-align_center">
+                &nbsp;{product.product.Store_Title__c}&nbsp;
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="subtitle slds-text-align_center">
+                &nbsp;{product.product.Store_Subtitle__c}&nbsp;
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={pricingOfferPrice}
+                    size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pricing first-line slds-text-align_center">
+                {pricingOfferPrice}
+            </lightning-layout-item>
+            <lightning-layout-item if:false={pricingOfferPrice}
+                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pricing first-line slds-text-align_center">
+                &nbsp;
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={pricing}
+                    size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pricing slds-text-align_center">
+                <lightning-formatted-rich-text value={pricing}></lightning-formatted-rich-text>
+            </lightning-layout-item>
+            <lightning-layout-item if:false={pricing}
+                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pricing slds-text-align_center">
+                &nbsp;
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="schedule-button slds-text-align_center no-margin-button-form">
+                <lightning-button label="Book now" class="mhc-button primary-button schedule-button"
+                                  aria-label={productMetaData}
+                                  onclick={handleSchedule}>
+                </lightning-button>
+            </lightning-layout-item>
+
+        </lightning-layout>
+
+    </div>
+
+    <template if:true={triggerConfirmRequirementsModal}>
+        <c-onl2-confirm-requirements-modal
+                store-config={storeConfig}
+                product-name={product.product.Name}
+                requirements={product.product.Requirements__c}
+                onclose={closeConfirmRequirementsModal}
+                onproceed={handleProceedFromRequirements}
+                dev={dev}
+        ></c-onl2-confirm-requirements-modal>
+    </template>
+
+</template>

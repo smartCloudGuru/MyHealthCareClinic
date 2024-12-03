@@ -1,0 +1,330 @@
+<!--
+ - Created 12.9.2022..
+ -->
+
+<!-- Mem Sign Up Form -->
+<template>
+
+    <template if:true={dataReady}>
+
+        <div if:false={saved}>
+            <div if:true={saving} class="saved-note slds-m-top_xx-large slds-text-heading_large slds-p-around_large width-limited">
+                <br/>
+                Please wait...
+            </div>
+
+            <div if:true={saving} class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+
+            <div if:true={saveError} class="slds-align_absolute-center slds-text-color_error slds-m-top_xx-large">
+                <span if:false={saving}>
+                We are unable to process your request at this time. Please try later or call us at&nbsp;<strong>{_contactPhone}</strong>.
+                </span>
+            </div>
+
+            <div if:false={saving}>
+
+                <div class="header">
+                    <div class="width-limited">
+                        <h2>Corporate Membership Sign Up</h2>
+                    </div>
+                </div>
+
+                <div class="width-limited">
+
+                    <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_medium">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="First Name"
+                                             data-id="firstName"
+                                             placeholder="First name"
+                                             autocomplete="off"
+                                             value={form.firstName}
+                                             read-only={prefilled}
+                                             required
+                                             max-length=64>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Last Name"
+                                             data-id="lastName"
+                                             placeholder="Last Name"
+                                             autocomplete="off"
+                                             value={form.lastName}
+                                             read-only={prefilled}
+                                             required
+                                             max-length=64>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Email"
+                                             type="email"
+                                             data-id="email"
+                                             placeholder="Email"
+                                             autocomplete="off"
+                                             required
+                                             read-only={prefilled}
+                                             value={form.email}
+                                             onchange={validateEmail2}
+                                             max-length=64>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Confirm Email"
+                                             type="email2"
+                                             data-id="email2"
+                                             read-only={prefilled}
+                                             placeholder="Email"
+                                             autocomplete="off"
+                                             required
+                                             value={form.email2}
+                                             onchange={validateEmail2}
+                                             max-length=64>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-combobox
+                                    label="Gender"
+                                    data-id="gender"
+                                    placeholder=""
+                                    value={form.gender}
+                                    required
+                                    options={genderOptions}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            <lightning-input label="Phone Number"
+                                             data-id="phone"
+                                             type="tel"
+                                             placeholder="Phone"
+                                             autocomplete="off"
+                                             required
+                                             value={form.phone}
+                                             max-length=100>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                            &nbsp;
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small"
+                                               class="fs14">
+                            <div>Date of birth</div>
+                            <div if:false={dobDateValid} class="slds-text-color_error">Please enter a valid date. You need to be at least 18 years old
+                                to
+                                apply for membership
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+
+                            <lightning-combobox
+                                    label="Day"
+                                    data-id="dob_d"
+                                    placeholder=""
+                                    required
+                                    value={form.dob_d}
+                                    options={ddOptions}
+                                    onchange={validateDOB18}
+                            >
+                            </lightning-combobox>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                            <lightning-combobox
+                                    label="Month"
+                                    data-id="dob_m"
+                                    value={form.dob_m}
+                                    placeholder=""
+                                    required
+                                    options={mmOptions}
+                                    onchange={validateDOB18}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                            <lightning-combobox
+                                    label="Year"
+                                    data-id="dob_y"
+                                    value={form.dob_y}
+                                    placeholder=""
+                                    required
+                                    options={yyOptions}
+                                    onchange={validateDOB18}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="subheading">
+                            <div class="slds-form-element__legend slds-form-element__label"><strong>Current address</strong></div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <c-onl2-autofill-input data-id="searchByPostal"
+                                                   label="Postal Code &amp; Address Search"
+                                                   class="sub-address address-search"
+                                                   onsearch={handlePostcodeSearch}
+                                                   onselectionchange={handlePostcodeSelection}></c-onl2-autofill-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 1"
+                                             data-id="address1"
+                                             placeholder="Address Line 1"
+                                             autocomplete="off"
+                                             class="sub-address"
+                                             required
+                                             value={form.address1}
+                                             max-length=40>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 2"
+                                             data-id="address2"
+                                             placeholder="Address Line 2"
+                                             autocomplete="off"
+                                             class="sub-address"
+                                             value={form.address2}
+                                             max-length=40>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Address Line 3"
+                                             data-id="address3"
+                                             placeholder="Address Line 3"
+                                             autocomplete="off"
+                                             class="sub-address"
+                                             value={form.address3}
+                                             max-length=40>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="City"
+                                             data-id="city"
+                                             placeholder="City"
+                                             class="sub-address"
+                                             required
+                                             autocomplete="off"
+                                             value={form.city}
+                                             max-length=40>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small">
+                            <lightning-input label="Postal Code"
+                                             data-id="postalCode"
+                                             placeholder="Postal code"
+                                             class="sub-address"
+                                             required
+                                             autocomplete="off"
+                                             value={form.postalCode}
+                                             max-length=12>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+
+                    </lightning-layout>
+
+
+                    <!-- submit button -->
+                    <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_small">
+
+                        <!-- DIVIDER -->
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="big-divider">
+                        </lightning-layout-item>
+
+                        <!--                        <lightning-layout-item if:true={planSelected}-->
+                        <!--                                               class={css_box_planSelected}-->
+                        <!--                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">-->
+                        <!--                            <p>Total price of your <strong>{planSelected}</strong> membership plan for {adultsAndChildren}:</p>-->
+                        <!--                            <p class="slds-align_absolute-center fs18 pb8"><strong>£{totalPrice} / month</strong></p>-->
+                        <!--                            <p>To pay for your Membership, you will need to set up a Direct Debit after filling in this form</p>-->
+
+                        <!--                        </lightning-layout-item>-->
+
+                        <!--                    <lightning-layout-item if:true={enabledGoCardless}-->
+                        <!--                                           size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">-->
+                        <!--                        <lightning-combobox label="Setup Direct Debit"-->
+                        <!--                                            data-id="ddselected"-->
+                        <!--                                            placeholder="Please select ..."-->
+                        <!--                                            options={ddebitOptions}-->
+                        <!--                                            onchange={handleDDSelectedChange}-->
+                        <!--                                            required-->
+                        <!--                                            value={form.ddselected}-->
+                        <!--                        >-->
+                        <!--                        </lightning-combobox>-->
+                        <!--                    </lightning-layout-item>-->
+
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            Please read our <a href="javascript:" class="footer-link" onclick={openTACModal}>Terms and Conditions</a>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox"
+                                             class="onl-check"
+                                             data-id="checkToc"
+                                             label="I have read, understand and accept the Terms and Conditions of the Memberships"
+                                             required
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <!--                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">-->
+                        <!--                            <lightning-input type="checkbox"-->
+                        <!--                                             class="onl-check mhc-p-l-10"-->
+                        <!--                                             data-id="checkNews"-->
+                        <!--                                             label="Notify me of exclusive member offers"-->
+                        <!--                            ></lightning-input>-->
+                        <!--                        </lightning-layout-item>-->
+
+                        <lightning-layout-item if:true={planSelected}
+                                               size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <template if:false={needsDDSetup}>
+                                <lightning-button if:false={saving} class="submit-button" variant="brand"
+                                                  label="Submit"
+                                                  onclick={handleSubmit}></lightning-button>
+                            </template>
+                            <lightning-spinner if:true={saving} alternative-text="Loading" size="medium"></lightning-spinner>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+
+
+                </div>
+
+            </div>
+        </div>
+
+        <div if:true={saved}
+             class="slds-m-top_xx-large slds-p-around_large width-limited">
+            <p>Thank you for signing up to our corporate membership plan.</p>
+            <p>An email confirming your signup will be sent to you shortly.</p>
+        </div>
+
+    </template>
+
+    <template if:true={triggerTACModal}>
+        <c-mem-t-a-c-popup onclose={closeTACModal}></c-mem-t-a-c-popup>
+    </template>
+
+
+</template>

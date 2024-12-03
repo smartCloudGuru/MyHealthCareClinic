@@ -1,0 +1,20 @@
+/**
+ * Created 12.9.2022..
+ */
+
+.sub-box
+{
+    margin:0px;
+    padding:6px;
+}
+
+.sub-box:hover
+{
+    background-color: #e1f3fb;
+}
+
+.commands
+{
+    width:100%;
+    text-align: end;
+}

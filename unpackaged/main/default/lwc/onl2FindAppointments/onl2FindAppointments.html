@@ -1,0 +1,138 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl FIND Covid Tests -->
+<template>
+
+    <div class={parentClass}>
+        <div class="box appointment search-wrapper">
+
+            <div>
+
+                <!--                <lightning-layout multiple-rows="true" horizontal-align="start" class="box appointment banner" onclick={handleGoToOffers}>-->
+
+                <!--                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12-->
+                <!--                                           class="padding-min-on-mobile">-->
+                <!--                        <span class="promotions">Check&nbsp;out&nbsp;our SPECIAL&nbsp;OFFERS</span>-->
+
+                <!--                    </lightning-layout-item>-->
+
+                <!--                </lightning-layout>-->
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="box appointment search">
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=4 padding="around-small"
+                                           class="padding-min-on-mobile">
+                        <span class="biglabel">Book&nbsp;an&nbsp;Appointment:&nbsp;&nbsp;</span>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small"
+                                           class="padding-min-on-mobile">
+
+                        <lightning-combobox label="1. Please select a Service"
+                                            class="category-dropdown"
+                                            placeholder="Please select:"
+                                            options={divisions}
+                                            onchange={handleDivisionChanged}
+                                            value={division}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 padding="around-small"
+                                           class="padding-min-on-mobile">
+
+                        <lightning-combobox label="2. Then select a Department"
+                                            class="category-dropdown"
+                                            placeholder="Please select:"
+                                            options={categories}
+                                            onchange={handleCategoryChanged}
+                                            value={category}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+
+                </lightning-layout>
+
+            </div>
+
+
+            <div class="policy-note" if:false={mobileApp}>
+                For help choosing an appointment, call Patient Support at <a
+                    href="tel:02072824280">0207&nbsp;282&nbsp;4280</a>. Appointment prices are shown after entering your details. Please have
+                your <span class="bold">payment card ready</span> if needed.
+
+            </div>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                       class="filter-results covid">
+
+                    <div if:true={loading} class="spinner-holder searching slds-align_absolute-center">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+
+                    <template if:false={loading}>
+
+                        <template if:true={noResults}>
+                            <p if:false={noCategorySelected}>
+                                <span class="no-results">No appointments found for your query.</span>
+                            </p>
+                        </template>
+
+                        <!-- RESULT ITERATION -->
+                        <template if:false={noResults} for:each={foundProductsBySub} for:item="sub">
+                            <lightning-layout if:false={noResults}
+                                              multiple-rows="true" horizontal-align="center" vertical-align="stretch"
+                                              key={sub.subCategory}>
+                                <lightning-layout-item if:false={sub.isDefault}
+                                                       size=12
+                                                       small-device-size=12
+                                                       medium-device-size=12
+                                                       large-device-size=12
+                                                       class="test-result-wrapper">
+                                    <div class="subcategory-title">{sub.subCategory}</div>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item for:each={sub.products}
+                                                       for:item="product"
+                                                       key={product.product.Id}
+                                                       size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                       class="test-result-wrapper">
+                                    <c-onl2-app-product-result-row
+                                            product={product}
+                                            onbook={handleBook}
+                                            onofferupsell={handleOfferUpsell}
+                                            store-config={storeConfig}
+                                            default-personal-details={defaultPersonalDetails}
+                                            dev={dev}
+                                    >
+                                    </c-onl2-app-product-result-row>
+
+                                </lightning-layout-item>
+                            </lightning-layout>
+
+                        </template>
+
+                    </template>
+
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+        </div>
+    </div> <!-- end search wrapper -->
+
+    <template if:true={triggerOpenUpsellModal}>
+        <c-onl2-upsell-modal
+                store-config={storeConfig}
+                book-context={inputForUpsellModal}
+                onclose={closeUpsellModal}
+                onbook={handleBook}
+                dev={dev}
+        ></c-onl2-upsell-modal>
+    </template>
+
+</template>

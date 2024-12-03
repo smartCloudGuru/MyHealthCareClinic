@@ -1,0 +1,55 @@
+/**
+ * Created 8.9.2021..
+ */
+
+.submit-button {
+    margin-bottom: 72px;
+}
+
+.submit-button .bu {
+    margin-bottom: 80px;
+}
+
+.subheading {
+    padding-bottom: 0;
+    padding-top: 14px;
+}
+
+.instruction.invalid-pin
+{
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+.slds-form-element__label.slds-text-color_error {
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+
+.big-divider {
+    border-bottom: 1px solid #e1f3fb;
+}
+
+p {
+    padding-top: 4px;
+}
+
+.saved-note
+{
+    margin: auto;
+    width: 90%;
+    text-align: center;
+}
+
+.booking-ref-frame {
+    font-size: larger;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.required_mark
+{
+    color: rgb(234, 0, 30);
+}
+
+.hidden
+{
+    display: none !important;
+}

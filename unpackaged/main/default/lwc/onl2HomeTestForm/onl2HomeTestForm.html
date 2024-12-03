@@ -1,0 +1,543 @@
+<!--
+ - Created 19.4.2021..
+ -->
+
+<!-- Onl RLF Results Form -->
+<template>
+
+    <div if:false={saved}>
+
+
+        <div if:true={saving} class="saved-note slds-m-top_xx-large slds-text-heading_large slds-p-around_large">
+            <br/>
+            Please wait...
+        </div>
+        <div if:true={saving} class="spinner-holder slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+
+        <div if:true={fetchError} class="slds-align_absolute-center slds-text-color_error slds-m-top_xx-large">
+            Unable to retrieve your Home Kit data. Please try later or call us at&nbsp;<strong>{_contactPhone}</strong>.
+        </div>
+
+        <div if:true={ctestNotApplicable} class="slds-align_absolute-center slds-text-color_error slds-m-top_xx-large">
+            Unable to find your Home Kit Test. If you believe this is an error call us at&nbsp;&nbsp;<strong>{_contactPhone}</strong>.
+        </div>
+
+        <div if:true={waitForPin}>
+            <div class="width-limited slds-p-top_large">
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_medium">
+
+
+                    <lightning-layout-item if:true={resellerUseCase} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           padding="around-small">
+
+                        <p if:true={invalid_OTP} class="instruction invalid-pin">The PIN you provided may not be valid. Please check the PIN you
+                            entered.</p>
+
+                        <lightning-input label="Please provide the PIN code for your test:"
+                                         data-id="otpcode"
+                                         class="uppercase"
+                                         placeholder=""
+                                         autocomplete="off"
+                                         value={otpcode}
+                                         onchange={handleOTPChanged}
+                                         required
+                                         max-length=6>
+                        </lightning-input>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                               class="slds-align_absolute-center">
+                            <lightning-button if:false={saving} class="submit-button" variant="brand"
+                                              label="&nbsp;&nbsp;&nbsp;&nbsp;Continue&nbsp;&nbsp;&nbsp;&nbsp;"
+                                              onclick={handleContinue}></lightning-button>
+                        </lightning-layout-item>
+
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </div>
+
+        <div if:false={waitForPin}>
+            <div if:false={saving}>
+                <div if:true={dataReady}>
+
+                    <div class="header">
+                        <div class="width-limited">
+                            <strong>Result Submission Form<span
+                                    if:true={form.Booking_Reference__c}> - Test {form.Booking_Reference__c}</span></strong>
+                        </div>
+                    </div>
+
+                    <div class="width-limited slds-p-top_large">
+
+                        <p class="instruction">We recommend opening this form from a Smartphone so that photos can be easily uploaded from your phone
+                            camera.</p>
+
+
+                        <!-- only if product selected -->
+                        <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_medium">
+
+
+                            <lightning-layout-item if:true={resellerUseCase} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   padding="around-small" class="hidden">
+
+                                <lightning-input label="Please provide the PIN code for your test:"
+                                                 data-id="Provided_OtpCode"
+                                                 class="uppercase "
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={otpcode}
+                                                 required
+                                                 max-length=6>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item if:true={genericCovidTest} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   padding="around-small">
+                                <lightning-combobox label="Which type of test are you reporting results for?"
+                                                    data-id="Test_Type__c"
+                                                    placeholder="Please select ..."
+                                                    options={_testTypeOptions}
+                                                    value={form.Test_Type__c}
+                                                    onchange={handleTestTypeChanged}
+                                                    required
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <div>
+
+                                    <div class="slds-m-top_small">
+                                        <p><span if:true={filesRequired} class="required_mark">*&nbsp;</span>Take a photo of your
+                                            &nbsp;<strong>UNUSED</strong>&nbsp;Test Strip, clearly showing the <strong>QR code</strong> at the top</p>
+                                        <p>
+                                            <lightning-file-upload
+                                                    label=""
+                                                    data-a1
+                                                    record-id={ctestid}
+                                                    accept={acceptedFormats}
+                                                    name="fileUploader"
+                                                    onuploadfinished={handleUploadFinished1}>
+                                            </lightning-file-upload>
+                                        </p>
+                                        <p if:true={attachment1.name}><strong>&nbsp;&nbsp;{attachment1.name}</strong></p>
+
+                                    </div>
+
+                                    <div class="slds-m-top_small">
+                                        <p><span if:true={filesRequired} class="required_mark">*&nbsp;</span>Take a photo of your Test Result <strong>15
+                                            mins AFTER</strong> placing the sample drops onto the Test Strip</p>
+                                        <p>
+                                            <lightning-file-upload
+                                                    label=""
+                                                    data-a1
+                                                    record-id={ctestid}
+                                                    accept={acceptedFormats}
+                                                    name="fileUploader"
+                                                    onuploadfinished={handleUploadFinished2}>
+                                            </lightning-file-upload>
+                                        </p>
+                                        <p if:true={attachment2.name}><strong>&nbsp;&nbsp;{attachment2.name}</strong></p>
+                                    </div>
+
+                                    <div class="slds-m-top_small">
+                                        <p><span if:true={filesRequired} class="required_mark">*&nbsp;</span>Take a Photo of your <strong>Passport
+                                            Photo
+                                            page</strong></p>
+                                        <p>
+                                            <lightning-file-upload
+                                                    label=""
+                                                    data-a1
+                                                    record-id={ctestid}
+                                                    accept={acceptedFormats}
+                                                    name="fileUploader"
+                                                    onuploadfinished={handleUploadFinished3}>
+                                            </lightning-file-upload>
+                                        </p>
+                                        <p if:true={attachment3.name}><strong>&nbsp;&nbsp;{attachment3.name}</strong></p>
+                                    </div>
+                                </div>
+                            </lightning-layout-item>
+
+
+                            <!-- DIVIDER -->
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                                   class="big-divider slds-m-top_large">
+                            </lightning-layout-item>
+
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="First Name"
+                                                 data-id="Provided_First_Name__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_First_Name__c}
+                                                 required
+                                                 max-length=100>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Last Name"
+                                                 data-id="Provided_Last_Name__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Last_Name__c}
+                                                 required
+                                                 max-length=100>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                                   class="subheading">
+                                <div class="slds-form-element__legend slds-form-element__label">Date of birth</div>
+                                <div if:false={dobDateValid} class="slds-form-element__legend slds-form-element__label slds-text-color_error">- Please
+                                    enter a
+                                    valid date
+                                </div>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+
+                                <lightning-combobox
+                                        label="Day"
+                                        data-id="dob_d"
+                                        value={form.dob_d}
+                                        placeholder=""
+                                        required
+                                        options={ddOptions}
+                                        onchange={validateDOB}
+                                >
+                                </lightning-combobox>
+
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                                <lightning-combobox
+                                        label="Month"
+                                        data-id="dob_m"
+                                        value={form.dob_m}
+                                        placeholder=""
+                                        required
+                                        options={mmOptions}
+                                        onchange={validateDOB}
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=4 medium-device-size=2 large-device-size=2 padding="around-small">
+                                <lightning-combobox
+                                        label="Year"
+                                        data-id="dob_y"
+                                        value={form.dob_y}
+                                        placeholder=""
+                                        required
+                                        options={yyOptions}
+                                        onchange={validateDOB}
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                                   class="subheading">
+                                <div class="slds-form-element__legend slds-form-element__label">Current address</div>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <c-onl2-autofill-input data-id="Provided_Postal_Code__c"
+                                                       label="Postal Code &amp; Address Search"
+                                                       class="sub-address"
+                                                       selection={preselectedPostalCode}
+                                                       onsearch={handlePostcodeSearch}
+                                                       onselectionchange={handlePostcodeSelection}></c-onl2-autofill-input>
+                            </lightning-layout-item>
+
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Address Line 1"
+                                                 data-id="Provided_Address_Line1__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 class="sub-address"
+                                                 required
+                                                 value={form.Provided_Address_Line1__c}
+                                                 max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Address Line 2"
+                                                 data-id="Provided_Address_Line2__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 class="sub-address"
+                                                 value={form.Provided_Address_Line2__c}
+                                                 max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="City"
+                                                 data-id="Provided_City__c"
+                                                 placeholder=""
+                                                 class="sub-address"
+                                                 autocomplete="off"
+                                                 required
+                                                 value={form.Provided_City__c}
+                                                 max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-combobox label="Country"
+                                                    data-id="Provided_Country__c"
+                                                    placeholder="Please select ..."
+                                                    class="sub-address"
+                                                    options={countryOptions}
+                                                    value={form.Provided_Country__c}
+                                                    required
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Email"
+                                                 type="email"
+                                                 data-id="Provided_Email__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Email__c}
+                                                 required
+                                                 max-length=100>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Mobile Phone"
+                                                 data-id="Provided_Mobile_Phone__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Mobile_Phone__c}
+                                                 max-length=100>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-input label="Phone Number"
+                                                 data-id="Provided_Phone_Number__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Phone_Number__c}
+                                                 max-length=100>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <!-- DIVIDER -->
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                                   class="big-divider">
+                            </lightning-layout-item>
+
+
+                        </lightning-layout>
+
+
+                        <!-- FIT TOP FLY test -->
+
+                        <lightning-layout if:true={isFitToFly}
+                                          multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Passport/National ID Number"
+                                                 data-id="Provided_Passport_Number__c"
+                                                 placeholder=""
+                                                 value={form.Provided_Passport_Number__c}
+                                                 max-length=30
+                                                 required
+                                >
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input type="checkbox"
+                                                 data-id="check1"
+                                                 label="Please confirm you have booked your appointment within the testing window required for the country you are travelling to"
+                                                 required
+                                ></lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Which date and time are you flying?"
+                                                 type="datetime"
+                                                 data-id="Flight_Date__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Flight_Date__c}
+                                                 required>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-combobox label="Where are you travelling to?"
+                                                    data-id="Destination_Country__c"
+                                                    placeholder="Please select ..."
+                                                    options={countryOptions}
+                                                    value={form.Destination_Country__c}
+                                                    required
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+
+                        </lightning-layout>
+
+                        <!-- UK ENTRY TEST -->
+                        <lightning-layout if:true={isUkEntry}
+                                          multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Passport/National ID Number"
+                                                 data-id="Provided_Passport_Number__c"
+                                                 placeholder=""
+                                                 value={form.Provided_Passport_Number__c}
+                                                 max-length=30
+                                                 required
+                                >
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+
+                        <lightning-layout if:true={isDay2or8}
+                                          multiple-rows="true" horizontal-align="start">
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="NHS Number (if known)"
+                                                 data-id="Provided_NHS_Number__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_NHS_Number__c}
+                                                 max-length=10>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Address where you are self-isolating (if different to your current address)"
+                                                 data-id="Provided_Isolation_Address__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Isolation_Address__c}
+                                                 max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-combobox label="Vaccination Status"
+                                                    data-id="Provided_Vaccination_Status__c"
+                                                    placeholder="Please select ..."
+                                                    options={vacStatusOptions}
+                                                    value={form.Provided_Vaccination_Status__c}
+                                                    required
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input
+                                        label="If you have been vaccinated, which vaccine did you receive? (if answered no above, please just write N/A)"
+                                        data-id="Provided_Vaccine__c"
+                                        placeholder=""
+                                        autocomplete="off"
+                                        value={form.Provided_Vaccine__c}
+                                        required
+                                        max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Date and Time of Arrival into the UK"
+                                                 type="datetime"
+                                                 data-id="Randox_arrivalDate__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Randox_arrivalDate__c}
+                                                 required>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input
+                                        label="Date on which you last departed from or transited through a country or territory outside the common travel area"
+                                        type="date"
+                                        data-id="Provided_Transit_Date__c"
+                                        placeholder=""
+                                        autocomplete="off"
+                                        value={form.Provided_Transit_Date__c}
+                                        required>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+
+                                <lightning-input label="The country or territory you were travelling from when you arrived in the UK, and any country or territory you transited through as part
+                of that journey"
+                                                 data-id="Countries_Visited__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 required
+                                                 value={form.Countries_Visited__c}
+                                                 max-length=200>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input label="Passport/National ID Number"
+                                                 data-id="Provided_Passport_Number__c"
+                                                 placeholder=""
+                                                 autocomplete="off"
+                                                 value={form.Provided_Passport_Number__c}
+                                                 max-length=30
+                                                 required>
+                                </lightning-input>
+                            </lightning-layout-item>
+
+
+                        </lightning-layout>
+
+                        <!-- submit button -->
+                        <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_medium">
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                                <lightning-input type="checkbox" data-id="check2"
+                                                 label="Please confirm you have read our T&Cs, accepted them and completed this form as accurately as possible."
+                                                 required
+                                ></lightning-input>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                                   class="slds-align_absolute-center">
+                                <lightning-button if:false={saving} class="submit-button" variant="brand"
+                                                  label="&nbsp;&nbsp;&nbsp;&nbsp;Submit&nbsp;&nbsp;&nbsp;&nbsp;"
+                                                  onclick={handleSubmit}></lightning-button>
+                                <lightning-spinner if:true={saving} alternative-text="Loading" size="medium"></lightning-spinner>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                    </div>
+                </div><!-- end if data ready -->
+            </div>
+        </div>
+
+    </div>
+
+    <div if:true={saved}
+         class="saved-note slds-m-top_xx-large slds-text-heading_medium slds-p-around_large">
+        <br/>Your test information has been submitted.
+        <br/>We will now check your submission and send you a response shortly.
+    </div>
+
+</template>

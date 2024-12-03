@@ -1,0 +1,65 @@
+/**
+ * Created by Matija on 8.8.2023..
+ */
+.spinnerHolder {
+    position: relative;
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    padding: 6px;
+}
+
+.spinnerText {
+    display: inline-block;
+    height: 94px;
+    vertical-align: middle;
+}
+
+.adate-wrapper {
+    line-height: 24px;
+    cursor: pointer;
+    padding: 4px;
+    padding-left: 8px;
+    color: #041ea8;
+    font-weight: 500;
+}
+
+.adate-wrapper:hover{
+    text-decoration: underline;
+}
+
+.onl2 .adate-wrapper {
+    line-height: 30px;
+    cursor: pointer;
+    color: #3c3c3b;
+    font-weight: 500;
+    padding: 8px 8px 8px 8px;
+    text-align: center;
+}
+
+.onl2 .adate-wrapper:hover{
+    text-decoration: none;
+}
+
+.onl2 .adate-wrapper .inner {
+    background-color: #b7e768;
+    border-radius: 4px;
+    padding:3px;
+    font-size: 14px;
+}
+
+.onl2 .adate-wrapper .inner:hover {
+    padding: 0px;
+    text-align: center;
+    border: 3px solid #4cb05b;
+    border-radius: 4px;
+}
+
+.no-aval-msg {
+    line-height: 1.5rem;
+}
+
+.searching-notice
+{
+    min-height: 294px;
+}

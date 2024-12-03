@@ -1,0 +1,258 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<template>
+
+    <div class={parentClass}>
+
+        <template if:false={showLandingMenu}>
+
+            <!-- LIST OF APPOINTMENT TYPES -->
+            <div class="box appointment search-wrapper scrollable-div">
+
+                <div class="book-head">
+                    <div class="policy-note">
+                        For help choosing an appointment, call Patient Support at <a
+                            href="tel:02072824280">0207&nbsp;282&nbsp;4280</a>. Appointment prices are shown after entering your details. Please have
+                        your <span class="bold">payment card ready</span> if needed.
+                    </div>
+                </div>
+
+
+                <div if:false={loading} class="holder-menu upper">
+
+                    <div class="landing-p bold fs15">See the Services we offer:</div>
+
+                    <lightning-layout multiple-rows="true" horizontal-align="spread" class="pull-to-boundary">
+
+                        <lightning-layout-item size=6 small-device-size=6 medium-device-size=6 large-device-size=6
+                                               padding="around-small" class="level1-wrapper" onclick={showMedicalCategoriesModal}>
+                            <div class="landing level1">
+                                <div class="label">
+                                    Medical&nbsp;&gt;&gt;
+                                </div>
+                            </div>
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=6 small-device-size=6 medium-device-size=6 large-device-size=6
+                                               padding="around-small" class="level1-wrapper" onclick={showDentalCategoriesModal}>
+                            <div class="landing level1 dental">
+                                <div class="label">
+                                    Dental&nbsp;&gt;&gt;
+                                </div>
+                            </div>
+
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+                </div>
+
+                <div class="current-dept popular" if:true={landingCategorySelected}>Or choose from a popular Service:</div>
+
+                <lightning-layout if:true={landingCategorySelected}
+                                  multiple-rows="true" horizontal-align="spread" class="pull-to-boundary">
+
+                    <lightning-layout-item size=6 small-device-size=6 medium-device-size=6 large-device-size=6
+                                           class="level1-wrapper">
+
+                        <lightning-layout multiple-rows="true" vertical-align="stretch" horizontal-align="spread" class="medical">
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='GP Consultation' data-serv='Medical' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper gp">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+
+                                    <div class="title">GP Consultations</div>
+                                </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='Health Screens' data-serv='Medical' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper healthscreen">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+                                    <div class="title">Health Screens</div>
+                                </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='Blood test' data-serv='Medical' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper bloodtests">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+                                    <div class="title">Blood Tests</div>
+                                </div>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item if:true={landingCategorySelected}
+                                           size=6 small-device-size=6 medium-device-size=6 large-device-size=6
+                                           class="level1-wrapper">
+
+
+                        <lightning-layout multiple-rows="true" vertical-align="stretch" horizontal-align="spread" class="dental">
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='Dental Examination' data-serv='Dental' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper dentalexam">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+                                    <div class="title">Dental Examination</div>
+                                </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='Dental Hygienist' data-serv='Dental' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper hygiene">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+                                    <div class="title">Dental Hygienist</div>
+                                </div>
+                            </lightning-layout-item>
+                            <lightning-layout-item
+                                    size=12
+                                    small-device-size=12
+                                    medium-device-size=12
+                                    large-device-size=4
+                                    padding="around-small"
+                                    data-cat='Implant Consultation' data-serv='Dental' onclick={handleLandingCategoryClick}
+                                    class="popular-wrapper implant">
+                                <div class="box">
+                                    <div class="image">
+
+                                    </div>
+                                    <div class="title">Implant Consultation</div>
+                                </div>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+                <div if:false={landingCategorySelected} class="current-dept">{currentDepartment}</div>
+
+                <c-onl3-category-info category={currentDepartment}></c-onl3-category-info>
+
+                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                           class="filter-results covid">
+
+                        <div if:true={loading} class="spinner-holder searching slds-align_absolute-center">
+                            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                        </div>
+
+                        <template if:false={loading}>
+
+                            <template if:true={noResults}>
+                                <p if:false={noCategorySelected}>
+                                    <span class="no-results">No appointments found for your query.</span>
+                                </p>
+                            </template>
+
+                            <!-- RESULT ITERATION -->
+                            <template if:false={noResults} for:each={foundProductsBySub} for:item="sub">
+                                <lightning-layout if:false={noResults}
+                                                  multiple-rows="true" vertical-align="stretch" horizontal-align="spread"
+                                                  key={sub.subCategory}>
+                                    <lightning-layout-item if:false={sub.isDefault}
+                                                           size=12
+                                                           small-device-size=12
+                                                           medium-device-size=12
+                                                           large-device-size=12
+                                                           class="test-result-wrapper">
+                                        <div class="subcategory-title">{sub.subCategory}</div>
+                                    </lightning-layout-item>
+
+                                    <lightning-layout-item for:each={sub.products}
+                                                           for:item="product"
+                                                           key={product.product.Id}
+                                                           size=12 small-device-size=12 medium-device-size=6 large-device-size={sub.layout}
+                                                           class="test-result-wrapper">
+                                        <c-onl3-app-product-result-row
+                                                product={product}
+                                                onbook={handleBook}
+                                                onofferupsell={handleOfferUpsell}
+                                                store-config={storeConfig}
+                                                default-personal-details={defaultPersonalDetails}
+                                                dev={dev}
+                                        >
+                                        </c-onl3-app-product-result-row>
+
+                                    </lightning-layout-item>
+                                </lightning-layout>
+
+                            </template>
+
+                        </template>
+
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+
+            </div>
+        </template>
+    </div> <!-- end search wrapper -->
+
+
+    <template if:true={triggerOpenUpsellModal}>
+        <c-onl2-upsell-modal
+                store-config={storeConfig}
+                book-context={inputForUpsellModal}
+                onclose={closeUpsellModal}
+                onbook={handleBook}
+                dev={dev}
+        ></c-onl2-upsell-modal>
+    </template>
+
+    <template if:true={triggerOpenCategoriesModal}>
+        <c-onl2-categories-modal
+                store-config={storeConfig}
+                medcategories={medicalCategories}
+                dentcategories={dentalCategories}
+                division={preselectDivision}
+                onclose={closeCategoriesModal}
+                oncategory={handleNewMenuCategorySelected}
+                dev={dev}
+        ></c-onl2-categories-modal>
+    </template>
+
+
+</template>

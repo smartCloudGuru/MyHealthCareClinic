@@ -1,0 +1,156 @@
+/**
+ * Created 15.4.2021..
+ */
+
+.spinner-holder.searching {
+    height: 113px;
+    margin-top: -20px;
+}
+
+
+.box.search {
+    background-color: var(--c-color-appointment);
+    margin-top: 0;
+    margin-right: 10px;
+    margin-left: 11px;
+    margin-bottom: 20px;
+}
+
+.box.banner {
+    background-color: var(--c-color-covid);
+    margin-top: 0;
+    margin-right: 10px;
+    margin-left: 11px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 24px
+}
+
+.box.banner:hover {
+    background-color: var(--c-color-appointment);
+    cursor: pointer;
+}
+
+.policy-note {
+    background-color: white;
+    padding: 9px;
+    font-size: 84%;
+    margin-right: 10px;
+    margin-left: 11px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #0874bb;
+    text-align: justify;
+}
+
+.policy-note .bold {
+    font-weight: 600;
+}
+
+
+.policy-note a {
+    font-weight: 400;
+}
+
+.box.search h3 {
+    font-size: 24px;
+    color: #FFF;
+    padding-bottom: 12px;
+}
+
+.category-dropdown,
+.division-dropdown {
+    width: 296px;
+}
+
+.search-cell {
+    text-align: end;
+}
+
+.row-wrap {
+    padding-top: 0;
+    background-color: var(--c-color-appointment);
+}
+
+.test-result-wrapper {
+    padding: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.box.search-wrapper {
+    margin-top: 0px;
+    padding: 0;
+    /*background-color: #ededed;*/
+    background-color: #fff;
+
+}
+
+.no-results {
+    padding: 32px;
+    padding-top: 15px;
+    display: block;
+}
+
+.biglabel {
+    font-size: 24px;
+    color: #FFF;
+    padding-top: 0px;
+    font-weight: 300;
+    padding-left: 14px;
+    line-height: 18px;
+    top: 18px;
+    position: relative;
+}
+
+
+.promotions {
+    font-size: 18px;
+    color: #FFF;
+    padding-top: 0px;
+    font-weight: 500;
+    line-height: 30px;
+    top: 1px;
+    position: relative;
+
+    letter-spacing: 2px;
+}
+
+.subcategory-title {
+    margin-top: 2px;
+    border-top: none;
+    padding: 0;
+    margin-bottom: 16px;
+    padding-left: 12px;
+    font-weight: 600;
+    font-variant: all-small-caps;
+    font-size: 18px;
+    color: var(--c-color-appointment);
+    border-bottom: 1px solid #8597a3;
+    letter-spacing: 1px;
+}
+
+@media only screen and (max-width: 600px) {
+    .test-result-wrapper {
+        padding: 0;
+    }
+
+    .policy-note {
+        margin: 16px 0;
+    }
+
+    .box.search {
+        margin-top: 0px;
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 16px;
+    }
+}
+
+@media only screen and (max-width: 374px) {
+
+    .policy-note {
+        margin: 16px 0;
+    }
+
+}

@@ -1,0 +1,21 @@
+/**
+ * Created 9.2.2022..
+ */
+
+.min-height
+{
+    height:400px;
+    min-height:400px;
+}
+
+.warn-amber
+{
+    color: darkgoldenrod;
+    font-weight: 500;
+}
+
+.warn-red
+{
+    color: darkred;
+    font-weight: 500;
+}

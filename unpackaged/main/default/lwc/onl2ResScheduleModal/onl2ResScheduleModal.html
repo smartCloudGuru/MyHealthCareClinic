@@ -1,0 +1,341 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Schedule Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open">
+
+        <div class="slds-modal__container">
+
+            <header class="slds-modal__header">
+                <lightning-button-icon if:false={step.booking} icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close">
+                </lightning-button-icon>
+                <h2 class="slds-text-heading_medium">Schedule a test</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                <lightning-layout multiple-rows="true"
+                                  horizontal-align="start"
+                                  class="scheduling-modal-layout">
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                        <div class="subtitle">{test.Test_Type__c}, {test.Turnaround_Time_Global__c}</div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="details" if:true={test.Provided_First_Name__c}>
+                        <span class="newline-on-small-factor">{test.Provided_First_Name__c} {test.Provided_Last_Name__c},&nbsp;</span>
+                        <span class="newline-on-small-factor">{test.Provided_Email__c}</span>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+                <!-- STEP prebook -->
+                <!-- pre-book layout -->
+                <lightning-layout
+                        if:true={step.prebook}
+                        multiple-rows="true"
+                        horizontal-align="start"
+                        class="scheduling-modal-layout">
+
+
+                    <!-- locations search parameters -->
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                        <lightning-layout multiple-rows="true" horizontal-align="start" class="box brand slds-align_absolute-center">
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                                <lightning-combobox label="Location"
+                                                    data-formfield="postalcode"
+                                                    placeholder="Please select a location…"
+                                                    options={serviceCenterOptions}
+                                                    onchange={handleLocationChanged}
+                                                    value={selectedServiceCenterPostalCode}>
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                        <!-- spinner locations -->
+                        <lightning-layout-item if:true={loading} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               padding="around-small" class="slds-align_absolute-center">
+                            <div class="spinner-holder slds-align_absolute-center">
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+
+                    </lightning-layout-item>
+
+                    <!-- locations column -->
+                    <lightning-layout-item if:false={loading} size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+
+                        <!-- found locations -->
+                        <lightning-layout-item if:false={loading} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               padding="around-small" class="location-list">
+
+                            <div if:true={noLocations} class="no-results">
+                                This test is not available at the selected location.
+                            </div>
+
+                            <div if:false={noLocations}>
+
+                                <!--
+                                ----
+                                ITERATION LOCATIONS
+                                ----
+                                -->
+                                <template if:false={noLocations} for:each={locations} for:item="loc">
+                                    <div key={loc.id}>
+                                        <div class="box location">
+
+                                            <div class="address">
+                                                <c-onl-location loc={loc} dont-show-distance></c-onl-location>
+                                            </div>
+
+<!--                                            <div class="availability">-->
+<!--                                                <span if:true={loc.class} class={loc.class}>{loc.firstAvailable}</span>-->
+<!--                                                <span if:false={loc.class} class="green">Earliest: {loc.firstAvailable}</span>-->
+<!--                                            </div>-->
+
+
+                                            <div class="select-button button-row">
+                                                <lightning-button
+                                                        icon-name="utility:checkin"
+                                                        label="Select"
+                                                        class="mhc-button primary-button"
+                                                        data-id={loc.id}
+                                                        data-date={loc.origDate}
+                                                        onclick={handleLocationClick}></lightning-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-layout-item>
+
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+                <!-- STEP locationselected -->
+                <lightning-layout
+                        if:true={step.locationselected}
+                        multiple-rows=""
+                        horizontal-align="start">
+
+                    <lightning-layout-item
+                            if:false={loading}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12
+                            class="no-border slds-text-align_left no-left-padding">
+                        <lightning-button label="Back to other locations"
+                                          icon-name="utility:chevronleft"
+                                          class="mhc-button no-top-margin back-button"
+                                          onclick={handleBackToLocations}></lightning-button>
+                    </lightning-layout-item>
+
+                    <!-- SELECTED LOCATION -->
+                    <lightning-layout-item
+                            if:false={loading}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12
+                            class="box location single">
+
+                        <div class="address">
+                            <c-onl-location loc={selectedLocation} dont-show-distance></c-onl-location>
+                        </div>
+
+                        <div class="availability">
+<!--                            <span if:true={selectedLocation.class} class={selectedLocation.class}>{selectedLocation.firstAvailable}</span>-->
+<!--                            <span if:false={selectedLocation.class} class="green">Earliest: {selectedLocation.firstAvailable}</span>-->
+                        </div>
+
+
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item
+                            if:false={loading}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12
+                            class="box no-border slots-column">
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item if:true={loadingSlots} size=12 small-device-size=12
+                                                   medium-device-size=12 large-device-size=12
+                                                   padding="around-small">
+                                <div class="spinner-holder slds-align_absolute-center">
+                                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                                </div>
+                            </lightning-layout-item>
+
+                            <!-- (datepicker) -->
+                            <lightning-layout-item if:false={loadingSlots}
+                                                   size=12 small-device-size=12 medium-device-size=12
+                                                   large-device-size=12
+                                                   padding="around-small"
+                                                   class="schedule-date">
+
+                                <p>Select a date and time:</p>
+
+                                <div if:true={selectedDate} class="slds-align_absolute-center">
+<!--                                    <lightning-button class="mhc-button util-button display-inline" label="<"-->
+<!--                                                      onclick={handleDatePrevious}></lightning-button>-->
+                                    <lightning-input
+                                            type="date"
+                                            name="inputDate"
+                                            label="Date"
+                                            variant="label-hidden"
+                                            class="display-inline date-input slds-align_absolute-center"
+                                            value={selectedDate}
+                                            onchange={handleDateInputChange}
+                                    >
+                                    </lightning-input>
+<!--                                    <lightning-button class="mhc-button util-button display-inline" label=">"-->
+<!--                                                      onclick={handleDateNext}></lightning-button>-->
+                                </div>
+                            </lightning-layout-item>
+
+                            <!-- timeslots -->
+                            <lightning-layout-item if:false={loadingSlots}
+                                                   size=12 small-device-size=12 medium-device-size=12
+                                                   large-device-size=12
+                                                   padding="around-small" class="timeslots">
+                                <lightning-layout if:true={hasSlots} multiple-rows="true" horizontal-align="start">
+                                    <!-- ITERATE SLOTS -->
+                                    <template for:each={currentSlots} for:item="slot">
+                                        <lightning-layout-item
+                                                if:true={slot.fullHour}
+                                                key={slot.label}
+                                                size=12 small-device-size=12 medium-device-size=12
+                                                large-device-size=12
+                                                class="slot-divider">
+                                        </lightning-layout-item>
+
+                                        <lightning-layout-item key={slot.label}
+                                                               size=12 small-device-size=12 medium-device-size=4
+                                                               large-device-size=2
+                                                               class="slot-wrapper">
+                                            <div
+                                                    if:true={slot.startTime}
+                                                    class="slot available"
+                                                    onclick={handleTimeSlotSelected}
+                                                    data-start={slot.startTime}
+                                                    data-end={slot.endTime}
+                                                    data-resource={slot.resource}
+                                            >
+                                                {slot.label}
+                                            </div>
+                                            <div if:false={slot.startTime} class="slot">
+                                                {slot.label}
+                                            </div>
+                                        </lightning-layout-item>
+
+                                    </template>
+                                </lightning-layout>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item if:true={loadingSlots}
+                                                   size=12 small-device-size=12 medium-device-size=12
+                                                   large-device-size=12
+                                                   padding="around-small" class="timeslots">
+                                <lightning-layout if:true={hasSlots} multiple-rows="true" horizontal-align="start">
+                                    &nbsp;
+                                </lightning-layout>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+                </lightning-layout>
+
+
+                <!-- STEP locationselected -->
+                <lightning-layout
+                        if:true={step.confirm}
+                        multiple-rows="true"
+                        horizontal-align="start">
+
+                    <lightning-layout-item
+                            if:false={loading}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12
+                            class="no-border slds-text-align_left no-left-padding">
+                        <lightning-button label="Back to time selection"
+                                          icon-name="utility:chevronleft"
+                                          class="mhc-button no-top-margin back-button"
+                                          onclick={handleBackToSlots}></lightning-button>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+                <!-- STEP confirmation dialog -->
+                <lightning-layout
+                        if:true={step.confirm}
+                        multiple-rows="true"
+                        horizontal-align="start"
+                        class="box confirmation">
+
+                    <!-- SELECTED LOCATION -->
+                    <lightning-layout-item
+                            if:false={loading}
+                            size=12
+                            small-device-size=12
+                            medium-device-size=12
+                            large-device-size=12>
+
+                        <div class="slds-align_absolute-center">
+                            <p if:false={errorMessage}>Please confirm</p>
+                            <p if:true={errorMessage} class="errorMessage">{errorMessage}</p>
+                        </div>
+
+                        <c-onl-location loc={selectedLocation} dont-show-distance></c-onl-location>
+
+                        <p class="time-and-date">Date and time:&nbsp;<span class="time-and-date">{formattedSelectedSlot}</span></p>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           class="slds-align_absolute-center">
+                        <lightning-button if:false={errorMessage} icon-name="utility:event" label="Confirm" class="mhc-button action-button no-margin"
+                                          onclick={doBook}></lightning-button>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+                <!-- STEP booking -->
+                <lightning-layout
+                        if:true={step.booking}
+                        multiple-rows=""
+                        horizontal-align="start">
+                    <div class="spinner-holder slds-align_absolute-center">
+                        <p class="slds-align_absolute-center">Please wait&mldr;</p>
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </lightning-layout>
+
+                <div class="mhc-button modal-footer">
+                    <button if:false={step.booking} type="button" class="slds-button" onclick={handleClose}>
+                        Close
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

@@ -1,0 +1,172 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Scheduling -->
+<template>
+
+    <!-- if loading -->
+<!--    <div if:true={loading}>-->
+<!--        <div class="spinner-holder slds-align_absolute-center">-->
+<!--            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <!-- if done loading -->
+    <div if:false={loading} class="order-overview">
+        <!-- covid tests -->
+        <div if:true={hasTests}>
+
+            <div class="width-limited">
+                <h4>In-Clinic tests in your order:</h4>
+
+                <div class="info">
+                    <p if:true={allTestsScheduled}>All tests are scheduled</p>
+                    <p if:false={allTestsScheduled}>Please schedule your tests and enter personal details for all tests below</p>
+                    <p if:false={opportunityClosed} class="warn-red">Your bookings will be held for {_reservationHeldTime} minutes. Please complete payment before
+                        this time otherwise your bookings will be cancelled.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="order-overview covid">
+                <template for:each={tests} for:item="item">
+                    <div key={item.Id} class="order-overview covid width-limited">
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                            <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                                <h5 class="covid-test">{item.Product2.Name}</h5>
+                                <c-onl2-remove-item if:false={opportunityClosed}
+                                        item-id= {item.Id}
+                                        onremove={handleRemoveItemFromBasket}
+                                ></c-onl2-remove-item>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item if:true={item.isBundle} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                                   class="bundle-edit slds-text-align_right">
+                                <lightning-button icon-name="utility:edit" label="Edit personal details for the bundle"
+                                                  class="mhc-button edit-button"
+                                                  onclick={openEditModal} data-itemid={item.Id}></lightning-button>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                        <div if:true={item.COVID_Tests__r}>
+                            <template for:each={item.COVID_Tests__r.records} for:item="test">
+                                <c-onl2-test-to-schedule-row
+                                        key={test.Id}
+                                        is-closed-won={opportunityClosed}
+                                        test={test}
+                                        dev={dev}
+                                        is-bundled={item.isBundle}
+                                        default-location={defaultLocation}
+                                        onbooked={handleBooked}
+                                        onupdated={handleUpdated}>
+                                </c-onl2-test-to-schedule-row>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+
+        </div>
+
+        <div if:true={hasProducts}>
+            <!-- list of products here -->
+            <div class="width-limited">
+                <h4>Home Self-Tests in your order:</h4>
+            </div>
+
+            <div class="order-overview product">
+                <template for:each={products} for:item="item">
+                    <div key={item.Id} class="order-overview product width-limited">
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                            <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                                <h5 class="covid-test">{item.Quantity} x {item.Product2.Name}</h5>
+                                <c-onl2-remove-item if:false={opportunityClosed}
+                                                    item-id= {item.Id}
+                                                    onremove={handleRemoveItemFromBasket}
+                                ></c-onl2-remove-item>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                    </div>
+                </template>
+            </div>
+
+        </div>
+
+        <div if:true={hasAppointments}>
+            <div class="width-limited">
+                <h4>Appointments in your order:</h4>
+
+<!--                <div class="info">-->
+<!--                    <p if:true={allAppointmentsScheduled}>All appointments are scheduled</p>-->
+<!--                    <p if:false={allAppointmentsScheduled}>Please schedule your appointments and enter personal details for all appointments below</p>-->
+<!--                </div>-->
+            </div>
+
+            <div class="order-overview appointment">
+                <template for:each={appointments} for:item="item">
+                    <div key={item.Id} class="order-overview appointment width-limited">
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                            <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                                <h5 class="appointment">{item.Product2.Name}</h5>
+                                <c-onl2-remove-item if:false={opportunityClosed}
+                                                    item-id= {item.Id}
+                                                    onremove={handleRemoveItemFromBasket}
+                                ></c-onl2-remove-item>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item if:true={item.isBundle} size=12 large-device-size=6 medium-device-size=6 small-device-size=12
+                                                   class="bundle-edit slds-text-align_right">
+                                <lightning-button icon-name="utility:edit" label="Edit personal details for the bundle"
+                                                  class="mhc-button edit-button"
+                                                  onclick={openEditModal} data-itemid={item.Id}></lightning-button>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+<!--                        <div if:true={item.Appointments__r}>-->
+<!--                            <template for:each={item.Appointments__r.records} for:item="app">-->
+<!--                                <c-onl2-appointment-to-schedule-row-->
+<!--                                        key={app.Id}-->
+<!--                                        is-closed-won={opportunityClosed}-->
+<!--                                        app={app}-->
+<!--                                        is-bundled={item.isBundle}-->
+<!--                                        default-location={defaultLocation}-->
+<!--                                        onbooked={handleBooked}-->
+<!--                                        onupdated={handleUpdated}>-->
+<!--                                </c-onl2-appointment-to-schedule-row>-->
+<!--                            </template>-->
+<!--                        </div>-->
+                    </div>
+                </template>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+
+
+    <template if:true={triggerOpenEditModal}>
+        <c-onl-edit-modal
+                onclose={closeEditModal}
+                onupdated={handleUpdated}
+                test-ids={selectedBundleTests}
+        ></c-onl-edit-modal>
+    </template>
+
+</template>

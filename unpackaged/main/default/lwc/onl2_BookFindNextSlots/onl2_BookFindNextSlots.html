@@ -1,0 +1,90 @@
+<!--
+ - Created by Matija on 8.8.2023..
+ -->
+
+<!-- Onl 2 Book Find Next Slots -->
+<template>
+
+    <!-- inside salesforce -->
+    <template if:false={storeBooking}>
+        <template if:false={instantSearch}>
+            <div>{textBefore}</div>
+            <br/>
+        </template>
+        <div if:true={hasAvailabilityDates}>
+            <div>{textAfter}</div>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start" class=slds-p-top_x-small>
+                <template for:each={availableDatesFormatted} for:item="adate">
+                    <lightning-layout-item key={adate.value}
+                                           class="adate-wrapper"
+                                           size=12 small-device-size=12 medium-device-size=6
+                                           large-device-size=4
+                                           onclick={handleDateSelected}
+                                           data-date={adate.value}
+                    >
+                        <lightning-formatted-date-time value={adate.label} year="numeric" month="long" day="2-digit"
+                                                       weekday="long" data-date={adate.value}></lightning-formatted-date-time>
+
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </div>
+        <br/>
+        <template if:false={searched}>
+            <div if:true={readyToSearch} class=slds-align_absolute-center>
+                <lightning-button if:false={searching} icon-name="utility:event" label="Find dates with availability" variant="brand"
+                                  class="mhc-button action-button no-margin" onclick={doSearch}></lightning-button>
+            </div>
+        </template>
+        <div if:true={searching} class="slds-align_absolute-center">
+            <div if:true={instantSearch}>Searching for other dates...</div>
+            <span class="spinnerHolder">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </span>
+        </div>
+    </template>
+
+
+    <!-- inside Online store -->
+    <template if:true={storeBooking}>
+        <template if:false={instantSearch}>
+            <div class="slds-p-left_medium">{textBefore}</div>
+        </template>
+        <div if:true={hasAvailabilityDates}>
+            <div class="slds-p-left_medium">{textAfter}</div>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-p-top_x-small onl2">
+                <template for:each={availableDatesFormatted} for:item="adate">
+                    <lightning-layout-item key={adate.value}
+                                           class="adate-wrapper"
+                                           size=6 small-device-size=6 medium-device-size=6
+                                           large-device-size=3
+                                           onclick={handleDateSelected}
+                                           data-date={adate.value}
+                    >
+                        <div class="inner">
+                        <lightning-formatted-date-time value={adate.label} month="short" day="2-digit"
+                                                       weekday="long" data-date={adate.value}></lightning-formatted-date-time>
+                        </div>
+
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </div>
+        <template if:false={searched}>
+            <div if:true={readyToSearch} class=slds-align_absolute-center>
+                <lightning-button if:false={searching} icon-name="utility:event" label="Find dates with availability" variant="brand"
+                                  class="mhc-button action-button no-margin" onclick={doSearch}></lightning-button>
+            </div>
+        </template>
+        <div if:true={searching} class="slds-align_absolute-center searching-notice">
+            <div if:true={instantSearch} class="no-aval-msg">We are searching for the earliest availability...</div>
+            <span class="spinnerHolder ">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </span>
+        </div>
+    </template>
+
+
+</template>

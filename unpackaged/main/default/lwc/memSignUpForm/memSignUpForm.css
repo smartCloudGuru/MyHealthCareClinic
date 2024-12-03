@@ -1,0 +1,88 @@
+/**
+ * Created 12.9.2022..
+ */
+.submit-button {
+    margin-top: 8px;
+    width: 240px;
+}
+
+.submit-button .bu {
+    margin-bottom: 80px;
+}
+
+.subheading {
+    padding-bottom: 0;
+    padding-top: 14px;
+}
+
+.instruction.invalid-pin {
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+
+.slds-form-element__label.slds-text-color_error {
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+
+.refCodeMsg{
+    padding-top:20px;
+}
+
+
+p {
+    padding-top: 4px;
+}
+
+.saved-note {
+    margin: auto;
+    width: 90%;
+    text-align: center;
+}
+
+.booking-ref-frame {
+    font-size: larger;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.required_mark {
+    color: rgb(234, 0, 30);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.mhc-p-l-10 {
+    padding-left: 12px;
+}
+
+.Dental {
+    background-color: var(--c-color-dental);
+}
+
+.GP {
+    background-color: var(--c-color-gp);
+}
+
+.Complete {
+    background-color: var(--c-color-complete);
+}
+
+.Premium {
+    background-color: var(--c-color-premium);
+}
+
+.box2 {
+    padding: 12px 18px 12px 18px !important;
+    color: #FFF;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+@media only screen and (max-width: 767px) {
+
+    .refCodeMsg{
+        padding-top:0px;
+    }
+
+}

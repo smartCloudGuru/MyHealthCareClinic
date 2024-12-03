@@ -1,0 +1,68 @@
+/**
+ * Created 22.3.2021..
+ */
+
+.row-wrap {
+    padding: 0;
+    background-color: #fff;
+    margin-top: 30px;
+    margin-bottom: 0px;
+}
+
+.menu-layout-item {
+    text-align: center;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-bottom: 2px solid #fff;
+    padding: 14px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.menu-layout-item[data-option="covid"] {
+    background-color: var(--c-color-covid);
+}
+
+.menu-layout-item[data-option="appointment"] {
+    background-color: var(--c-color-appointment);
+}
+
+.menu-layout-item[data-option="product"] {
+    background-color: var(--c-color-product);
+}
+
+.menu-layout-item[data-option="covid"][data-active="covid"],
+.menu-layout-item[data-option="appointment"][data-active="appointment"],
+.menu-layout-item[data-option="product"][data-active="product"] {
+    border-bottom: none;
+}
+
+.strip {
+    height: 12px;
+    max-height: 12px;
+    font-size: 1px;
+    margin: 0;
+    padding: 0;
+}
+
+.strip[data-active="covid"] {
+    background-color: var(--c-color-covid);
+}
+
+.strip[data-active="appointment"] {
+    background-color: var(--c-color-appointment);
+}
+
+.strip[data-active="product"] {
+    background-color: var(--c-color-product);
+}
+
+
+
+@media only screen and (max-width: 768px) {
+
+    .strip {
+        height: 8px;
+        max-height: 8px;
+    }
+}

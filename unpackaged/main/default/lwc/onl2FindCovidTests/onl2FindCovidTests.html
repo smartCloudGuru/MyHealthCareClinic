@@ -1,0 +1,124 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl FIND Covid Tests -->
+<template>
+
+    <lightning-layout if:true={smallFactorAndNavigationShown} multiple-rows="false" horizontal-align="spread">
+
+        <lightning-layout-item class="width-limited slds-text-align_left back-for-small">
+            <lightning-button if:true={searchDone}
+                              label="Back"
+                              icon-name="utility:chevronleft"
+                              class="mhc-button back-button no-margin"
+                              onclick={handleBackToSearch}></lightning-button>
+        </lightning-layout-item>
+
+    </lightning-layout>
+
+
+    <div class="width-limited">
+        <div class="box covid search-wrapper">
+
+            <div if:false={hideForSmallFF}>
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="box search">
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                        <h3>Book an In-Clinic Test</h3>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item if:true={showServiceCenters} size=12 small-device-size=12 medium-device-size=12 large-device-size=6
+                                                   padding="around-small">
+                                <lightning-combobox label="Location"
+                                                    data-formfield="postalcode"
+                                                    placeholder="Please select…"
+                                                    options={serviceCenterOptions}
+                                                    onchange={handleSearchFieldChanged}
+                                                    required
+                                                    value={_defaults.postalcode}>
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                                <lightning-combobox label="Test Type"
+                                                    data-formfield="type"
+                                                    placeholder="Please select…"
+                                                    options={typeOptions}
+                                                    onchange={handleSearchFieldChangedClearProduct}
+                                                    required
+                                                    value={_defaults.type}>
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                                <lightning-combobox label="Turnaround Time"
+                                                    data-formfield="turnaround"
+                                                    onchange={handleSearchFieldChangedClearProduct}
+                                                    placeholder=""
+                                                    options={turnaroundOptions}
+                                                    value={_defaults.turnaround}
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+
+
+                </lightning-layout>
+
+            </div>
+
+
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                       class="filter-results covid">
+
+                    <div if:true={loading} class="spinner-holder searching slds-align_absolute-center">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+
+                    <template if:false={loading}>
+
+                        <template if:true={noResults}>
+                            <p>
+                                <span class="no-results">No tests found for your query at selected location</span>
+                            </p>
+                        </template>
+
+                        <lightning-layout if:false={noResults} multiple-rows="true" horizontal-align="start" vertical-align="stretch">
+                            <!-- RESULT ITERATION -->
+                            <lightning-layout-item for:each={foundProducts}
+                                                   for:item="product"
+                                                   key={product.product.Id}
+                                                   size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                   class="test-result-wrapper">
+                                <c-onl2-find-covid-test-result-row
+                                        product={product.product}
+                                        locations={product.locations}
+                                        onadd={handleAdd}
+                                        store-config={storeConfig}
+                                        default-personal-details={defaultPersonalDetails}
+                                >
+                                </c-onl2-find-covid-test-result-row>
+
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </template>
+
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+        </div>
+    </div> <!-- end search wrapper -->
+
+
+</template>

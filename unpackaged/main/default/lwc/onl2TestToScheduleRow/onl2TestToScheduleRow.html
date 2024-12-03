@@ -1,0 +1,87 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Test To Schedule Row -->
+<template>
+
+    <div class="width-limited">
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="box single-test-row">
+
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="test-details-cell">
+                <div class="product-name">{test.Test_Type__c}</div>
+                <div class="product-turnaround">Turnaround time: {test.Turnaround_Time_Global__c}</div>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={test.Allows_Scheduling__c} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                   class="slds-text-align_right details">
+                <lightning-button if:false={alreadyScheduled} icon-name="utility:event" label="Schedule" class="mhc-button primary-button"
+                                  onclick={openScheduleModal}></lightning-button>
+                <lightning-button if:true={alreadyScheduled} icon-name="utility:event" label="Reschedule" class="mhc-button schedule-button"
+                                  onclick={openScheduleModal}></lightning-button>
+            </lightning-layout-item>
+
+
+            <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="appointment">
+                <div class="datetime">Scheduled for {scheduledStartFormatted}</div>
+                <div if:true={isClosedWon} class="calendars">
+                    Add to calendar:
+                    <a class="cal-link" target="_blank" href={calHref.google}>Google</a>
+                    <a class="cal-link" target="_blank" href={calHref.ical}>iCal</a>
+                    <a class="cal-link" target="_blank" href={calHref.yahoo}>Yahoo</a>
+                    <a class="cal-link" target="_blank" href={calHref.outlook}>Outlook</a></div>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:true={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="details">
+                <lightning-icon icon-name="utility:location" alternative-text="Location" title="Location" class="ico" size="small"></lightning-icon>
+                <c-onl-location service-territory={test.Scheduled_Appointment__r.ServiceTerritory} class="location"
+                                dont-show-distance></c-onl-location>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:false={alreadyScheduled} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                   class="details not-yet-scheduled">
+                Not yet scheduled
+            </lightning-layout-item>
+
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="details">
+                <div if:true={test.Provided_First_Name__c}>
+                    <lightning-icon icon-name="utility:user" alternative-text="Details" title="Details" class="ico" size="small"></lightning-icon>
+                    <div class="persona">{test.Provided_First_Name__c} {test.Provided_Last_Name__c},&nbsp;<span class="newline-on-small-factor">{test.Provided_Email__c}</span>
+                    </div>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item if:false={isBundled} size=12 small-device-size=12 medium-device-size=6 large-device-size=6
+                                   class="details slds-text-align_right">
+                <lightning-button icon-name="utility:edit" label="Edit personal details" class="mhc-button edit-button"
+                                  onclick={openEditModal}></lightning-button>
+            </lightning-layout-item>
+
+
+        </lightning-layout>
+    </div>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenScheduleModal}>
+        <c-onl2-res-schedule-modal
+                onclose={closeScheduleModal}
+                onbooked={handleBooked}
+                test={test}
+                dev={dev}
+                reschedule={alreadyScheduled}
+                default-location={defaultLocation}></c-onl2-res-schedule-modal>
+    </template>
+
+    <!-- open schedule modal -->
+    <template if:true={triggerOpenEditModal}>
+        <c-onl-edit-modal
+                onclose={closeEditModal}
+                onupdated={handleUpdated}
+                test={test}
+        ></c-onl-edit-modal>
+    </template>
+
+</template>

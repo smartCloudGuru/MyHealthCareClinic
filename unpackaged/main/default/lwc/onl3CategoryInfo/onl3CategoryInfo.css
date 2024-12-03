@@ -1,0 +1,21 @@
+/**
+ * Created by Matija on 19.11.2024..
+ */
+
+.box.category-info {
+    border: none;
+    font-size: 15px;
+    text-align: justify;
+}
+
+strong {
+    font-weight: 500;
+    color: rgb(3, 45, 96);
+}
+
+@media only screen and (max-width: 600px) {
+    .box.category-info {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}

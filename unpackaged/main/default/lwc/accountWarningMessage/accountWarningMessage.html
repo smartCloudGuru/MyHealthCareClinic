@@ -1,0 +1,49 @@
+<!--
+ - Created 10.11.2021..
+ -->
+
+<!-- Account Warning Message -->
+<template>
+    <template if:true={loaded}>
+        <lightning-card if:true={hasNotes}>
+            <div slot="title" class="smmaller">
+                <lightning-icon icon-name="action:priority" size="x-small"></lightning-icon>
+                Warnings
+            </div>
+            <div slot="actions">
+                <lightning-button-icon icon-name="utility:refresh" size="small" alternative-text="Refresh" class="slds-m-left_xx-small"
+                                       onclick={doRefresh}></lightning-button-icon>
+            </div>
+            <div class="slds-p-left_medium slds-p-right_medium">
+                <table class="notestable">
+
+                    <!-- ITERATE notes -->
+                    <template for:each={notes} for:item="note">
+                        <tr key={note}>
+                            <td class="slds-p-bottom_small">
+                                <lightning-icon icon-name="utility:warning" size="x-small"></lightning-icon>&nbsp;{note}
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+            </div>
+        </lightning-card>
+        <lightning-card if:false={hasNotes}>
+            <div slot="title" class="smmaller">
+                No warnings
+            </div>
+            <div slot="actions">
+                <lightning-button-icon icon-name="utility:refresh" size="small" alternative-text="Refresh" class="slds-m-left_xx-small"
+                                       onclick={doRefresh}></lightning-button-icon>
+            </div>
+        </lightning-card>
+    </template>
+    <lightning-card if:false={loaded}>
+        <div>
+            <div slot="title">
+                &nbsp;
+            </div>
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </lightning-card>
+</template>

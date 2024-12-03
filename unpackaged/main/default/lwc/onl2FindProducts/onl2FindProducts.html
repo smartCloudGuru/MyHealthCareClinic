@@ -1,0 +1,96 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl2 Find products -->
+<template>
+
+<!--    <lightning-layout if:true={smallFactorAndNavigationShown} multiple-rows="false" horizontal-align="spread">-->
+
+<!--        <lightning-layout-item class="width-limited slds-text-align_left back-for-small">-->
+<!--            <lightning-button if:true={searchDone}-->
+<!--                              label="Back"-->
+<!--                              icon-name="utility:chevronleft"-->
+<!--                              class="mhc-button back-button no-margin"-->
+<!--                              onclick={handleBackToSearch}></lightning-button>-->
+<!--        </lightning-layout-item>-->
+
+<!--    </lightning-layout>-->
+
+    <div class="width-limited">
+        <div class="box product search-wrapper">
+
+            <div >
+
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="box product search">
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=11>
+                        <h3>Order a Home Self-Test (Postal Delivery or Click & Collect)</h3>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+
+                        <lightning-layout multiple-rows="true" horizontal-align="start">
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-combobox label="Product Type"
+                                                    data-formfield="product"
+                                                    placeholder="Please select…"
+                                                    options={productOptions}
+                                                    onchange={handleSearchFieldChanged}
+                                                    required
+                                                    value={_defaults.product}>
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                            <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 padding="around-small">
+                                <lightning-combobox label="Test Type"
+                                                    data-formfield="type"
+                                                    onchange={handleSearchFieldChanged}
+                                                    placeholder=""
+                                                    options={typeOptions}
+                                                    value={_defaults.type}
+                                >
+                                </lightning-combobox>
+                            </lightning-layout-item>
+
+                        </lightning-layout>
+
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+            </div>
+
+            <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                                       class="filter-results product">
+
+                    <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+
+                    <template if:false={loading}>
+
+                        <template if:true={noResults}>
+                            <p>
+                                <span class="no-results">No products found for your query.</span>
+                            </p>
+                        </template>
+
+                        <!-- PRODUCT ITERATION -->
+                        <template if:false={noResults} for:each={foundProducts} for:item="product">
+                            <c-onl2-product-row data-needsstop onadd={handleAddToBasket} key={product.Id} product={product}></c-onl2-product-row>
+                        </template>
+                    </template>
+
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+
+        </div>
+    </div>
+
+
+</template>

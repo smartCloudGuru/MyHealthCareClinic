@@ -1,0 +1,599 @@
+<!-- TLC Portal Main -->
+<template>
+
+    <p class="dev-build">v101</p>
+
+    <div class="page-width-limited">
+        <lightning-layout
+                multiple-rows=""
+                horizontal-align="start"
+                class="mhc2">
+
+            <lightning-layout-item
+                    if:false={loading}
+                    size=12
+                    small-device-size=12
+                    medium-device-size=12
+                    large-device-size=12
+                    class="box no-border slots-column">
+
+                <lightning-layout if:false={selectedSlot} multiple-rows="true" horizontal-align="start">
+
+                    <template if:false={loadingSlots}>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                               class="pad-top-bottom-075">
+                            <lightning-input
+                                    type="date"
+                                    name="inputDate"
+                                    label={datePickerText}
+                                    class="display-inline date-input pad-r-10"
+                                    value={selectedDate}
+                                    date-style="short"
+                                    onchange={handleDateInputChange}
+                            >
+                            </lightning-input>
+
+                            <lightning-button-icon
+                                    class="table-cell"
+                                    icon-name="utility:refresh"
+                                    alternative-text="Refresh"
+                                    onclick={searchSlots}
+                            ></lightning-button-icon>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=8
+                                               padding="around-small">
+                            <lightning-combobox
+                                    placeholder="Appointment Type"
+                                    options={appTypeOptions}
+                                    value={selectedWorkTypeGroupId}
+                                    onchange={handleAppointmentTypeChanged}
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                    </template>
+
+                    <template if:true={loadingSlots}>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                               class="pad-top-bottom-075">
+
+                            <lightning-input
+                                    if:true={loadingSlots}
+                                    type="date"
+                                    name="inputDate"
+                                    label={datePickerText}
+                                    class="display-inline date-input pad-r-10"
+                                    value={selectedDate}
+                                    date-style="short"
+                                    disabled
+                            >
+                            </lightning-input>
+
+                            <lightning-button-icon
+                                    class="table-cell"
+                                    icon-name="utility:refresh"
+                                    alternative-text="Refresh"
+                                    disabled
+                            ></lightning-button-icon>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=8
+                                               padding="around-small">
+                            <lightning-combobox
+                                    placeholder="Please select the appointment type..."
+                                    options={appTypeOptions}
+                                    value={selectedWorkTypeGroupId}
+                                    disabled
+                            >
+                            </lightning-combobox>
+                        </lightning-layout-item>
+                    </template>
+
+                    <lightning-layout-item if:false={canSearch}
+                                           size=12 small-device-size=12 medium-device-size=12
+                                           large-device-size=12
+                                           class="timeslots">
+                        <div class="slds-align_absolute-center">
+                            <p class="m-top-32">Please select the date and appointment type</p>
+                        </div>
+
+                    </lightning-layout-item>
+
+                    <template if:true={canSearch}>
+                        <!-- timeslots -->
+                        <lightning-layout-item if:true={loadingSlots}
+                                               size=12 small-device-size=12 medium-device-size=12
+                                               large-device-size=12
+                                               class="timeslots">
+                            <div class="spinner-holder slds-align_absolute-center">
+                                <p class="slds-align_absolute-center">Please be patient while we look for availability&mldr;</p>
+                                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                            </div>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:false={loadingSlots}
+                                               size=12 small-device-size=12 medium-device-size=12
+                                               large-device-size=12
+                                               class="timeslots">
+
+                            <lightning-layout
+                                    multiple-rows="true" vertical-align="stretch"
+                                    horizontal-align="start"
+                                    pull-to-boundary="medium">
+
+                                <lightning-layout-item size=6
+                                                       small-device-size=6 medium-device-size=6 large-device-size=6
+                                                       class="prev-but slds-text-align_left">
+                                    <span class="arrow" onclick={handleDayMinus}><span class="arrow-icon">&lt;</span> Previous </span>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=6
+                                                       small-device-size=6 medium-device-size=6 large-device-size=6
+                                                       class="next-but slds-text-align_right">
+                                    <span class="arrow" onclick={handleDayPlus}>Next <span class="arrow-icon">&gt;</span></span>
+                                </lightning-layout-item>
+
+                                <!-- DAY0 column -->
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                                       class="slds-text-align_center slots-column-small" padding="around-medium">
+                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                        <lightning-layout-item
+                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                class="slds-align_absolute-center date-long">
+                                            <lightning-formatted-date-time value={selectedDateP0} year="numeric" month="long" day="2-digit"
+                                                                           weekday="long"></lightning-formatted-date-time>
+                                        </lightning-layout-item>
+                                        <!-- ITERATE SLOTS day0-->
+                                        <template if:true={hasSlotsDay0}
+                                                  for:each={currentSlotsDay0} for:item="slot">
+                                            <lightning-layout-item key={slot.label}
+                                                                   size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                   class="slot-wrapper">
+                                                <div if:true={slot.startTime}
+                                                     class="slot available tooltip"
+                                                     onclick={handleTimeSlotSelected}
+                                                     data-start={slot.startTime}
+                                                     data-end={slot.endTime}
+                                                     data-resources={slot.resources}
+                                                     data-resource_locations={slot.resource_locations}
+                                                >{slot.label}
+                                                    <span class="tooltiptext">{slot.tooltip}</span>
+                                                </div>
+                                            </lightning-layout-item>
+                                        </template> <!-- end ITERATE SLOTS day0-->
+
+                                        <template if:false={hasSlotsDay0}>
+                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                        </template>
+                                    </lightning-layout>
+                                </lightning-layout-item>
+
+
+                                <!-- DAY1 column -->
+                                <lightning-layout-item
+                                        size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                        class="slds-text-align_center slots-column-small" padding="around-medium">
+                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                        <lightning-layout-item
+                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                class="slds-align_absolute-center date-long">
+                                            <lightning-formatted-date-time value={selectedDateP1} year="numeric" month="long" day="2-digit"
+                                                                           weekday="long"></lightning-formatted-date-time>
+                                        </lightning-layout-item>
+                                        <!-- ITERATE SLOTS day1-->
+                                        <template if:true={hasSlotsDay1}
+                                                  for:each={currentSlotsDay1} for:item="slot">
+                                            <lightning-layout-item key={slot.label}
+                                                                   size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                   class="slot-wrapper">
+                                                <div if:true={slot.startTime}
+                                                     class="slot available tooltip"
+                                                     onclick={handleTimeSlotSelected}
+                                                     data-start={slot.startTime}
+                                                     data-end={slot.endTime}
+                                                     data-resources={slot.resources}
+                                                     data-resource_locations={slot.resource_locations}
+                                                     aria-label={productMetaData}
+                                                >{slot.label}
+                                                    <span class="tooltiptext">{slot.tooltip}</span>
+                                                </div>
+                                            </lightning-layout-item>
+                                        </template> <!-- end ITERATE SLOTS day1-->
+                                        <template if:false={hasSlotsDay1}>
+                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                        </template>
+                                    </lightning-layout>
+                                </lightning-layout-item>
+
+                                <!-- DAY2 column -->
+                                <lightning-layout-item
+                                        size=12 small-device-size=12 medium-device-size=6 large-device-size=4
+                                        class="slds-text-align_center slots-column-small" padding="around-medium">
+                                    <lightning-layout multiple-rows="" horizontal-align="start">
+                                        <lightning-layout-item
+                                                size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                                class="slds-align_absolute-center date-long">
+                                            <lightning-formatted-date-time value={selectedDateP2} year="numeric" month="long" day="2-digit"
+                                                                           weekday="long"></lightning-formatted-date-time>
+                                        </lightning-layout-item>
+                                        <!-- ITERATE SLOTS day2-->
+                                        <template if:true={hasSlotsDay2}
+                                                  for:each={currentSlotsDay2} for:item="slot">
+                                            <lightning-layout-item key={slot.label}
+                                                                   size=3 small-device-size=4 medium-device-size=3 large-device-size=3
+                                                                   class="slot-wrapper">
+                                                <div if:true={slot.startTime}
+                                                     class="slot available tooltip"
+                                                     onclick={handleTimeSlotSelected}
+                                                     data-start={slot.startTime}
+                                                     data-end={slot.endTime}
+                                                     data-resources={slot.resources}
+                                                     data-resource_locations={slot.resource_locations}
+                                                     aria-label={productMetaData}
+                                                >{slot.label}
+                                                    <span class="tooltiptext">{slot.tooltip}</span>
+                                                </div>
+                                            </lightning-layout-item>
+                                        </template> <!-- end ITERATE SLOTS day2-->
+                                        <template if:false={hasSlotsDay2}>
+                                            <div class="slds-text-align_center no-slots-text">No availability for this date</div>
+                                        </template>
+                                    </lightning-layout>
+                                </lightning-layout-item>
+
+
+                            </lightning-layout>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <!-- if slot was selected -->
+        <template if:true={selectedSlot}>
+            <lightning-layout>
+                <lightning-layout-item class="timeslot-selected slds-text-align_center"
+                                       size=12 small-device-size=12 medium-device-size=12>
+                    <p class="bolder">{selectedAppointmentName}</p>
+                    <p>
+                        <lightning-formatted-date-time value={selectedSlot.startTime}
+                                                       year="numeric"
+                                                       month="long"
+                                                       day="2-digit"
+                                                       weekday="long"
+                                                       hour="2-digit"
+                                                       hour12={ampm}
+                                                       minute="2-digit"
+                                                       time-zone="Europe/London"
+                                                       class="bolder"
+                        ></lightning-formatted-date-time>
+                    </p>
+                    <p class="bolder">
+                        {selectedSlot.tooltip}
+                    </p>
+                    <p>
+                        <lightning-button label="Back to Date and Time Selection"
+                                          icon-name="utility:chevronleft"
+                                          class="mhc-button back-button mtop06"
+                                          onclick={handleBackToSlots}></lightning-button>
+                    </p>
+                </lightning-layout-item>
+
+                <lightning-layout-item class="slds-text-align_center"
+                                       size=12 small-device-size=12 medium-device-size=12>
+
+                </lightning-layout-item>
+            </lightning-layout>
+        </template>
+
+        <lightning-layout
+                multiple-rows="true" horizontal-align="start"
+                class={displayFormCSS}>
+
+            <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                <lightning-layout multiple-rows="true" horizontal-align="start" class="mhc2 theo-form">
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="text"
+                                         label="Patient's First Name"
+                                         placeholder="First Name"
+                                         data-formfield="firstName"
+                                         data-persist="true"
+                                         max-length=18
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="text"
+                                         label="Patient's Last Name"
+                                         placeholder="Last Name"
+                                         data-formfield="lastName"
+                                         data-persist="true"
+                                         max-length=18
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-combobox
+                                label="Day of Birth"
+                                data-formfield="dob_d"
+                                data-persist="true"
+                                placeholder=""
+                                required
+                                options={ddOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-combobox
+                                label="Month of Birth"
+                                data-formfield="dob_m"
+                                data-persist="true"
+                                placeholder=""
+                                required
+                                options={mmOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=4 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-combobox
+                                label="Year of Birth"
+                                data-formfield="dob_y"
+                                data-persist="true"
+                                placeholder=""
+                                required
+                                options={yyOptions}
+                                onchange={validateDOB}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-combobox
+                                label="Gender"
+                                data-formfield="gender"
+                                data-persist="true"
+                                placeholder=""
+                                required
+                                options={genderOptions}
+                        >
+                        </lightning-combobox>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="email"
+                                         label="E-mail"
+                                         data-formfield="email"
+                                         data-persist="true"
+                                         placeholder="E-mail"
+                                         max-length=64
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="text"
+                                         label="Mobile Number"
+                                         data-persist="true"
+                                         data-formfield="phone"
+                                         max-length=24
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <c-onl2-autofill-input label="Postal Code &amp; Address Search"
+                                               data-formfield="postalCodeSearch"
+                                               onsearch={handlePostcodeSearch}
+                                               onselectionchange={handlePostcodeSelection}
+                        ></c-onl2-autofill-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-input label="Postal code"
+                                         data-formfield="postalCode"
+                                         data-persist="true"
+                                         placeholder="Postal code"
+                                         required
+                                         max-length=12
+                        >
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=3 large-device-size=3 class="pad-05">
+                        <lightning-input label="City"
+                                         data-formfield="city"
+                                         data-persist="true"
+                                         placeholder="City"
+                                         required
+                                         max-length=20
+                        >
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=4 class="pad-05">
+                        <lightning-input label="Address line 1"
+                                         data-formfield="address1"
+                                         data-persist="true"
+                                         placeholder="Address line 1"
+                                         required
+                                         max-length=30>
+                        </lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 class="pad-05">
+                        <lightning-input label="Address line 2"
+                                         data-formfield="address2"
+                                         data-persist="true"
+                                         placeholder="Address line 2"
+                                         max-length=30>
+                        </lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=4 class="pad-05">
+                        <lightning-input label="Address line 3"
+                                         data-formfield="address3"
+                                         data-persist="true"
+                                         placeholder="Address line 3"
+                                         max-length=30>
+                        </lightning-input>
+                    </lightning-layout-item>
+
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 class="pad-05">
+                        <lightning-input label="County/State"
+                                         data-formfield="county"
+                                         data-persist="true"
+                                         placeholder="County/State"
+                                         max-length=2
+                        >
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <!-- separator -->
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           class="pad-05 slds-m-bottom_small">
+
+                        <!-- separator -->
+                        <p class="slds-m-top_x-large">Which assessment has been chosen?</p>
+
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-1"
+                                         label="WELL2 - AllWoman Assessment (under 40)"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-2"
+                                         label="WELL3 - AllWoman Assessment (over 40)"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-3"
+                                         label="WELL4 - AllMan Assessment"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-4"
+                                         label="WELL5 - Sexual Health"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-5"
+                                         label="WELL6 - Male Fertility"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-6"
+                                         label="WELL7 - PeriMenopause"
+                        ></lightning-input>
+                        <lightning-input type="checkbox"
+                                         class="onl-check"
+                                         data-formfield="addon-7"
+                                         label="WELL8 - PostMenopause"
+                        ></lightning-input>
+
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           class="pad-05 slds-m-bottom_small">
+                        <lightning-textarea
+                                data-formfield="notes"
+                                name="notes"
+                                label="Additional appointment notes:">
+                        </lightning-textarea>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="text"
+                                         label="Patient Reference"
+                                         placeholder="L-Number"
+                                         data-formfield="refP"
+                                         data-persist="true"
+                                         max-length=18
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=6 class="pad-05">
+                        <lightning-input type="text"
+                                         label="Appointment Reference"
+                                         placeholder="M-Number"
+                                         data-formfield="refA"
+                                         data-persist="true"
+                                         max-length=18
+                                         required
+                        ></lightning-input>
+                    </lightning-layout-item>
+
+
+                    <template if:false={submitting}>
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center">
+                            <lightning-input if:true={selectedSlot} type="checkbox"
+                                             class="onl-check slds-m-bottom_medium"
+                                             data-formfield="chkAdditional"
+                                             checked={dont_clear_form}
+                                             label="Save patient details to book an additional appointment"
+                                             value={dont_clear_form}
+                                             onchange={handleClearFormCheckChange}
+                            ></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                               class="slds-align_absolute-center">
+                            <lightning-button if:true={selectedSlot}
+                                              icon-name="utility:event" label="Submit"
+                                              class="mhc-button action-button no-margin"
+                                              onclick={doSubmit}></lightning-button>
+
+                            <p if:false={selectedSlot} class="standout-warn">Please select a date and time before continuing</p>
+                        </lightning-layout-item>
+                    </template>
+
+                    <lightning-layout-item if:true={submitting} size=12 small-device-size=12 medium-device-size=12 large-device-size=12
+                                           class="slds-align_absolute-center">
+                        <div class="spinner-holder slds-align_absolute-center">
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                        </div>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+    <template if:true={showErrorModal}>
+        <c-onl-ok-modal modal-title="Unable to process booking"
+                        text="We are unable to process this booking at this time. Please try again or contact us for assistance."
+                        text2={errorModalText}
+                        onno={closeErrorModal}
+                        onclose={closeErrorModal}
+                        onyes={closeErrorModal}
+        ></c-onl-ok-modal>
+    </template>
+
+    <template if:true={showSuccessModal}>
+        <c-onl-ok-modal modal-title="Appointment made"
+                        text="Thank you, your booking has been done. An email with the confirmation should arrive shortly."
+                        onno={closeSuccessModal}
+                        onclose={closeSuccessModal}
+                        onyes={closeSuccessModal}
+        ></c-onl-ok-modal>
+    </template>
+
+</template>

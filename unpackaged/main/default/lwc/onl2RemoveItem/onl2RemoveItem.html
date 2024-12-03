@@ -1,0 +1,16 @@
+<!--
+ - Created 8.6.2021..
+ -->
+
+<!-- Onl 2 Remove Item Control -->
+<template>
+    <div if:false={inEdit} class="edit-options">
+        <a href="javascript:" onclick={handleRemove}>remove</a>
+    </div>
+
+    <div if:true={inRemove} class="edit-options">
+        <span class="newline-on-small-factor">Are you sure?&nbsp;&nbsp;</span>
+        <a href="javascript:" onclick={handleRemoveYes}>yes, remove</a>
+        <a href="javascript:" onclick={handleRemoveCancel}>cancel</a>
+    </div>
+</template>

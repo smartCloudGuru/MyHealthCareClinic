@@ -1,0 +1,641 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Scheduling -->
+<template>
+
+    <div if:true={loading} class="spinner-holder2 slds-align_absolute-center">
+        <div class="background"></div>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <div class="header-container">
+
+        <lightning-layout multiple-rows="true" horizontal-align="start" class="width-limited">
+            <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                <div class="header">
+                    <lightning-button
+                            label="Back"
+                            icon-name="utility:chevronleft"
+                            class="mhc-button back-button no-margin to-payment"
+                            onclick={handleBackFromCart}></lightning-button>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                <div class="header slds-text-align_right">
+                    <div if:true={showtcerror} class="tc-error-message slds-text-color_error ">Please agree to the T&amp;Cs below&nbsp;</div>
+                    <lightning-button
+                            if:true={showPaymentButton}
+                            label="Continue to payment"
+                            class="mhc-button action-button"
+                            onclick={handleContinueToPayment}></lightning-button>
+                    <lightning-button
+                            if:true={showFinishButton}
+                            label="Finish order"
+                            class="mhc-button action-button"
+                            onclick={handleFinishOrder}></lightning-button>
+                    <div if:false={allTestsScheduled} class="header-notice">
+                        <span if:false={loading}>Please schedule all your tests before continuing</span>
+                    </div>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+
+    <!-- if loading -->
+    <div if:true={loadingPayment} class="spinner-holder slds-align_absolute-center">
+        <p class="slds-align_absolute-center">Please wait to be redirected to payment&mldr;</p>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <!-- if done loading -->
+    <!--    <div if:false={loading}>-->
+    <div class={hideOnLoading}>
+
+        <div if:false={loadingPayment}>
+
+            <div if:true={hasAnyItems} class="row-wrap subheader">
+                <div class="width-limited">
+                    <h3>Order Summary</h3>
+
+                </div>
+            </div>
+
+            <!--  2column view (8+4, 6+6 or 12) -->
+            <lightning-layout if:true={hasAnyItems} multiple-rows="true" horizontal-align="start" class="width-limited">
+
+                <!-- column with forms -->
+                <lightning-layout-item size=12 large-device-size=8 medium-device-size=6 small-device-size=12 padding="around-small"
+                                       class="summary-form">
+
+                    <lightning-layout multiple-rows="true" horizontal-align="start" class="outlined-box">
+
+                        <lightning-layout-item if:true={displayOrderBy} size=12 large-device-size=6 medium-device-size=12 small-device-size=12
+                                               class="personal-details-wrapper">
+
+                            <h4>Billing Information</h4>
+                            <div if:true={personalDetails}>
+                                <div if:true={personalDetails.firstName}>{personalDetails.firstName}&nbsp;{personalDetails.lastName}</div>
+                                <div if:true={personalDetails.email}>{personalDetails.email}</div>
+                                <div if:true={personalDetails.phone}>{personalDetails.phone}</div>
+                                <div class="address slds-p-left_medium">
+                                    <div if:true={personalDetails.address1}>{personalDetails.address1}</div>
+                                    <div if:true={personalDetails.address2}>{personalDetails.address3}</div>
+                                    <div if:true={personalDetails.address2}>{personalDetails.address3}</div>
+                                    <div>
+                                        <span if:true={personalDetails.postalCode}>{personalDetails.postalCode}&nbsp;</span>
+                                        <span if:true={personalDetails.city}>{personalDetails.city}</span>
+                                    </div>
+                                    <div if:true={personalDetails.country}>{personalDetails.country}</div>
+                                </div>
+                            </div>
+
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item if:true={displayOrderBy} size=12 large-device-size=6 medium-device-size=12 small-device-size=12
+                                               class="personal-details-wrapper">
+
+                            <div if:true={hasProducts}>
+                                <h4>Shipping Information</h4>
+                                <div if:true={shippingInformation.firstName}>{shippingInformation.firstName}&nbsp;{shippingInformation.lastName}</div>
+                                <div if:true={shippingInformation.email}>{shippingInformation.email}</div>
+                                <div if:true={shippingInformation.phone}>{shippingInformation.phone}</div>
+                                <div class="address slds-p-left_medium">
+                                    <div if:true={shippingInformation.address1}>{shippingInformation.address1}</div>
+                                    <div if:true={shippingInformation.address2}>{shippingInformation.address3}</div>
+                                    <div if:true={shippingInformation.address2}>{shippingInformation.address3}</div>
+                                    <div>
+                                        <span if:true={shippingInformation.postalCode}>{shippingInformation.postalCode}&nbsp;</span>
+                                        <span if:true={shippingInformation.city}>{shippingInformation.city}</span>
+                                    </div>
+                                    <div if:true={shippingInformation.country}>{shippingInformation.country}</div>
+                                </div>
+                            </div>
+
+
+                        </lightning-layout-item>
+
+
+                        <lightning-layout-item if:true={displayBillingDetailsForm} size=12 large-device-size=12 medium-device-size=12
+                                               small-device-size=12
+                                               class="personal-details-wrapper">
+
+                            <!-- PERSONAL DETAILS -->
+                            <lightning-layout multiple-rows="true"
+                                              horizontal-align="start"
+                                              class="personal-details-form width-limited row-wrap over slds-p-top_none">
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                                    <h4>Please provide your billing details</h4>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=6 padding="around-small"
+                                                       class="form-field">
+                                    <lightning-input label="First Name"
+                                                     data-form="personal"
+                                                     data-formfield="firstName"
+                                                     max-length=30
+                                                     placeholder="First Name"
+                                                     value={personalDetails.firstName}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=6 padding="around-small"
+                                                       class="form-field">
+                                    <lightning-input label="Last Name"
+                                                     data-form="personal"
+                                                     data-formfield="lastName"
+                                                     max-length=30
+                                                     placeholder="Last Name"
+                                                     value={personalDetails.lastName}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=6 padding="around-small"
+                                                       class="form-field">
+                                    <lightning-input label="Email"
+                                                     data-form="personal"
+                                                     data-formfield="email"
+                                                     max-length=50
+                                                     placeholder="Email"
+                                                     type="email"
+                                                     value={personalDetails.email}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=6 padding="around-small"
+                                                       class="form-field">
+                                    <lightning-input label="Phone No."
+                                                     type="tel"
+                                                     data-form="personal"
+                                                     data-formfield="phone"
+                                                     max-length=20
+                                                     placeholder="Phone No."
+                                                     value={personalDetails.phone}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <!-- postcode search -->
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small" class="form-field">
+                                    <c-onl2-autofill-input label="Postal Code &amp; Address Search"
+                                                           onsearch={handlePostcodeSearch}
+                                                           name="personal"
+                                                           onselectionchange={handlePostcodeSelection}></c-onl2-autofill-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="Address line 1"
+                                                     data-form="personal"
+                                                     data-formfield="address1"
+                                                     value={personalDetails.address1}
+                                                     placeholder="Address line 1"
+                                                     max-length=50
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="Address line 2"
+                                                     data-form="personal"
+                                                     data-formfield="address2"
+                                                     placeholder="Address line 2"
+                                                     value={personalDetails.address2}
+                                                     max-length=50>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="Address line 3"
+                                                     data-form="personal"
+                                                     data-formfield="address3"
+                                                     placeholder="Address line 3"
+                                                     value={personalDetails.address3}
+                                                     max-length=50>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="Postal code"
+                                                     data-form="personal"
+                                                     data-formfield="postalCode"
+                                                     placeholder="Postal code"
+                                                     value={personalDetails.postalCode}
+                                                     max-length=12
+                                                     required
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="City"
+                                                     data-form="personal"
+                                                     data-formfield="city"
+                                                     placeholder="City"
+                                                     value={personalDetails.city}
+                                                     max-length=30
+                                                     required
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class="form-field">
+                                    <lightning-input label="County"
+                                                     data-form="personal"
+                                                     data-formfield="county"
+                                                     placeholder="County"
+                                                     value={personalDetails.county}
+                                                     max-length=30
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+
+                            </lightning-layout>
+
+                            <!-- SHIPPING DETAILS -->
+                            <lightning-layout if:true={displayShippingDetailsForm} multiple-rows="true" horizontal-align="start"
+                                              class="personal-details-form width-limited row-wrap over slds-m-bottom_none slds-m-top_none slds-p-top_none">
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12>
+                                    <h4 if:false={smallFactor}>Please choose your delivery option or Click &amp; Collect</h4>
+                                    <h4 if:true={smallFactor}>Select Courier Delivery or Click & Collect</h4>
+                                </lightning-layout-item>
+
+<!--                                <lightning-layout-item if:true={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12-->
+<!--                                                       large-device-size=12 padding="around-small">-->
+<!--                                    <lightning-input type="checkbox" data-formfield="checkClickAndCollect"-->
+<!--                                                     label="Click & Collect your Self-Tests from one of our Test Centres"-->
+<!--                                                     name="checkClickAndCollect" checked={_clickAndCollectChecked}-->
+<!--                                                     onchange={handleClickAndCollectChange}></lightning-input>-->
+<!--                                </lightning-layout-item>-->
+
+
+                                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12>
+                                    <lightning-radio-group name="rg_delivery"
+                                                           class="delivery_options"
+                                                           label="Select an option:"
+                                                           required
+                                                           data-form="shipping"
+                                                           data-formfield="delivery"
+                                                           options={deliveryOptions}
+                                                           value={selectedDeliveryOption}
+                                                           onchange={handleDeliveryOptionChange}
+                                                           type="radio"></lightning-radio-group>
+                                </lightning-layout-item>
+
+<!--                                <lightning-layout-item if:true={earliestDeliveryDate} size=12 small-device-size=12 medium-device-size=12-->
+<!--                                                       large-device-size=12 padding="around-small">-->
+<!--                                    <p class="earliest-date">* Earliest delivery date possible:&nbsp;-->
+<!--                                        <lightning-formatted-date-time value={earliestDeliveryDate} month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>-->
+<!--                                        <span if:true={earliestDeliveryDateHours}>&nbsp;by&nbsp;{earliestDeliveryDateHours}</span>-->
+<!--                                    </p>-->
+<!--                                </lightning-layout-item>-->
+
+                                <lightning-layout-item if:false={_clickAndCollectChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small" class={shippingVisibilityClass}>
+                                    <lightning-input type="checkbox" data-formfield="check_shipping_same"
+                                                     label="My shipping and billing address are the same"
+                                                     name="check_shipping_same" checked={personalDetails.check_shipping_same}
+                                                     onchange={handleShippingSameChange}></lightning-input>
+                                </lightning-layout-item>
+
+
+                                <lightning-layout-item if:true={_clickAndCollectChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small">
+                                    <lightning-combobox label="Select collect location:"
+                                                        data-formfield="clickCollectLocationId"
+                                                        placeholder="Please select…"
+                                                        options={serviceCenterOptions}
+                                                        onchange={handleCollectLocationChange}
+                                                        required
+                                                        value={_clickCollectLocationId}>
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small" class={shippingVisibilityClass}>
+                                    <h4>Please provide your shipping details</h4>
+                                </lightning-layout-item>
+
+
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small"
+                                                       class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="First Name"
+                                                     data-form="shipping"
+                                                     data-formfield="firstName"
+                                                     placeholder="First Name"
+                                                     max-length=30
+                                                     value={shippingInformation.firstName}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small"
+                                                       class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Last Name"
+                                                     data-form="shipping"
+                                                     placeholder="Last Name"
+                                                     data-formfield="lastName"
+                                                     max-length=30
+                                                     value={shippingInformation.lastName}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small"
+                                                       class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Email"
+                                                     data-form="shipping"
+                                                     placeholder="Email Name"
+                                                     data-formfield="email"
+                                                     max-length=50
+                                                     type="email"
+                                                     value={shippingInformation.email}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small"
+                                                       class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Phone No."
+                                                     type="tel"
+                                                     placeholder="Phone No."
+                                                     data-form="shipping"
+                                                     data-formfield="phone"
+                                                     max-length=20
+                                                     value={shippingInformation.phone}
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+
+                                <!-- postcode search -->
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <c-onl2-autofill-input label="Postal Code &amp; Address Search"
+                                                           onsearch={handlePostcodeSearch}
+                                                           onselectionchange={handlePostcodeSelection}
+                                                           name="shipping"
+                                    ></c-onl2-autofill-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Address line 1"
+                                                     data-form="shipping"
+                                                     data-formfield="address1"
+                                                     placeholder="Address line 1"
+                                                     value={shippingInformation.address1}
+                                                     max-length=50
+                                                     required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Address line 2"
+                                                     data-form="shipping"
+                                                     data-formfield="address2"
+                                                     placeholder="Address line 2"
+                                                     value={shippingInformation.address2}
+                                                     max-length=50>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Address line 3"
+                                                     data-form="shipping"
+                                                     data-formfield="address3"
+                                                     placeholder="Address line 3"
+                                                     value={shippingInformation.address3}
+                                                     max-length=50>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="Postal code"
+                                                     data-form="shipping"
+                                                     data-formfield="postalCode"
+                                                     placeholder="Postal code"
+                                                     value={shippingInformation.postalCode}
+                                                     max-length=12
+                                                     required
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="City"
+                                                     data-form="shipping"
+                                                     data-formfield="city"
+                                                     placeholder="City"
+                                                     value={shippingInformation.city}
+                                                     max-length=30
+                                                     required
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={_sameShippingChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=6 padding="around-small" class={shippingVisibilityClassFormField}>
+                                    <lightning-input label="County"
+                                                     data-form="shipping"
+                                                     data-formfield="county"
+                                                     placeholder="County"
+                                                     value={shippingInformation.county}
+                                                     max-length=30
+                                                     required
+                                    >
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                                <lightning-layout-item if:false={_clickAndCollectChecked} size=12 small-device-size=12 medium-device-size=12
+                                                       large-device-size=12 padding="around-small" class={shippingVisibilityClass}>
+                                    <p>*We can only ship to <strong>UK addresses</strong> (excluding Scottish Highlands & Islands)</p>
+                                </lightning-layout-item>
+
+                            </lightning-layout>
+
+                        </lightning-layout-item>
+
+
+                    </lightning-layout>
+
+                </lightning-layout-item>
+
+                <!-- column with cart -->
+                <lightning-layout-item size=12 large-device-size=4 medium-device-size=6 small-device-size=12 padding="around-small"
+                                       class="slds-m-bottom_large  summary-form">
+
+                    <div if:true={hasAnyItems} class="cart-box outlined-box">
+
+                        <h4>Ordered items</h4>
+                        <p>Order ID:&nbsp;{orderId}</p>
+
+                        <div if:true={hasTests}>
+                            <!-- iterate over test products -->
+                            <div class="order-overview covid">
+                                <template for:each={tests} for:item="item">
+                                    <c-onl2-product-row-overview key={item.Id} item={item}
+                                                                 locked={opportunityClosed}
+                                                                 onremove={handleRemoveItemFromBasket}></c-onl2-product-row-overview>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div if:true={hasProducts}>
+                            <!-- iterate over products -->
+                            <div class="order-overview product">
+                                <template for:each={products} for:item="item">
+                                    <c-onl2-product-row-overview key={item.Id} item={item}
+                                                                 locked={opportunityClosed}
+                                                                 onremove={handleRemoveItemFromBasket}></c-onl2-product-row-overview>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div if:true={hasAppointments}>
+                            <!-- iterate over apps -->
+                            <div class="order-overview appointment">
+                                <template for:each={appointments} for:item="item">
+                                    <c-onl2-product-row-overview key={item.Id} item={item}
+                                                                 locked={opportunityClosed}
+                                                                 onremove={handleRemoveItemFromBasket}></c-onl2-product-row-overview>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div if:true={hasDiscounts}>
+                            <!-- iterate over discount -->
+                            <div class="order-overview discount">
+                                <template for:each={discounts} for:item="item">
+                                    <c-onl2-product-row-overview key={item.Id} item={item}
+                                                                 locked={opportunityClosed}
+                                                                 onremove={handleRemoveItemFromBasket}></c-onl2-product-row-overview>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div if:true={hasDelivery}>
+                            <!-- iterate over discount -->
+                            <div class="order-overview delivery">
+                                <template for:each={delivery} for:item="item">
+                                    <c-onl2-product-row-overview key={item.Id} item={item} delivery
+                                                                 locked></c-onl2-product-row-overview>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Order Total -->
+                        <div class="basket-info">Total: <span class="price-total"> <lightning-formatted-number
+                                value={total} format-style="currency" currency-code="GBP"></lightning-formatted-number></span>
+                        </div>
+
+                        <div if:true={showCoupon} class="coupon-cell slds-align_absolute-center">
+                            <lightning-input label=""
+                                             data-formfield="coupon"
+                                             class="coupon-input"
+                                             variant="label-hidden"
+                                             placeholder="Coupon code?"
+                                             autocomplete="off"
+                                             onchange={couponChanged}
+                                             max-length=12>
+                            </lightning-input>
+                            <lightning-button label="Apply"
+                                              class="mhc-button coupon-button slds-m-left_medium"
+                                              onclick={checkCoupon}></lightning-button>
+                        </div>
+                        <p if:true={triggerCouponNotValid} class="error-msg slds-align_absolute-center">Entered coupon is not valid</p>
+
+                    </div>
+
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+
+            <div class="width-limited ticks-wrapper summary-form" if:true={displayBillingDetailsForm}>
+                <div class="slds-p-around_small slds-p-top_none">
+                    <!-- CONSENTS -->
+                    <lightning-layout multiple-rows="true" horizontal-align="start" class="row-wrap ticks outlined-box">
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_terms"
+                                             label="* Tick here to confirm you have read and understood our Cancellation policy and other important T&Cs"
+                                             name="check_terms" required onchange={revalidate} checked={personalDetails.checktac}></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_share"
+                                             label="* Tick here to confirm that you understand that your details & test result may be shared with Public Health England for Covid Monitoring purposes"
+                                             name="check_share" required checked={personalDetails.checkshare} onchange={revalidate}></lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                            <lightning-input type="checkbox" data-formfield="check_marketing" label="Tick here to stay up to date on the latest Covid & general health topics. We never share your data and promise to only send you
+        helpful information." name="check_marketing" checked={personalDetails.checkmark}></lightning-input>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+                </div>
+            </div>
+
+        </div>
+
+        <c-onl2-opportunity-tests-view
+                data-refreshable
+                opportunity-id={opportunityId}
+                onopportunitychanged={handleOpportunityChanged}
+                store-config={storeConfig}
+                onupdatedbasket={handleOpportunityChanged}
+        >
+        </c-onl2-opportunity-tests-view>
+
+        <div if:true={showRescheduleNotification}
+             class="reschedule-notification width-limited">
+            A new Booking Confirmation has been sent to your provided email address
+            <br/>
+        </div>
+
+
+        <div if:false={hasAnyItems}>
+            <div class="width-limited">
+                <p if:false={loading} class="slds-m-around_xx-large">
+                    Your cart is empty.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="footer-buttons">
+        <div class="header slds-text-align_right width-limited">
+            <lightning-button
+                    if:true={showPaymentButton}
+                    label="Continue to payment"
+                    class="mhc-button action-button"
+                    onclick={handleContinueToPayment}></lightning-button>
+        </div>
+    </div>
+
+    <template if:true={triggerOpenEditModal}>
+        <c-onl-edit-modal
+                onclose={closeEditModal}
+                onupdated={handleUpdated}
+                test-ids={selectedBundleTests}
+        ></c-onl-edit-modal>
+    </template>
+
+</template>

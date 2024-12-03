@@ -1,0 +1,275 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Onl Scheduling -->
+<template>
+
+    <div class="header-container">
+        <div class="header slds-text-align_right width-limited">
+            <lightning-button
+                    if:true={showPaymentButton}
+                    label="Continue to payment"
+                    class="mhc-button action-button"
+                    onclick={handleContinueToPayment}></lightning-button>
+            <div if:false={allTestsScheduled} class="header-notice">
+                <span if:false={loading}>Please schedule all your tests before continuing</span>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- if loading -->
+    <div if:true={loading}>
+
+        <div class="row-wrap">
+            <div class="width-limited">
+                <h3>Please wait&mldr;</h3>
+                <p>&nbsp;</p>
+            </div>
+        </div>
+
+        <div class="spinner-holder slds-align_absolute-center">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </div>
+
+    <!-- if loading -->
+    <div if:true={loadingPayment} class="spinner-holder slds-align_absolute-center">
+        <p class="slds-align_absolute-center">Please wait to be redirected to payment&mldr;</p>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <!-- if done loading -->
+    <div if:false={loading}>
+
+        <div if:false={loadingPayment}>
+
+            <div if:true={hasAnyItems} class="row-wrap">
+                <div class="width-limited">
+                    <h3>Order Summary</h3>
+                    <p>Order ID:&nbsp; <strong>{orderId}</strong></p>
+                    <p>Total payment due:&nbsp; <strong>
+                        <lightning-formatted-number value={total} format-style="currency" currency-code="GBP"></lightning-formatted-number>
+                    </strong>
+                    </p>
+                </div>
+            </div>
+
+
+            <lightning-layout if:true={hasAnyItems} multiple-rows="true" horizontal-align="start" class="width-limited">
+
+                <lightning-layout-item if:true={hasAnyItems} size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                    <h4>Ordered items</h4>
+
+                    <div if:true={hasTests}>
+                        <!-- iterate over test products -->
+                        <div class="order-overview covid">
+                            <template for:each={tests} for:item="item">
+                                <c-onl-product-row-overview2 key={item.Id} item={item}  onremove={handleRemoveItemFromBasket}></c-onl-product-row-overview2>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div if:true={hasProducts}>
+                        <!-- iterate over products -->
+                        <div class="order-overview product">
+                            <template for:each={products} for:item="item">
+                                <c-onl-product-row-overview2 key={item.Id} item={item}  onremove={handleRemoveItemFromBasket}></c-onl-product-row-overview2>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div if:true={hasDiscounts}>
+                        <!-- iterate over discount -->
+                        <div class="order-overview discount">
+                            <template for:each={discounts} for:item="item">
+                                <c-onl-product-row-overview2 key={item.Id} item={item} onremove={handleRemoveItemFromBasket}></c-onl-product-row-overview2>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div if:true={showCoupon} class="coupon-cell slds-align_absolute-center">
+                        <lightning-input label=""
+                                         data-formfield="coupon"
+                                         class="coupon-input"
+                                         variant="label-hidden"
+                                         placeholder="Coupon code?"
+                                         autocomplete="off"
+                                         onchange={couponChanged}
+                                         max-length=12>
+                        </lightning-input>
+                        <lightning-button label="Apply"
+                                          class="mhc-button coupon-button slds-m-left_medium"
+                                          onclick={checkCoupon}></lightning-button>
+                    </div>
+                    <p if:true={triggerCouponNotValid} class="error-msg slds-align_absolute-center">Entered coupon is not valid</p>
+
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+            <!-- PERSONAL DETAILS -->
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="personal-details-form width-limited row-wrap over">
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12>
+                    <h4>Please provide your personal details</h4>
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                    <lightning-input label="First Name"
+                                     data-formfield="firstName"
+                                     placeholder="First Name"
+                                     max-length=30
+                                     value={personalDetails.firstName}
+                                     required>
+                    </lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                    <lightning-input label="Last Name"
+                                     data-formfield="lastName"
+                                     placeholder="Last Name"
+                                     max-length=30
+                                     value={personalDetails.lastName}
+                                     required>
+                    </lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                    <lightning-input label="Email"
+                                     placeholder="Email"
+                                     data-formfield="email"
+                                     max-length=50
+                                     type="email"
+                                     value={personalDetails.email}
+                                     required>
+                    </lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=6 large-device-size=3 padding="around-small">
+                    <lightning-input label="Phone No."
+                                     data-formfield="phone"
+                                     placeholder="Phone No."
+                                     max-length=20
+                                     value={personalDetails.phone}
+                                     required>
+                    </lightning-input>
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+            <!-- CONSENTS -->
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="slds-m-top_large width-limited row-wrap inside">
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                    <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_terms"
+                                     label="Tick here to confirm you have read and understood our Cancellation policy and other important"
+                                     name="check_terms" required onchange={revalidate} checked={personalDetails.checktac}></lightning-input>
+                    <span class="slds-show_inline-block label-link"> <a href={storeConfig.termsUrl} target="_blank">T&Cs</a></span>
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                    <lightning-input type="checkbox" class="hide-required slds-show_inline-block" data-formfield="check_share"
+                                     label="Tick here to confirm that you understand that your data & test result may be shared with Public Health England & NHS Track & Trace for Covid Monitoring purposes"
+                                     name="check_share" required checked={personalDetails.checkshare} onchange={revalidate}></lightning-input>
+                </lightning-layout-item>
+
+                <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small">
+                    <lightning-input type="checkbox" data-formfield="check_marketing" label="Tick here to stay up to date on the latest Covid & general health topics. We never share your data and promise to only send you
+        helpful information." name="check_marketing" checked={personalDetails.checkmark}></lightning-input>
+                </lightning-layout-item>
+
+            </lightning-layout>
+
+
+            <!-- covid tests -->
+            <div if:true={hasTests}>
+                <div class="width-limited">
+                    <h4>COVID tests</h4>
+
+                    <div class="info">
+                        <p class="info-line" if:true={allTestsScheduled}>Your tests are now all scheduled</p>
+                        <p class="info-line" if:false={allTestsScheduled}>Please schedule your tests and enter personal details for all tests below</p>
+                    </div>
+
+
+                </div>
+
+                <!-- if loading -->
+                <div if:true={smallloading} class="spinner-holder slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+
+                <template if:false={smallloading}>
+
+                    <div class="order-overview covid">
+                        <template for:each={tests} for:item="item">
+                            <div key={item.Id} class="order-overview covid width-limited">
+
+                                <lightning-layout multiple-rows="true" horizontal-align="start">
+
+                                    <lightning-layout-item size=12 large-device-size=6 medium-device-size=6 small-device-size=12>
+                                        <h5 class="covid-test">{item.Product2.Name}:</h5>
+                                    </lightning-layout-item>
+
+                                    <lightning-layout-item if:true={item.isBundle} size=12 large-device-size=6 medium-device-size=6 small-device-size=12 class="bundle-edit slds-text-align_right">
+                                        <lightning-button icon-name="utility:edit" label="Edit personal details for the bundle" class="mhc-button edit-button"
+                                                          onclick={openEditModal} data-itemid={item.Id}></lightning-button>
+                                    </lightning-layout-item>
+
+                                </lightning-layout>
+
+                                <div if:true={item.COVID_Tests__r}>
+                                    <template for:each={item.COVID_Tests__r.records} for:item="test">
+                                        <c-onl-test-to-schedule-row
+                                                key={test.Id}
+                                                test={test}
+                                                default-location={defaultLocation}
+                                                onbooked={handleBooked}
+                                                onupdated={handleUpdated}>
+                                        </c-onl-test-to-schedule-row>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                    </div>
+
+                </template>
+            </div>
+
+
+        </div>
+
+
+        <div if:false={hasAnyItems}>
+            <div class="width-limited">
+                <p class="slds-m-around_xx-large">
+                    Your request is not valid. Please check the link that brought you here.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+
+
+    <div class="footer-buttons">
+        <div class="header slds-text-align_right width-limited">
+            <lightning-button
+                    if:true={showPaymentButton}
+                    label="Continue to payment"
+                    class="mhc-button action-button"
+                    onclick={handleContinueToPayment}></lightning-button>
+        </div>
+    </div>
+
+    <template if:true={triggerOpenEditModal}>
+        <c-onl-edit-modal
+                onclose={closeEditModal}
+                onupdated={handleUpdated}
+                test-ids={selectedBundleTests}
+        ></c-onl-edit-modal>
+    </template>
+
+</template>

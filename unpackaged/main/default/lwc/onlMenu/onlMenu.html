@@ -1,0 +1,60 @@
+<!--
+ - Created 22.3.2021..
+ -->
+
+<!-- Onl Menu -->
+<template>
+
+    <div class="row-wrap">
+        <div class="width-limited">
+            <lightning-layout if:true={showMenu} multiple-rows="false" class="menu-layout" vertical-align="stretch">
+                <lightning-layout-item if:true={storeConfig.covid}
+                                       size=4
+                                       small-device-size=4
+                                       medium-device-size=4
+                                       large-device-size=4
+                                       class="menu-layout-item"
+                                       data-active={currentActiveOption}
+                                       role="button"
+                                       data-option="covid"
+                                       onclick={handleSelectedOption}
+                >
+                    <h3>COVID Tests</h3>
+                    <p hide-on-small>Book private coronavirus testing</p>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={storeConfig.appointment}
+                                       size=4
+                                       small-device-size=4
+                                       medium-device-size=4
+                                       large-device-size=4
+                                       class="menu-layout-item"
+                                       data-active={currentActiveOption}
+                                       role="button"
+                                       data-option="appointment"
+                                       onclick={handleSelectedOption}
+                >
+                    <h3>Appointments</h3>
+                    <p hide-on-small>Book medical appointments</p>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={storeConfig.product}
+                                       size=4
+                                       small-device-size=4
+                                       medium-device-size=4
+                                       large-device-size=4
+                                       class="menu-layout-item"
+                                       data-active={currentActiveOption}
+                                       role="button"
+                                       data-option="product"
+                                       onclick={handleSelectedOption}
+                >
+                    <h3>Products</h3>
+                    <p hide-on-small>Purchase products we offer</p>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+
+    </div>
+    <div class="row-wrap strip" data-active={currentActiveOption}>&nbsp;</div>
+</template>

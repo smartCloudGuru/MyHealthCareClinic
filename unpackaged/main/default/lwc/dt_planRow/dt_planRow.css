@@ -1,0 +1,38 @@
+/**
+ * Created 3.6.2024..
+ */
+.divider {
+    height: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #efefef;
+}
+
+.at {
+    font-size: 84%;
+    padding-left: 4px;
+    display: list-item;
+    margin-left: 16px;
+}
+
+.align_right_important {
+    text-align: right !important;
+}
+
+.quote-button {
+    align-self: self-start;
+}
+
+.mon-label {
+    display: inline-block;
+    width: 82px;
+}
+
+.mon-amount {
+    display: inline-block;
+    text-align: right;
+    width: 100px;
+}
+
+.bold{
+    font-weight: 600;
+}

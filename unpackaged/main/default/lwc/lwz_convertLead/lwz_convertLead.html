@@ -1,0 +1,80 @@
+<!--
+ - Created by Matija on 14.9.2023..
+ -->
+
+<!-- LWZ Convert -->
+<template>
+    <template if:true={recordId}>
+        <lightning-card>
+
+            <template if:false={loading} class="min-height slds-p-horizontal_small">
+                <div if:true={hasDuplicates} class="slds-m-bottom_medium">
+                    We found some similar Patients that already exist. To prevent creating duplicates, please select an existing Patient or proceed to
+                    create a new one:
+                    <br/>
+                    <br/>
+
+                    <template for:each={options} for:item="dupe">
+                        <div class="candidate-wrapper" key={dupe.value}>
+                            <div class="action">
+
+                                <lightning-input type="checkbox-button"
+                                                 label=""
+                                                 variant="label-hidden"
+                                                 name="input1"
+                                                 data-fieldid={dupe.value}
+                                                 onclick={handleSelectedChosen}
+                                >
+                                </lightning-input>
+
+                            </div>
+                            <div class="tile">
+                                <div class="name"><a href={dupe.obj.url} target="_blank">{dupe.obj.Name}</a>&nbsp;({dupe.obj.Date_of_Birth__c})</div>
+                                <div class="contacts">
+<!--                                    {dupe.obj.Patient_Id__c}&nbsp;&bull;&nbsp;-->
+                                    {dupe.obj.Patient_Type__c}&nbsp;&bull;&nbsp;{dupe.obj.PersonEmail}&nbsp;&bull;&nbsp;{dupe.obj.Phone}&nbsp;&bull;&nbsp;{dupe.obj.PersonMobilePhone}
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <br/>
+
+                    <div class="candidate-wrapper">
+                        <div class="action">
+
+                            <lightning-input type="checkbox-button"
+                                             label=""
+                                             variant="label-hidden"
+                                             name="inputNew"
+                                             data-fieldid="new"
+                                             onclick={handleSelectedChosen}
+                            >
+                            </lightning-input>
+
+                        </div>
+                        <div class="tile new-account">
+                            Convert the Lead to a New Patient
+                        </div>
+                    </div>
+
+
+                </div>
+            </template>
+
+            <template if:true={loading}>
+                <div class="min-height slds-p-horizontal_small">
+                    <lightning-spinner alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+                </div>
+            </template>
+
+            <p if:false={loading} slot="footer" class="footer-min-height slds-text-align_right">
+                <lightning-button label="Previous" title="Previous" onclick={handlePrevious} class="slds-m-right_medium"></lightning-button>
+                <lightning-button if:false={canProceed} disabled label="Convert" title="Convert"></lightning-button>
+                <lightning-button if:true={canProceed} variant="brand" label="Convert" title="Convert"
+                                  onclick={handleConvert}></lightning-button>
+
+            </p>
+        </lightning-card>
+    </template>
+</template>

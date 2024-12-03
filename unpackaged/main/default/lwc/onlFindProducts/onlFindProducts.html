@@ -1,0 +1,40 @@
+<!--
+ - Created 8.3.2021..
+ -->
+
+<!-- Onl Add To Basket -->
+<template>
+
+    <div class="row-wrap">
+        <div class="width-limited"><p class="faux-center">Following products are currently available for purchase:</p></div>
+    </div>
+
+    <lightning-layout multiple-rows="true" horizontal-align="start">
+
+        <lightning-layout-item size=12 small-device-size=12 medium-device-size=12 large-device-size=12 padding="around-small"
+                               class="filter-results product">
+
+            <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+
+            <template if:false={loading}>
+
+                <template if:true={noResults}>
+                    <div class="width-limited">
+                        <span class="no-results">No products found for your query.</span>
+                    </div>
+                </template>
+
+                <!-- PRODUCT ITERATION -->
+                <template if:false={noResults} for:each={foundProducts} for:item="product">
+                    <c-onl-product-row onadd={handleAddToBasket} key={product.Id} product={product}></c-onl-product-row>
+                </template>
+            </template>
+
+        </lightning-layout-item>
+
+    </lightning-layout>
+
+
+</template>

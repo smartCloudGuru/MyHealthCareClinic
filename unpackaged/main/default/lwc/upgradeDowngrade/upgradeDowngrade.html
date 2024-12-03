@@ -1,0 +1,110 @@
+<!--
+ - Created 9.2.2022..
+ -->
+
+<!-- Upgrade Downgrade -->
+<template>
+    <lightning-card title="Upgrade or Downgrade a Product">
+
+        <p if:false={loading} class="slds-p-horizontal_small min-height">
+
+            <lightning-layout multiple-rows="true" horizontal-align="start" class="width-limited">
+
+                <lightning-layout-item size=12 large-device-size=12 medium-device-size=12 small-device-size=12 padding="around-medium">
+                    <lightning-combobox label="Operation to perform"
+                                        data-formfield="operation"
+                                        placeholder="Please select…"
+                                        options={operationOptions}
+                                        onchange={handleOperationChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={isUpgrade} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    <lightning-combobox label="Product to Upgrade"
+                                        data-formfield="selectedforupgrade"
+                                        placeholder="Please select…"
+                                        options={productsInOpportunity}
+                                        value={upgradeFromSelected}
+                                        onchange={handleUpgradeFromChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={isDowngrade} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    <lightning-combobox label="Product to Downgrade"
+                                        data-formfield="selectedfordowngrade"
+                                        placeholder="Please select…"
+                                        options={productsInOpportunity}
+                                        value={downgradeFromSelected}
+                                        onchange={handleDowngradeFromChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+
+
+                <lightning-layout-item if:true={showAppWarnAmber} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium" class="warn-amber">
+                    Warning: This change impacts an Appointment that is scheduled late in the day at {appLocationName}. Please check if the same Appointment Time
+                    is available for the new Appointment type.
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={showAppWarnRed} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium" class="warn-red">
+                    Warning: This change impacts an Appointment that is scheduled very late in the day at {appLocationName}. Please check if the same Appointment Time
+                    is available for the new Appointment type.
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={showUpgradeToList} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    <lightning-combobox label="Upgrade to"
+                                        data-formfield="upgradeto"
+                                        placeholder="Please select…"
+                                        options={upgradeOptions}
+                                        value={upgradeToSelected}
+                                        onchange={handleUpgradeToChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={showDowngradeToList} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    <lightning-combobox label="Downgrade to"
+                                        data-formfield="downgradeto"
+                                        placeholder="Please select…"
+                                        options={downgradeOptions}
+                                        value={downgradeToSelected}
+                                        onchange={handleDowngradeToChanged}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={noAvailableUpgradeOptions} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    There are no available Products to upgrade to
+                </lightning-layout-item>
+
+                <lightning-layout-item if:true={noAvailableDowngradeOptions} size=12 large-device-size=12 medium-device-size=12 small-device-size=12
+                                       padding="around-medium">
+                    There are no available Products to downgrade to
+                </lightning-layout-item>
+
+
+            </lightning-layout>
+
+        </p>
+
+        <p if:true={loading} class="slds-p-horizontal_small">
+            <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+        </p>
+        <p slot="footer">
+
+            <template if:true={allowsave}>
+                <lightning-button if:true={isUpgrade} variant="brand" label="Perform Upgrade" title="Perform Upgrade"
+                                  onclick={handleRun}></lightning-button>
+                <lightning-button if:true={isDowngrade} variant="brand" label="Perform Downgrade" title="Perform Downgrade"
+                                  onclick={handleRun}></lightning-button>
+            </template>
+        </p>
+    </lightning-card>
+
+    <span style="display:none">{recordId}</span>
+</template>

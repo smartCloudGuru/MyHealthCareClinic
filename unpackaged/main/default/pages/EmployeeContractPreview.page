@@ -1,0 +1,497 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeContract_ctrl" extensions="DynamicPDFHelper">
+
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-1.8.js')}" />
+        <apex:includeScript value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.js')}" />
+        <apex:stylesheet value="{!UrlFor($Resource.jQuery181,'/jquery/jquery-ui.css')}" />
+        <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.Myhealthcare_Appt,'/css/style.css')}" />
+
+        <style type="text/css">
+            .tooltip {
+                position: relative;
+                display: inline-block;
+                /*border-bottom: 1px dotted black;*/
+            }
+
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 158px;
+                background-color: #ffdbdb;
+                color: #000;
+                text-align: center;
+                border-radius: 6px;
+                border: 1px solid red;
+                padding: 5px 0;
+                position: absolute;
+                z-index: 1;
+                bottom: 100%;
+                left: 50%;
+                margin-left: -5px;
+                margin-bottom: 3px;
+            }
+
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+            }
+
+            #ctopHeaderId {
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: 0;
+                z-index: 999;
+            }
+
+            #cContentId {
+                padding-top: 0px;
+                position: absolute;
+                left: 0;
+                right: 0;
+            }
+
+            body {
+               
+                font-size: 15px !important;
+            }
+
+            
+
+            .col1 {
+                padding-left: 20px !important;
+                padding-top: 15px!important;
+                padding-bottom: 15px !important;
+            }
+
+            .col2 {
+                padding-right: 20px !important;
+                padding-top: 15px!important;
+                padding-bottom: 15px !important;
+            }
+
+            .col11,
+            .col22 {
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+
+            .col12 {
+                padding-left: 20px !important;
+                padding-bottom: 15px !important;
+            }
+
+            .btn-main:hover {
+                background-color: #f7ba00 !important;
+                border-color: #f7ba00 !important;
+                color: #333 !important;
+            }
+
+            .btn-main {
+                background-color: #ffce00 !important;
+                border-color: #ffce00 !important;
+                color: #333 !important;
+                float: right;
+            }
+
+            .requiredLoaderBG {
+                background-color: rgba(92, 173, 243, 0.22);
+                opacity: 0.9;
+                filter: alpha(opacity=70);
+                background-image:url({!$Resource.Spinner});
+                background-position: center center;
+                background-repeat: no-repeat;
+                height: 100%;
+                left: 0;
+                position: fixed;
+                text-align: center;
+                top: 0;
+                width: 100%;
+                z-index: 1;
+                background-size: 7%;
+            }
+
+            div_signcontract {
+                width: 99%;
+            }
+
+            .popupHeader {
+                margin: 10px;
+            }
+
+
+            .myFormStyle {
+                background-color: #023107;
+                margin: 0px;
+            }
+
+            .pgLabel {
+                color: #fff;
+                font-weight: bold;
+                margin-right: 7px;
+            }
+
+            .pgText {
+
+                margin-left: 7px;
+            }
+
+            .tdBorder {
+
+                border: 1px solid;
+                border-right: none;
+            }
+
+
+            .text-block {
+                position: absolute; //bottom: 250px;
+                right: 400px;
+                left: 300px;
+                background-color: #fff;
+                color: Black;
+                padding: 50px; //padding-right: 20px;
+                font-family: initial;
+                margin: auto;
+                border-radius: 10px;
+            }
+
+            .overlay-pad {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                background-color: rgba(0, 0, 0, 0.7);
+                width: 100%;
+                height: 100%;
+            }
+
+            .so-pannel{
+                background-color: #D2D3D0;
+            }
+
+            .so-main-section{
+                margin-left: 20% !important;
+                margin-right: 20% !important; 
+                background-color: white;
+            }
+
+            .so-section__outer{
+                width:100%;
+                padding: 5rem 4rem;
+                padding-bottom: 2.8rem;
+            }
+           
+            .so-section__inner{
+
+            }
+
+            .so-bg-header{
+                padding-top: 14%;
+                font-size: 20px;
+                background-size: cover;
+                width: 100%;
+                height: 100vh;
+                min-height:100%; 
+                padding-left: 34%;
+                padding-right: 7%;
+                color: #001d85;
+            }
+
+            .so-main-heading{
+                font-weight: bold !important;
+                text-align: center;               
+            }
+
+            .so-center-aligned{
+                text-align: center;
+            }
+
+            .so-heading{
+                font-weight: bold !important;
+            }
+
+            .so-li-bold{
+                font-weight: bold;
+            }
+
+            .so-h1{
+                font-size: 22px !important;
+            }
+
+            .so-h2{
+                font-size: 15px !important;
+            }
+
+            .so-section__inner-div{
+                margin-left: -25px;
+            }
+
+            .so-line-height{
+                line-height: 30px;
+            }
+
+            OL { counter-reset: item; line-height: 30px;}
+            OL::before{padding-right:0.5em;}
+            LI { display: block; margin-left: 25px !important; line-height: 30px;}
+            LI:before { font-weight:600;content: counters(item, ".") " "; counter-increment: item }
+
+            @media only screen and (max-device-width: 480px){
+                .so-main-section{
+                    margin-left: 2% !important;
+                    margin-right: 2% !important; 
+                    background-color: white;
+                }
+
+                .so-section__outer{
+                    padding-left: 1.5rem;
+                    padding-right: 1.5rem;
+                    width:100%;
+                }
+
+                .col22{
+                    padding-left: 0px !important;
+                    padding-right: 20px !important;
+                    padding-top: 0px !important;
+                    padding-bottom: 0px !important;
+                }
+
+                .col12{
+                    height: 24px;
+                }
+
+                #cHeaderId{
+                    height: 265px !important;
+                }
+
+                .so-continue-text{
+                    margin-top: -16px;
+                }
+
+                .overlay {
+                    top: 260px;
+                }
+            }
+            input[type="text"], select{
+                border: 1px solid grey;
+                border-radius: 5px;
+                margin-top: 15px!important;
+                padding: 3px;
+                width: 85%;
+            }
+            table.table {
+                margin-top: 10px;
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #000;
+            }
+
+            .table th, .table td {
+                padding: 5px 15px !important;
+                border: 1px solid #000;
+            }
+        </style>
+        <apex:slds />
+    </head>
+
+    <div id="msgerId" style="font-size: 20px;
+                                background: #ff9d9d;
+                                padding: 0px 34%;
+                                text-shadow: 0px 0px 1px #ff030380;
+                                margin: 0px 6%;
+                                border-radius: 12px;
+                                box-shadow: 4px 4px 1px 0px;">
+        <apex:pageMessages id="errorMsgId" />
+    </div>
+    <apex:form rendered="{!!isError}">
+        <apex:outputPanel id="pnlId">
+            <div class="content">
+
+                <body>
+                   
+                    <div class="so-pannel" id="cContentId" style="line-height: 25px;">
+
+                        <!--Contract Pages-->
+                        <div style="height:10px;background-color: #D2D3D0;">&nbsp;</div>
+                        
+                        <div class="so-main-section">
+                            
+                            <div class="so-section__outer">
+
+                                <a onclick="openEditFormModel()" style="position: fixed;
+                                                margin-left: calc(60% - 4rem) !important;
+                                                z-index: 9;
+                                                background-color: rgb(68, 65, 99);
+                                                color: #fff;
+                                                padding: 6px 37px;
+                                                border-radius: 0px 10px 10px 0px;
+                                                text-decoration: underline;top: 100px;">
+                                    Edit Form
+                                </a>
+                                <a target="_blank" href="/apex/EmployeeContractPDF?id={!employee.Id}&token={!employee.Id}" style="position: fixed;
+                                                margin-left: calc(60% - 4rem) !important;
+                                                z-index: 9;
+                                                background-color: rgb(53, 145, 0);
+                                                color: #fff;
+                                                padding: 6px 20px;
+                                                border-radius: 0px 10px 10px 0px;
+                                                text-decoration: underline;top: 160px;">
+                                    Preview As PDF
+                                </a>
+
+                                <apex:outputText value="{!pContent}" escape="false"/>
+
+                            </div>
+                        
+                            <!--Signature Page-->                                
+                            <div style="height:10px;background-color: #D2D3D0;">&nbsp;</div>
+
+                            <div style="margin: 0px 64px !important;height:794px">
+                                
+                                <p>
+                                    <br/>
+                                        <center><b>{!employee.Contract_Document__r.Agreement_With__c}</b></center>
+                                    <br/>
+                                </p>
+                                <p >
+                                    <b><u>For and on behalf of {!employee.Contract_Document__r.For_and_on_behalf_of__c}</u></b><br/>
+                                    Signature:&nbsp;<apex:image url="{!$Resource.Myhealthcarecliniclogo}" style="float:center;width:100px; height:40px;" /><br/>
+                                    Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Myhealthcare Clinic<br/>
+                                    Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                                            <apex:param value="{!TODAY()}" />
+                                        </apex:outputText>
+                                </p><br/>
+                                <p >
+                                    <b><u>Employee:</u></b> I agree to the above terms<br/>
+                                    <div >
+                                        Signature:&nbsp; 
+                                        <div class="tooltip">
+                                            <img src="{!$Resource.Contractformsignature}" id="cSignImgId"  title="Click Here to Sign." style="float:center;width:90px; height:50px;"  onclick="openSignatureModel();"/>
+                                        </div>
+                                    </div>
+                                </p>
+                                <p >
+                                    Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!employee.First_Name__c}&nbsp;{!employee.Surname__c}<br/>
+                                    Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0,date,dd/MM/yyyy}">
+                                            <apex:param value="{!TODAY()}" />
+                                        </apex:outputText>
+                                </p>
+                            </div>
+
+                            <!--End Contract Content/Pages-->                                
+                            <div style="background-color: #D2D3D0;">&nbsp;</div>
+                        </div>
+                    </div>
+                            
+                </body>
+
+            </div>
+        </apex:outputPanel>
+       
+        <!-- Edit Popup -->
+        <div class="demo-only" id="modelId" style="height: 840px;display:none;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+                class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container" style="max-width: 70rem;width: 58%;padding: unset !important;">
+                    <header class="slds-modal__header">
+                        <a class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="closeEditFormModel()"
+                            style="  width: 2rem;height: 2rem;position: absolute;top: 5px;right: 0;">
+                            <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" style="fill: rgb(107, 109, 112);">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.8.0#close"
+                                />
+                            </svg>
+                            <span class="slds-assistive-text">Close</span>
+                        </a>
+                        <h2 class="slds-text-heading_medium slds-hyphenate" id="modal-heading-01" style="font-size: 1.0rem;    font-weight: bold;"
+                            data-aura-rendered-by="57:57;a">Edit Contract Form </h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div data-role="page" id="mainPage">
+                            <apex:pageBlock id="contractFormPnlId">
+                                <div style="color:#cc0000">
+                                    <apex:pageMessages id="errMsgId" ></apex:pageMessages>
+                                </div>
+                                <apex:pageBlockSection >
+                                    <apex:inputField value="{!employee.Date_of_Commencement_of_Employment__c}"/> 
+                                    <apex:inputField value="{!employee.Date_of_Continuous_Employment__c}"/> 
+                                    <apex:inputField value="{!employee.Type_of_Contract__c}"/> 
+                                    <apex:inputField value="{!employee.If_Fixed_Term_Date_of_Termination__c}"/> 
+                                    <apex:inputField value="{!employee.Regular_place_of_work__c}"/> 
+                                    <apex:inputField value="{!employee.Job_Title__c}"/> 
+                                    <apex:inputField value="{!employee.Work_Pattern__c}"/> 
+                                    <apex:inputField value="{!employee.Hourly_Pay_Rate__c}"/> 
+                                    <apex:inputField value="{!employee.Pay_Terms__c}"/> 
+                                    <apex:inputField value="{!employee.Notice_Period__c}"/> 
+                                    <apex:inputField value="{!employee.Addendum__c}"/> 
+                                </apex:pageBlockSection>
+                            </apex:pageBlock>
+                                
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer" style="display: block !important;">
+                        <apex:commandButton action="{!onUpdateContractForm}" value="Save" styleclass="slds-button slds-button_brand" reRender="pnlId, errMsgId" oncomplete="toastMsg();"/>
+                        <a class="slds-button slds-button_outline-brand" onclick="closeEditFormModel()">Cancel</a>                        
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+
+        <!--toast-->
+        <div class="demo-only slds-hidden" style="height: 4rem;" id='ToastMessage'>
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_success" role="alert">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#success')}" />
+                        </svg>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">Contract form has been updated successfully!</h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close" onclick='toastMsg()'>
+                        <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/utility-sprite/svg/symbols.svg#close')}" />
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    
+    <script>
+    
+        function openEditFormModel() {
+
+            jQuery('#modelId').show();
+        }
+
+        function closeEditFormModel() {
+
+            jQuery('#modelId').hide();
+        }
+
+        function toastMsg() {
+
+            if(!document.querySelector('.errorM3')){
+                var element = document.getElementById("ToastMessage");
+                element.classList.toggle("slds-hidden");
+                closeEditFormModel();
+                launchToast();
+            }
+        }
+
+        function launchToast() {
+
+            setTimeout(function(){
+                
+                var element = document.getElementById("ToastMessage");
+                element.classList.toggle("slds-hidden");
+            }, 2000);
+        }
+    </script>
+  
+</apex:page>

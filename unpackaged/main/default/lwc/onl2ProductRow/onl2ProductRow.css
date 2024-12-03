@@ -1,0 +1,131 @@
+/**
+ * Created 12.3.2021..
+ */
+
+
+:host {
+}
+
+.box.product-row {
+    background-color: #FFF;
+}
+
+.location-name {
+    font-weight: 600;
+}
+
+.spinner-holder.adding {
+    padding-left: 1.6rem;
+    padding-right: 1.6rem;
+    color: var(--c-color-border);
+    border: none;
+    background-color: #fff;
+    height: 39px;
+    width: 160px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 18px;
+    margin-top: 0;
+    margin-left: 28px;
+    top: 14px;
+}
+
+.justadded {
+    padding-left: 1.6rem;
+    padding-right: 1.6rem;
+    color: var(--c-color-main);
+    border: none;
+    background-color: #fff;
+    height: 32px;
+    width: 160px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 18px;
+    margin-top: 25px;
+    margin-left: 28px;
+    display: inline-block;
+}
+
+.cell-name {
+    text-align: center;
+    width: 100%;
+    padding: 8px;
+    color: #FFF;
+    border-radius: 10px;
+}
+
+.class-wrapper
+{
+    height:100%;
+    padding-bottom: 10px;
+}
+
+.class-default .cell-name {
+    background-color: var(--c-color-product);
+}
+
+.cell-name .product-subtype {
+    font-size: 110%;
+}
+
+.class-green .cell-name {
+    background-color: #00b050;
+}
+
+.class-blue .cell-name {
+    background-color: #0070c0;
+}
+
+.class-yellow .cell-name {
+    background-color: #ffc000;
+}
+
+.cell-price {
+    text-align: center;
+    width: 100%;
+    padding: 18px;
+    padding-bottom: 6px;
+    color: #404041;
+    font-weight: 700;
+    letter-spacing: 0.03rem;
+    font-size: 18px;
+}
+
+.class-green .cell-price {
+    color: #00b050;
+}
+.class-blue .cell-price {
+    color: #0070c0;
+}
+
+.class-yellow .cell-price {
+    color: #ffc000;
+}
+
+.cell-description {
+    text-align: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 18px;
+}
+
+.cell-qty {
+    text-align: center;
+    padding-bottom: 2px;
+}
+
+.cell-add
+{
+    text-align: center;
+    padding-bottom:4px;
+}
+
+.box.product-row
+{
+    height: 100%;
+}
+
+.quantity-label
+{
+    margin-right:12px;
+}

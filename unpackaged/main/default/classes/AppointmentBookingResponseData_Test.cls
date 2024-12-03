@@ -1,0 +1,127 @@
+@isTest
+Private Class AppointmentBookingResponseData_Test{
+    Private Static TestMethod Void myUnitTest(){
+        AppointmentBookingResponseDataError.error objWrpError = new AppointmentBookingResponseDataError.error();
+            objWrpError.StatusCode = 020;
+            objWrpError.EventType = 4440;
+            objWrpError.EventCode = 3330;
+            objWrpError.Message = 'Test Message';
+            
+        AppointmentBookingResponseDataError objClsABRDE = new AppointmentBookingResponseDataError();
+            objClsABRDE.error = objWrpError ;
+            objClsABRDE.status = 'confirmed';
+        
+        AppointmentBookingResponseDataOk objABRDR = new  AppointmentBookingResponseDataOk();
+ 
+        AppointmentBookingResponseDataOk.Type  objType= new AppointmentBookingResponseDataOk.Type();
+             objType.CanReferPatient    = true;
+             objType.TelemedicineOption = true;
+             objType.CanBookAppointment = true;
+             objType.Key = '1256';
+             objType.Notes = 'Myheart';
+             objType.Name = 'yourheart';    
+             objABRDR.status = 'test';
+          
+        AppointmentBookingResponseDataOk.Address objAdd = new AppointmentBookingResponseDataOk.Address();
+             objAdd.Country  = 'India';
+             objAdd.City  = 'Delhi';
+             objAdd.County = 'Delhi region';
+             objAdd.Address3 = 'Okhla';
+             objAdd.PostCode = '203102';
+             objAdd.Address2 = 'Mumbai';
+             objAdd.Address1 = 'Kolkata';   
+        AppointmentBookingResponseDataOk.Site objSite = new AppointmentBookingResponseDataOk.Site();
+             objSite.Address = objAdd;
+             objSite.Name = 'Myhealth';
+             objSite.Key = 1236544;
+        AppointmentBookingResponseDataOk.Clinician objCli = new AppointmentBookingResponseDataOk.Clinician();
+             objCli.SexType  = 12364;
+             objCli.Key  = 5622;
+             objCli.FullName = 'Mo';
+        AppointmentBookingResponseDataOk.BillingAddress objBli = new AppointmentBookingResponseDataOk.BillingAddress();
+             
+        AppointmentBookingResponseDataOk.Account objAcc = new AppointmentBookingResponseDataOk.Account();
+             objAcc.Name='kann';
+             objAcc.DateOfBirth = 'Dob';
+             objAcc.EmailAddress = 'email';
+             objAcc.SexType = 12563;
+             objAcc.BillingAddress = objBli;
+             objAcc.Surname = 'Sur';
+             objAcc.EmployeeNumber = 'Emp';
+             objAcc.TermsAndConditionsAccepted  = true;
+             objAcc.Title='TTl';
+             objAcc.StatisticalProcessingAccepted = true;
+             objAcc.Key='Ke';
+        AppointmentBookingResponseDataOk.Debtor objDbt = new AppointmentBookingResponseDataOk.Debtor();
+             objDbt.IsCompany=true;
+             objDbt.Name='yes';
+             objDbt.Account= objAcc;
+             objDbt.Address=objAdd;
+        AppointmentBookingResponseDataOk.Creditor objCdt = new AppointmentBookingResponseDataOk.Creditor(); 
+             objCdt.Name='moh';
+             objCdt.Account=objAcc;
+             objCdt.IsCompany= true;
+        AppointmentBookingResponseDataOk.Invoice objInv = new AppointmentBookingResponseDataOk.Invoice();
+             list<AppointmentBookingResponseDataOk.Items> Itm = new list<AppointmentBookingResponseDataOk.Items>();
+             objInv.Items =Itm;
+             objInv.Tax =12.2;
+             objInv.TotalNet =32.6;
+             objInv.TotalGross =96.2;
+             objInv.CurrencyCode= 'curr';
+             objInv.Paid= 32.5;
+             objInv.I_Number = 566;
+             list<String> sti = new list<String>{'w','r'};
+             objInv.CreditNotes = sti;
+             objInv.I_Date='opps';
+             objInv.Debtor= objDbt;
+             objInv.Creditor= objCdt;
+             objInv.PayableOnline = true;
+             objInv.Key = 'Kem';
+        AppointmentBookingResponseDataOk.Patient objPtt = new AppointmentBookingResponseDataOk.Patient();   
+             objPtt.Key = 'kem';
+             objPtt.EmailAddress = 'Email';
+             objPtt.DateOfBirth = 'DOB';
+             objPtt.BillingAddress = objBli;
+             objPtt.SexType = 1233;
+             objPtt.EmployeeNumber = 'Emp';
+             objPtt.Surname = 'Sur';
+             objPtt.TermsAndConditionsAccepted = true;
+             objPtt.Name = 'yes';
+             objPtt.StatisticalProcessingAccepted =true;
+             objPtt.Title='TTl';
+             
+        AppointmentBookingResponseDataOk.result objRes = new AppointmentBookingResponseDataOk.result();
+             objRes.Clinician = objCli;
+             objRes.Finish = 'Usam';
+             objRes.Site = objSite;
+             objRes.Start = 'account';
+             objRes.Telemedicine = true;
+             objRes.Type = objType;
+             objRes.TelemedicineConnection = 'mo';
+             objRes.StateColor = 'test';
+             list<String> str = new list<string> {'s','d'};
+             objRes.Modules = str;
+             objRes.StateDisplayName = 'std';
+             objRes.Invoice=objInv;
+             objRes.State = 'std';
+             objRes.Patient = objPtt;
+             objPtt.Key = 'Mess';
+             objABRDR.result= objRes;
+        AppointmentBookingResponseDataOk.Items objItm = new AppointmentBookingResponseDataOk.Items();  
+             objItm.Code = 'Cd';
+             objItm.CurrencyCode = 'CCD';
+             objItm.NetPrice = 123;
+             objItm.Name = 'yasmin';
+             objItm.Tax = 22.1;
+             objItm.TypeName = 'Tyname';
+             objItm.GrossPrice = 65.36;
+             objPtt.Key = 'yahoo';
+             System.assert(objType.CanBookAppointment == true);
+              
+        
+        AppointmentBookingResponseData objClsABRD = new AppointmentBookingResponseData();
+            objClsABRD.status = 'Confirmed';
+            objClsABRD.error = objClsABRDE;
+            objClsABRD.ok = objABRDR;
+    }
+}

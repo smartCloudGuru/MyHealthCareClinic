@@ -1,0 +1,222 @@
+<!--
+ - Created by zokito on 5/29/21.
+ -->
+<apex:page id="COVID_Test_Home_Day2_Certificate" standardController="COVID_Test__c"
+           extensions="Covid_Test_Certificate_Controller"
+           applyBodyTag="false"
+           renderAs="advanced_pdf"
+           showHeader="false">
+    <head>
+        <style>
+            @page {
+                margin: 0.5in;
+                size: 8.25in 11.75in;
+                @bottom-left {
+                    content: element(footer);
+                }
+            }
+
+            body {
+                font-family: sans-serif, serif;
+                margin: 0;
+                padding: 0;
+                font-size: 13px;
+            }
+
+
+            h1 {
+                font-size: 19px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom: 24px;
+            }
+
+            h2 {
+                font-size: 16px;
+                text-align: center;
+                font-weight: 600;
+                margin-bottom: 20px;
+            }
+
+            p {
+                line-height: 18px;
+                margin-top: 6px;
+                margin-bottom: 10px;
+            }
+
+            div.footer {
+                display: block;
+                padding: 5px;
+                position: running(footer);
+                font-size: 11px;
+                line-height: 16px;
+                text-align: center;
+            }
+
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+
+        </style>
+    </head>
+
+    <apex:image url="{!$Resource.Mhc_logo_rgb}" width="180"/>
+    <h1>
+        CERTIFICATE OF CONFIRMATION: SARS-COVID-2 ANTIGEN TESTING
+        <br/>
+        VACCINATED DAY 2
+    </h1>
+
+    <p>
+        MHC Wandsworth
+        <br/>Commodore House,Battersea Reach Complex,
+        <br/>Juniper Drive Wandsworth
+        <br/>SW18 1TW
+    </p>
+
+    <p>
+        <strong>Date:&nbsp;
+            <apex:outputText value="{0,date,dd-MMM-yyyy}">
+                <apex:param value="{!TODAY()}"/>
+            </apex:outputText>
+        </strong>
+        <br/>
+        <strong>Patient Name: {!COVID_Test__c.Provided_First_Name__c} {!COVID_Test__c.Provided_Last_Name__c}</strong>
+        <br/>
+        <strong>Patient DOB:&nbsp;
+            <apex:outputText value="{0,date,dd/MM/yyyy}">
+                <apex:param value="{!COVID_Test__c.Provided_Date_of_Birth__c}"/>
+            </apex:outputText>
+        </strong>
+        <apex:outputPanel layout="none" rendered="{!COVID_Test__c.Home_Kit_ID__c != null}">
+            <br/>
+            <strong>Test ID: {!COVID_Test__c.Home_Kit_ID__c}</strong>
+        </apex:outputPanel>
+        <br/>
+        <strong>Booking Reference: {!COVID_Test__c.Booking_Reference__c}</strong>
+        <apex:outputPanel layout="none" rendered="{!COVID_Test__c.Provided_Passport_Number__c  != null}">
+            <br/>
+            <strong>Passport Number: {!COVID_Test__c.Provided_Passport_Number__c}</strong>
+        </apex:outputPanel>
+    </p>
+
+    <p>
+        TO WHOM IT MAY CONCERN
+    </p>
+    <p>
+        The above patient had a COVID-19 Antigen Nasal swab test to check for active infection to coronavirus on&nbsp;
+        <apex:outputText value="{!formattedSwabDateTime}"/>
+        .
+    </p>
+
+    <!--    panel negative-->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Negative'}">
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == true}">
+            <p>Your coronavirus (COVID-19) test result is <strong>NEGATIVE</strong>. It’s likely you were not infectious when the test was done.</p>
+            <p>If you develop symptoms of coronavirus, it is advised that you take a PCR test. If you have any of the main symptoms the public health
+                advice is to avoid contact with other people where possible.</p>
+            <p>For more information visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == false}">
+            <p>
+                Your coronavirus (COVID-19) test result is <strong>NEGATIVE</strong>. You did not have the virus when the test was
+                done.
+            </p>
+            <p>
+                You are not required to self-isolate.
+            </p>
+            <p>
+                You should self-isolate again if you get symptoms of coronavirus (COVID-19) – get an NHS coronavirus
+                (COVID-19) test from www.gov.uk/get-coronavirus-test and self-isolate until you get the results.
+            </p>
+            <p>
+                For advice on when you might need to self-isolate and what to do, go to
+                www.nhs.uk/conditions/coronavirus-covid-19 and read ‘Self-isolation and treating symptoms’.
+            </p>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <!-- panel positive -->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Positive'}">
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == true}">
+            <p>Your coronavirus test result is <strong>POSITIVE</strong>. This means you probably have the virus.</p>
+            <p>You are no longer legally required to self-isolate.</p>
+            <p>However, if you have a positive test result, the public health advice is to stay at home and avoid contact with other people where
+                possible.</p>
+            <p>It is advised that you do not travel, including to leave the UK.</p>
+            <p>For more information visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+            <p>Contact 111 if you need medical help. In an emergency dial 999.</p>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == false}">
+            <p>Your coronavirus test result is <strong>POSITIVE</strong>. This means you probably have the virus.</p>
+            <p>Even if you have not had symptoms of coronavirus you must now self-isolate for 10 days from the day after your test date.</p>
+            <p>You must obtain, take and return a free follow up polymerase chain reaction (PCR) test from NHS Test and Trace to confirm this.
+                You can obtain your confirmatory PCR test by visiting <a
+                        href="https:www.gov.uk/get-coronavirus-test">www.gov.uk/get-coronavirus-test</a>
+                or by calling 119.</p>
+            <p>This test will be free of charge and will be sent to you as a home test kit.</p>
+            <p>You must take this test in accordance with this notice. If this confirmatory test is negative, you no longer need to self-isolate.</p>
+            <p>You may be contacted for contact tracing and to check that you, and those who you live or are travelling with, are self-isolating.</p>
+            <p>You must not travel, including to leave the UK, during self-isolation.</p>
+            <p>Contact 111 if you need medical help. In an emergency dial 999.</p>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <!-- panel unclear -->
+    <apex:outputPanel layout="none" rendered="{!COVID_Test__c.COVID_Test_Status__c == 'Unclear'}">
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == true}">
+            <p>Your coronavirus test result is <strong>UNCLEAR</strong>. It is not possible to say if you had the virus when the test was done.</p>
+            <p>It is advised that you take another coronavirus test.</p>
+            <p>You are no longer required to self-isolate.</p>
+            <p>However, if you have symptoms of coronavirus, the public health advice is to get a PCR test and avoid contact with other people where
+                possible.</p>
+            <p>For more information visit <a href="https://www.gov.uk/coronavirus">https://www.gov.uk/coronavirus</a></p>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!livingWithCovid == false}">
+            <p>Your coronavirus test result is <strong>UNCLEAR</strong>. It is not possible to say if you had the virus when the test was done.</p>
+            <p>You must self-isolate for 10 days from the day after your test date.</p>
+            <p>You may choose to take another test, and if it comes back with a negative result, you
+                no longer need to self-isolate. You may be contacted to check that you are self-isolating.</p>
+        </apex:outputPanel>
+    </apex:outputPanel>
+
+    <p>
+        The test was performed using the FlowFlex Antigen Rapid lateral flow chromatographic
+        immunoassay for the qualitative detection of SARS-CoV-2 viral nucleoprotein antigens in
+        nasopharyngeal and/or oropharyngeal specimens. The test is made by Acon laboratories.
+        This sample is processed by 'MyHealthcare clinic' which is ISO 15189 Accredited, (see QR
+        code below).
+    </p>
+
+    <apex:outputPanel rendered="{!!ISBLANK(COVID_Test__c.Certificate_Custom_Text__c)}" layout="none">
+        <p>
+            <apex:outputText escape="false" value="{!COVID_Test__c.Certificate_Custom_Text__c}"/>
+        </p>
+    </apex:outputPanel>
+
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <br/>Yours sincerely
+                <div>
+                    <apex:image url="{!$Resource.signature_akash_patel}" height="80"/>
+                </div>
+                Dr Akash Patel MBBS BSc (Hons) MRCGP
+                <br/>Medical Director - GMC: 7088309
+            </td>
+
+            <td style="text-align: end;align-content: end;align-content: end;">
+                <br/>
+                <apex:image url="{!$Resource.qr_ukas_homekits}" height="80"/>
+            </td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        <p>Web: myhealthcareclinic.com Mail: coronatesting@myhealthcareclinic.com Tel: 02070995555
+            <br/>END OF REPORT</p>
+    </div>
+
+</apex:page>

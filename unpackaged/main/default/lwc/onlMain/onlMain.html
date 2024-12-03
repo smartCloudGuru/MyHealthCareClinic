@@ -1,0 +1,116 @@
+<!--
+ - Created 10.3.2021..
+ -->
+
+<!-- Online COVID test shop Main -->
+<template>
+
+    <!-- navigation always on top -->
+    <div class="header-container">
+
+        <template if:true={sm_page.main}>
+            <div class="header slds-text-align_right width-limited">
+                <span class="header-msg" if:true={basketHasCoupon}>Coupon <strong>{currentCouponName}</strong> will be applied during checkout</span>
+                <lightning-button
+                        title="Proceed to checkout"
+                        label={basketLabel}
+                        icon-name="utility:cart"
+                        class="mhc-button basket-button"
+                        onclick={navigateToCheckout}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <template if:true={sm_showCheckoutForms}>
+            <div class="header width-limited">
+                <lightning-button
+                        if:true={smallFactor}
+                        label="Back"
+                        icon-name="utility:chevronleft"
+                        class="mhc-button back-button no-margin"
+                        onclick={handleBackFromCart}></lightning-button>
+            </div>
+        </template>
+    </div>
+
+
+    <!-- a la carte options -->
+    <c-onl-menu if:true={sm_page.main} current-active-option={sm_menuSelection} onmenuoption={handleMenuOption}
+                store-config={storeConfig}>
+
+    </c-onl-menu>
+
+    <div class="find-lists">
+        <!-- page=main / find covid tests -->
+        <c-onl-find-covid-tests
+                data-cfct
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}
+                onadd={handleAddToBasket}
+        >
+        </c-onl-find-covid-tests>
+
+        <!-- page=main / find appointments -->
+        <c-onl-find-appointments
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}>
+        </c-onl-find-appointments>
+
+        <!-- page=main / find products -->
+        <c-onl-find-products
+                if:true={sm_page.main}
+                data-selected={sm_menuSelection}
+                store-config={storeConfig}
+                query-parameters={queryParameters}
+                onadd={handleAddToBasket}>
+        </c-onl-find-products>
+    </div>
+
+    <!-- Step 2 - checkout confirmation forms (personal details, shipping info) -->
+    <c-onl-checkout
+            if:true={sm_showCheckoutForms}
+            store-config={storeConfig}
+            basket-wrapper={basketWrapper}
+            oncontinue={handleDoCheckout}
+            onupdatedbasket={handleBasketUpdate}
+    >
+    </c-onl-checkout>
+
+    <!-- Step 2 - order overview  -->
+    <c-onl-order-overview
+            if:true={sm_showFulfillmentItems}
+            params={checkoutParams}
+            default-location={step1DefaultLocation}
+            opportunity-id={opportunityId}
+            onpayment={handleContinueToPayment}
+            store-config={storeConfig}
+    >
+    </c-onl-order-overview>
+
+
+    <div if:true={basketCount} class="footer-buttons">
+        <template if:true={sm_page.main}>
+            <div class="header slds-text-align_right width-limited">
+                <lightning-button
+                        title="Proceed to checkout"
+                        label={basketLabel}
+                        icon-name="utility:cart"
+                        class="mhc-button basket-button"
+                        onclick={navigateToCheckout}>
+                </lightning-button>
+            </div>
+        </template>
+    </div>
+
+    <!-- basket modal -->
+    <template if:true={triggerOpenBasketModal}>
+        <c-onl-basket-modal onclose={closeBasketModal} basket={basket} onupdatedbasket={handleBasketUpdate}
+                            message={basketMessage}></c-onl-basket-modal>
+    </template>
+
+
+</template>

@@ -1,0 +1,57 @@
+<!--
+ - Created by Matija on 29.6.2023..
+ -->
+
+<!-- Onl 2 Confirm Requirements Modal -->
+<template>
+    <div role="dialog" class="slds-modal slds-modal_large slds-fade-in-open">
+
+        <div class="slds-modal__container wide-as-possible">
+
+            <header class="slds-modal__header">
+
+                <lightning-button-icon icon-name="utility:close"
+                                       alternative-text="Close"
+                                       title="Close"
+                                       onclick={handleClose}
+                                       class="mhc-button slds-modal__close">
+                </lightning-button-icon>
+
+                <h2>Please note</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium scrollable-div" style="position: relative;">
+
+                <div class="box brand upsell slds-p-around_medium slds-m-top_medium">Please ensure that the following statement(s) apply to you before proceeding with the appointment you have chosen, as it is reserved for specific patients.
+                </div>
+
+                <div class="slds-p-around_medium">
+                    <template for:each={requirementOptions} for:item="req">
+                        <div key={req.id}>
+                            <div class="req-label">{req.label}</div>
+                            <div class="requirement-checkbox">
+                                <lightning-input type="checkbox" data-checkfield={req.id}
+                                                 label={req.check}
+                                                 name={req.id}
+                                                 onchange={handleReqChange}></lightning-input>
+                            </div>
+                            <br/>
+                        </div>
+                    </template>
+                </div>
+
+                <div if:true={allChecked} class="buttons slds-align_absolute-center">
+                    <lightning-button label="Proceed" class="mhc-button primary-button secondary-button no-margin" onclick={handleProceed}>
+                    </lightning-button>
+                </div>
+                <div if:false={allChecked}  class="buttons slds-align_absolute-center">
+                    <lightning-button label="Back to booking page" class="mhc-button secondary-button no-margin" onclick={handleClose}>
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

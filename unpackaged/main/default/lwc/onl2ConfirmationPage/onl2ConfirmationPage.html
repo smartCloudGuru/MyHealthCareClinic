@@ -1,0 +1,95 @@
+<!--
+ - Created 31.5.2022..
+ -->
+
+<!-- Onl 2 Confirmation Page -->
+<template>
+    <div class="header-container">
+        <div class="header slds-text-align_left width-limited">
+        </div>
+    </div>
+
+    <div if:true={loading} class="spinner-holder slds-align_absolute-center">
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <!-- APPOINTMENTS STORE -->
+    <template if:true={isStoreAppointments}>
+
+        <template if:true={successfulCheck}>
+            <div class="width-limited slds-text-align_left">
+                <h4>&nbsp;</h4>
+                <p>Thank you for choosing MyHealthcare Clinic.</p>
+
+                <p>An appointment confirmation has been sent to the email address provided.</p>
+
+                <p>Should you not receive confirmation of your booking via email within 10 minutes, please contact us for assistance.</p>
+
+                <p>We look forward to welcoming you.</p>
+            </div>
+            <div class="width-limited slds-text-align_center">
+                <a href="?page=main&amp;c=_L" class="button_link back-to-site" role="button">{storeConfig.backToStoreText}</a>
+                <div if:true={storeConfig.backToWebsiteUrl}>
+                    <a href={storeConfig.backToWebsiteUrl} class="button_link back-to-site" role="button">{storeConfig.backToWebsiteText}</a>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={failedCheck}>
+            <div class="width-limited slds-text-align_left">
+                <h4>&nbsp;</h4>
+                <p class="boldred">Your payment was not successful.</p>
+
+                <p>Please contact us at <a href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a> with details of your order.</p>
+            </div>
+            <div class="width-limited slds-text-align_center">
+                <a href="?page=main" class="button_link back-to-site" role="button">{storeConfig.backToStoreText}</a>
+                <div if:true={storeConfig.backToWebsiteUrl}>
+                    <a href={storeConfig.backToWebsiteUrl} class="button_link back-to-site" role="button">{storeConfig.backToWebsiteText}</a>
+                </div>
+            </div>
+        </template>
+    </template>
+
+    <!-- TLC STORE -->
+    <template if:true={isStoreTLC}>
+
+        <template if:true={successfulCheck}>
+            <div class="width-limited slds-text-align_left">
+                <h4>&nbsp;</h4>
+                <p>Thank you for choosing The London Clinic.</p>
+
+                <p>An appointment confirmation has been sent to the email address provided.</p>
+
+                <p>Should you not receive confirmation of your booking via email within 10 minutes, please contact us for assistance.</p>
+
+                <p>We look forward to welcoming you.</p>
+
+                <template if:true={storeConfig.backToWebsiteUrl}>
+                    <div class="slds-text-align_center">
+                        <a href={storeConfig.backToWebsiteUrl} class="button_link back-to-site" role="button">{storeConfig.backToWebsiteText}</a>
+                    </div>
+                </template>
+                <p>&nbsp;</p>
+            </div>
+        </template>
+
+        <template if:true={failedCheck}>
+            <div class="width-limited slds-text-align_left">
+                <h4>&nbsp;</h4>
+                <p class="boldred">Your payment was not successful.</p>
+
+                <p>Please contact us at <a href="mailto:info@myhealthcareclinic.com">info@myhealthcareclinic.com</a> with details of your
+                    order.</p>
+            </div>
+
+            <template if:true={storeConfig.backToWebsiteUrl}>
+                <div class="slds-text-align_center">
+                    <a href={storeConfig.backToWebsiteUrl} class="button_link back-to-site" role="button">{storeConfig.backToWebsiteText}</a>
+                </div>
+            </template>
+        </template>
+
+    </template>
+
+</template>
